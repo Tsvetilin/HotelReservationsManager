@@ -18,5 +18,6 @@ namespace Data.Models
         public bool IsTaken { get; set; }
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
+        public virtual IEnumerable<Reservation> Reservations { get; set; }
     }
 }
