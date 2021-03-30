@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Data.Models
 {
     public class ApplicationUser : IdentityUser<string>
     {
+        public ApplicationUser()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public bool IsAdult { get; set; }
+        public virtual EmployeeData EmployeeData {get;set;}
     }
 }

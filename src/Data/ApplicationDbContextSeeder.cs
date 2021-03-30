@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Data.Seeders;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,19 @@ namespace Data
     {
         public async Task SeedAsync(ApplicationDbContext dbContext, ILogger logger)
         {
+            var seeders = new List<ISeeder>
+            {
+                new RolesSeeder(),
+                new UsersSeeder(),
+            };
+
+            foreach (var seeder in seeders)
+            {
+                await seeder.SeedAsync(dbContext, logger);
+            }
+
+            logger.LogInformation("Finished executing seeders");
+
             return;
         }
     }
