@@ -24,8 +24,15 @@ namespace Services
 
         public Task<IEnumerable<T>> GetAllByEmail<T>(string email) where T : class;
 
+        public IEnumerable<T> GetPageItems<T>(int page, int usersOnPage);
+
+        public IEnumerable<T> GetSearchResults<T>(string searchString);
+
         public Task UpdateAsync(EmployeeData user);
 
         public Task DeleteAsync(string id);
+        public int CountAllEmployees();
+
+        public bool IsAlreadyAdded(string email);
     }
 }

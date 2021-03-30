@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Data.Models.ViewModels
+namespace Web.Models.ViewModels
 {
-    class EmployeeDataViewModel
+    public class EmployeeDataViewModel
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
