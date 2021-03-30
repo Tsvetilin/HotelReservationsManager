@@ -16,6 +16,7 @@ namespace Data
         }
 
         public virtual DbSet<EmployeeData> EmployeeData { get; set; }
+        public virtual DbSet<ClientData> ClientData { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
     }

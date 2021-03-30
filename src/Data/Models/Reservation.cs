@@ -13,7 +13,7 @@ namespace Data.Models
         }
         public string Id { get; set; }
         public ApplicationUser User { get; set; }
-        public List<ApplicationUser> Clients { get; set; }
+        public IEnumerable<ClientData> Clients { get; set; }
         public DateTime AccommodationDate { get; set; }
         public DateTime ReleaseDate { get; set; }
         public bool Breakfast { get; set; }
