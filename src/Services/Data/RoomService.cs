@@ -3,6 +3,7 @@ using Data.Enums;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Services.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,32 @@ namespace Services
         {
             return await context.Rooms.Where(x => x.IsTaken).ProjectTo<T>().ToListAsync();
         }
+        public async Task<IEnumerable<T>> GetAll<T>()
+        {
+            return await context.Rooms.AsQueryable().ProjectTo<T>().ToListAsync();
+        }
+        public async Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage)
+        {
+            var rooms = await GetAll<T>();
+            return rooms.Skip(roomsOnPage * (page - 1)).Take(roomsOnPage).AsQueryable().ProjectTo<T>().ToList();
+        }
+        public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
+        {
+            var result = new List<T>();
+            var capacitResults = await GetAllByCapacity<T>(int.Parse(searchString));
+            var typeResults = await GetAllByType<T>(((RoomType)Enum.Parse(typeof(RoomType), searchString)));
+           
+            if (capacitResults != null)
+            {
+                result.AddRange(capacitResults);
+            }
+            if (typeResults != null)
+            {
+                result.AddRange(typeResults);
+            }
+            return result;
+        }
+
         public async Task DeleteRoom(string id)
         {
             var room = await context.Rooms.FindAsync(id);
