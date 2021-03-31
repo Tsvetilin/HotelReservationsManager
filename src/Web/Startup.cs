@@ -42,6 +42,7 @@ namespace Web
 
             services.AddControllersWithViews();
 
+            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IReservationService, ReservationsService>();
         }
 

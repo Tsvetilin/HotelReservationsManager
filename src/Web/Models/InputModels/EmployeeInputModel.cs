@@ -16,7 +16,8 @@ namespace Web.Models.InputModels
         public string Email { get; set; }
         public string UCN { get; set; }
         public DateTime DateOfAppointment { get; set; }
-        public string Error { get; set; }
+        public string PhoneNumber { get; set; }
         public bool IsAdult { get; set; }
+        public string Еrror { get; set; }
     }
 }

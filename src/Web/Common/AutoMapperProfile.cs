@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Data.Models;
 using Web.Models.Clients;
+using Web.Models.InputModels;
 using Web.Models.Reservations;
+using Web.Models.ViewModels;
 
 namespace Web.Models
 {
@@ -11,6 +13,10 @@ namespace Web.Models
         {
             CreateMap<Reservation, ReservationViewModel>();
             CreateMap<ClientData, ClientViewModel>();
+            CreateMap<EmployeeData, EmployeeDataViewModel>();
+            CreateMap<EmployeeDataViewModel, EmployeeDataViewModel>();
+            CreateMap<EmployeeData, EmployeeInputModel>();
+            CreateMap<ApplicationUser, EmployeeDataViewModel>();
         }
     }
 }
