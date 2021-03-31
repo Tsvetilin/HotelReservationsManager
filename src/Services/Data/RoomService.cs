@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Services.Common;
 
 namespace Services
 {
@@ -40,8 +41,7 @@ namespace Services
         }
         public async Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage)
         {
-            var rooms = await GetAll<T>();
-            return rooms.Skip(roomsOnPage * (page - 1)).Take(roomsOnPage).AsQueryable().ProjectTo<T>().ToList();
+            return await GetAll<T>().GetPageItems(page,roomsOnPage);
         }
         public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
         {

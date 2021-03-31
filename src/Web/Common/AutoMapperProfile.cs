@@ -12,7 +12,9 @@ namespace Web.Models
         public AutoMapperProfile()
         {
             CreateMap<Reservation, ReservationViewModel>();
+            CreateMap<ClientViewModel, ClientData>();
             CreateMap<ClientData, ClientViewModel>();
+            CreateMap<ReservationInputModel, Reservation>();
             CreateMap<EmployeeData, EmployeeDataViewModel>();
             CreateMap<EmployeeDataViewModel, EmployeeDataViewModel>();
             CreateMap<EmployeeData, EmployeeInputModel>();

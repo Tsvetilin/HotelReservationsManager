@@ -1,6 +1,7 @@
 ﻿using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Services.Common;
 using Services.Mapping;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,8 +62,7 @@ namespace Services
 
         public async Task<IEnumerable<T>> GetPageItems<T>(int page, int usersOnPage)
         {
-            var users = await GetAll<T>();
-            return users.Skip(usersOnPage * (page - 1)).Take(usersOnPage).AsQueryable().ProjectTo<T>().ToList();
+            return await GetAll<T>().GetPageItems(page,usersOnPage);
         }
 
        //Dublirane

@@ -1,6 +1,7 @@
 ﻿using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Services.Common;
 using Services.Mapping;
 using System;
 using System.Collections.Generic;
@@ -67,12 +68,16 @@ namespace Services
         public async Task<T> GetReservation<T>(string id)
         {
             return await this.dbContext.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
-
         }
 
         public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
         {
-            return await this.dbContext.Reservations.Where(x => x.User.Id == userId).ProjectTo<T>().ToListAsync();
+            return await this.dbContext.Reservations.Where(x => x.User.Id == userId).OrderByDescending(x => x.AccommodationDate).ProjectTo<T>().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetForUserOnPage<T>(string userId, int page, int elementsOnPage)
+        {
+            return await GetReservationsForUser<T>(userId).GetPageItems(page, elementsOnPage);
         }
     }
 }

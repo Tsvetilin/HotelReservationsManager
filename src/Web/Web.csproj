@@ -27,5 +27,7 @@
     <ProjectReference Include="..\Data\Data.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Folder Include="Views\Reservations\" />
+  </ItemGroup>
 </Project>
