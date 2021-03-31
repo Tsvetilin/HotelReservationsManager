@@ -17,18 +17,18 @@
 </div>
 <br />
 
-@*<ul class="list-inline text-dark">
+<ul class="list-inline text-dark">
     @foreach (var employeeCard in Model?.Employees)
     {
         <li class="pb-3">
                 <div class="col-md-6 ml-4">
                     <h3 class="text-dark font-weight-bold">@employeeCard.UserName</h3>
-                    <h5 class="text-dark ">Rating: @employeeCard.FirstName</h5>
-                    <p class="text-dark ">Director: @employeeCard.SecondName</p>
-                    <p class="text-dark ">@employeeCard.LastName</p>
-                    <p class="text-dark ">Genres:Is Active: @employeeCard.IsActive</p>
+                    <h5 class="text-dark "> @employeeCard.UserFirstName</h5>
+                    <p class="text-dark "> @employeeCard.SecondName</p>
+                    <p class="text-dark ">@employeeCard.UserLastName</p>
+                    <p class="text-dark ">Is Active: @employeeCard.IsActive</p>
                     <p class="text-dark ">Date of appointment: @employeeCard.DateOfAppointment.ToString("dd/MM/yyyyг.")</p>
                 </div>
         </li>
     }
-</ul>*@
+</ul>

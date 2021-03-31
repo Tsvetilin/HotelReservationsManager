@@ -14,6 +14,7 @@ namespace Data.Models
         public DateTime DateOfAppointment { get; set; }
         public bool IsActive { get; set; }
         public DateTime? DateOfResignation { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
     }
 }

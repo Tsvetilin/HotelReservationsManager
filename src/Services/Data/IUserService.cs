@@ -14,15 +14,15 @@ namespace Services
 
         public Task<IEnumerable<T>> GetAll<T>();
 
-        public Task<IEnumerable<T>> GetAllByUserName<T>(string username);
+        //public Task<IEnumerable<T>> GetAllByUserName<T>(string username);
 
-        public Task<IEnumerable<T>> GetAllByFirstName<T>(string firstName);
+        //public Task<IEnumerable<T>> GetAllByFirstName<T>(string firstName);
 
-        public Task<IEnumerable<T>> GetAllBySecondName<T>(string secondName);
+        //public Task<IEnumerable<T>> GetAllBySecondName<T>(string secondName);
 
-        public Task<IEnumerable<T>> GetAllByFamilyName<T>(string familyName);
+        public Task<IEnumerable<string>> GetAllByFamilyName(string familyName);
 
-        public Task<IEnumerable<T>> GetAllByEmail<T>(string email);
+        public Task<IEnumerable<string>> GetAllByEmail(string email);
 
         public Task<IEnumerable<T>> GetPageItems<T>(int page, int usersOnPage);
 
