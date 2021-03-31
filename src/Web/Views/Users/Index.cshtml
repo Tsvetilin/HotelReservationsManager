@@ -1,0 +1,34 @@
+﻿@model Web.Models.ViewModels.EmployeesIndexViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-inline-flex w-100">
+    <h1>Employees</h1>
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Users" asp-action="Index" method="get">
+        <input class="form-control" name="Search" placeholder="Employee name or email" />
+        <input class="btn btn-primary" type="submit" value="Try Find Employee" />
+    </form>
+</div>
+
+<div class="col-md-12">
+    <div asp-validation-summary="All" class="d-flex justify-content-center m-auto text-danger w-100"></div>
+</div>
+<br />
+
+@*<ul class="list-inline text-dark">
+    @foreach (var employeeCard in Model?.Employees)
+    {
+        <li class="pb-3">
+                <div class="col-md-6 ml-4">
+                    <h3 class="text-dark font-weight-bold">@employeeCard.UserName</h3>
+                    <h5 class="text-dark ">Rating: @employeeCard.FirstName</h5>
+                    <p class="text-dark ">Director: @employeeCard.SecondName</p>
+                    <p class="text-dark ">@employeeCard.LastName</p>
+                    <p class="text-dark ">Genres:Is Active: @employeeCard.IsActive</p>
+                    <p class="text-dark ">Date of appointment: @employeeCard.DateOfAppointment.ToString("dd/MM/yyyyг.")</p>
+                </div>
+        </li>
+    }
+</ul>*@

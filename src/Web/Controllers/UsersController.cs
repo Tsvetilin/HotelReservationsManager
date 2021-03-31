@@ -60,7 +60,7 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Manager, Admin")]
+       // [Authorize(Roles = "Manager, Admin")]
         public async Task<IActionResult> Add()
         {
             var user = await userManager.GetUserAsync(User);
@@ -71,7 +71,7 @@ namespace Web.Controllers
             return this.View();
         }
 
-        [Authorize(Roles = "Manager, Admin")]
+       // [Authorize(Roles = "Manager, Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(EmployeeInputModel input)
         {

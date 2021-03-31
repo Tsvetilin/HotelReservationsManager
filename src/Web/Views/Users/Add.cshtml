@@ -1,0 +1,60 @@
+﻿@model Web.Models.InputModels.EmployeeInputModel
+@using Data.Enums;
+@{
+    ViewData["Title"] = "Add employee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center">Add employee</h1>
+<hr />
+
+<div class="justify-content-center">
+    <div class="col-md-4">
+        <form enctype="multipart/form-data" asp-controller="Users" asp-action="Add" method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.FirstName"></label>
+                <input asp-for="@Model.FirstName" class="form-control" />
+                <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.SecondName"></label>
+                <input asp-for="@Model.SecondName" class="form-control" />
+                <span asp-validation-for="@Model.SecondName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.LastName"></label>
+                <input asp-for="@Model.LastName" class="form-control"></input>
+                <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UCN"></label>
+                <input asp-for="@Model.UCN" class="form-control" />
+                <span asp-validation-for="@Model.UCN" class="text-danger"></span>
+                <small class="text-dark">Note: Please enter valid UCN</small>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserName"></label>
+                <input asp-for="@Model.UserName" class="form-control" />
+                <span asp-validation-for="@Model.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Password"></label>
+                <input type="password" asp-for="@Model.Password" class="form-control" />
+                <span asp-validation-for="@Model.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Email"></label>
+                <input asp-for="@Model.Email" class="form-control" />
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.IsAdult"></label>
+                <input asp-for="@Model.IsAdult" class="form-control" />
+                <span asp-validation-for="@Model.IsAdult" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary submit-but">Add Employee</button>           
+        </form>
+    </div>
+</div>

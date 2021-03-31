@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using Services;
 
 namespace Web
 {
@@ -41,6 +42,10 @@ namespace Web
 
             services.AddControllersWithViews();
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddSingleton(this.Configuration);
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
