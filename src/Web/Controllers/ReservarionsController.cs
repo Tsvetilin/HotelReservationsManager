@@ -1,5 +1,4 @@
 ﻿using Data.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -9,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Models.Reservations;
+using Web.Models.Rooms;
 
 namespace Web.Controllers
 {
@@ -16,12 +16,17 @@ namespace Web.Controllers
     {
         private readonly IReservationService reservationService;
         private readonly IUserService userService;
+        private readonly IRoomService roomService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public ReservarionsController(IReservationService reservationService, IUserService userService, UserManager<ApplicationUser> userManager)
+        public ReservarionsController(IReservationService reservationService,
+                                      IUserService userService, 
+                                      IRoomService roomService,
+                                      UserManager<ApplicationUser> userManager)
         {
             this.reservationService = reservationService;
             this.userService = userService;
+            this.roomService = roomService;
             this.userManager = userManager;
         }
 
@@ -60,8 +65,64 @@ namespace Web.Controllers
             return this.View(viewModel);
         }
 
+        public async Task<IActionResult> Create(string id)
+        {
+            var room = await roomService.GetRoom<RoomViewModel>(id);
+            if(room==null || (room?.IsTaken??true))
+            {
+                return this.NotFound();
+            }
+
+            var inputModel = new ReservationInputModel
+            {
+                RoomId = room.Id,
+                Reservations = room.Reservations,
+                RoomCapacity=room.Capacity,
+                AllInclusivePrice=000,
+                RoomAdultPrice=room.AdultPrice,
+                BreakfastPrice=000,
+                RoomChildrenPrice=room.ChildrenPrice,
+                RoomType=room.Type,
+            };
+
+            return this.View(inputModel);
+        }
+
+
+        public async Task<IActionResult> Create(string id, ReservationInputModel inputModel)
+        {
+            var room = await roomService.GetRoom<RoomViewModel>(id);
+            if (room == null || (room?.IsTaken ?? true))
+            {
+                return this.NotFound();
+            }
+
+            // TODO: Check if room is empty in the selected time, if atlest 1 person is going, calculate price
+            //       Pass room properties again if view is returned
+
+            /*
+            var inputModel = new ReservationInputModel
+            {
+                RoomId = room.Id,
+                Reservations = room.Reservations,
+                RoomCapacity = room.Capacity,
+                AllInclusivePrice = 000,
+                RoomAdultPrice = room.AdultPrice,
+                BreakfastPrice = 000,
+                RoomChildrenPrice = room.ChildrenPrice,
+                RoomType = room.Type,
+            };*/
+
+            return this.View(inputModel);
+        }
+
+        // TODO: Concurrancy concerns
+
+
         public async Task<IActionResult> Update(string id)
         {
+            //Same as create, but have to exclude the particular date periods and sat they are free
+
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
 
             if (reservation == null)

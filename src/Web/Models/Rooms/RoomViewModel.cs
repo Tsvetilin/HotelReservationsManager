@@ -1,13 +1,12 @@
 ﻿using Data.Enums;
-using Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Web.Models.ViewModels
+namespace Web.Models.Rooms
 {
-    public class RoomDataViewModel
+    public class RoomViewModel
     {
         public string Id { get; set; }
         public int Capacity { get; set; }
@@ -15,6 +14,7 @@ namespace Web.Models.ViewModels
         public bool IsTaken { get; set; }
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
-        public virtual IEnumerable<Reservation> Reservations { get; set; }
+        public IEnumerable<ReservationPeriod> Reservations {get;set;}
+
     }
 }

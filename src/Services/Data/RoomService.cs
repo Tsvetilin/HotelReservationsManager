@@ -14,35 +14,44 @@ namespace Services
      public class RoomServices : IRoomService
     {
         private readonly ApplicationDbContext context;
+
         public RoomServices(ApplicationDbContext context)
         {
             this.context = context;
         }
+
         public async Task AddRoom(Room room)
         {
             await context.Rooms.AddAsync(room);
             await context.SaveChangesAsync();
         }
+
         public async Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity)
         {
             return await context.Rooms.Where(x => x.Capacity == capacity).ProjectTo<T>().ToListAsync();
         }
+
         public async Task<IEnumerable<T>> GetAllByType<T>(RoomType type)
         {
             return await context.Rooms.Where(x => x.Type == type).ProjectTo<T>().ToListAsync();
         }
+
+        // Taken now
         public async Task<IEnumerable<T>> GetAllReservedRooms<T>()
         {
             return await context.Rooms.Where(x => x.IsTaken).ProjectTo<T>().ToListAsync();
         }
+
         public async Task<IEnumerable<T>> GetAll<T>()
         {
             return await context.Rooms.AsQueryable().ProjectTo<T>().ToListAsync();
         }
+
         public async Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage)
         {
             return await GetAll<T>().GetPageItems(page,roomsOnPage);
         }
+
         public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
         {
             var result = new List<T>();
