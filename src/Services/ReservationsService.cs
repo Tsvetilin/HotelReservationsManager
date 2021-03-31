@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Data;
+﻿using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Services.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +12,10 @@ namespace Services
     public class ReservationsService : IReservationService
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly IMapper mapper;
 
-        public ReservationsService(ApplicationDbContext dbContext, IMapper mapper)
+        public ReservationsService(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
-            this.mapper = mapper;
         }
 
         public async Task AddReservation(double price, DateTime accomodationDate, DateTime releaseDate, bool allInclusive, bool breakfast, IEnumerable<ClientData> clients)
@@ -66,17 +64,15 @@ namespace Services
             }
         }
 
-        public async Task<T> GetReservation<T>(string id) where T : class
+        public async Task<T> GetReservation<T>(string id)
         {
-            var reservation = await this.dbContext.Reservations.FindAsync(id);
-            return mapper.Map(reservation, typeof(Reservation), typeof(T)) as T;
+            return await this.dbContext.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
 
         }
 
-        public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId) where T : class
+        public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
         {
-            var reservations = await this.dbContext.Reservations.Where(x => x.User.Id == userId).ToListAsync();
-            return mapper.Map(reservations, typeof(List<Reservation>), typeof(IEnumerable<T>)) as IEnumerable<T>;
+            return await this.dbContext.Reservations.Where(x => x.User.Id == userId).ProjectTo<T>().ToListAsync();
         }
     }
 }

@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Reservations\" />
+  </ItemGroup>
+
 </Project>
