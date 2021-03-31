@@ -3,6 +3,7 @@ using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
 using Services.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -121,7 +122,9 @@ namespace Services
             var userInContext = await context.EmployeeData.FindAsync(id);
             if (userInContext != null)
             {
-                context.EmployeeData.Remove(userInContext);
+                userInContext.DateOfResignation = DateTime.UtcNow;
+                userInContext.IsActive = false;
+                context.EmployeeData.Update(userInContext);
                 await context.SaveChangesAsync();
             }
         }

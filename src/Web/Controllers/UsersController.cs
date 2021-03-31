@@ -16,13 +16,15 @@ namespace Web.Controllers
     {
         private readonly IUserService userService;
         private readonly UserManager<ApplicationUser> userManager;
-
+        private readonly RoleManager<ApplicationRole> roleManager;
         private const int usersOnPage = 10;
         public UsersController(IUserService userService,
-                               UserManager<ApplicationUser> userManager)
+                               UserManager<ApplicationUser> userManager,
+                               RoleManager<ApplicationRole> roleManager)
         {
             this.userService = userService;
             this.userManager = userManager;
+            this.roleManager = roleManager;
         }
         public async Task< IActionResult> Index(int id = 1, string search = "")
         {
@@ -58,7 +60,7 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-       // [Authorize(Roles = "Manager, Admin")]
+        // [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Add()
         {
             var user = await userManager.GetUserAsync(User);
@@ -69,30 +71,29 @@ namespace Web.Controllers
             return this.View();
         }
 
-       // [Authorize(Roles = "Manager, Admin")]
+        // [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(EmployeeInputModel input)
         {
-            //Doesn't add in .netusers 
-            //TO DO
             if (userService.IsAlreadyAdded(input.Email))
             {
                 ModelState.AddModelError("Added", "User already added!");
+                return View(input);
             }
 
             var appUser = new ApplicationUser
             {
-                UserName= input.UserName,
+                UserName = input.UserName,
                 IsAdult = input.IsAdult,
                 Email = input.Email,
                 FirstName = input.FirstName,
                 LastName = input.LastName,
-                PhoneNumber = input.PhoneNumber
+                PhoneNumber = input.PhoneNumber,
+                SecurityStamp = DateTime.UtcNow.Ticks.ToString()
             };
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
-            appUser.PasswordHash = passwordHasher.HashPassword(appUser, input.Password);
-
-            await userManager.CreateAsync(appUser);
+            
+            await userManager.CreateAsync(appUser, input.Password);
+            await userManager.AddToRoleAsync(appUser, "Employee");
 
             var employee = new EmployeeData
             {
@@ -100,7 +101,8 @@ namespace Web.Controllers
                 UCN = input.UCN,
                 SecondName = input.SecondName,
                 IsActive = true,
-                DateOfAppointment = DateTime.UtcNow
+                DateOfAppointment = DateTime.UtcNow,
+                User = appUser
             };
 
             await userService.AddAsync(employee);
@@ -108,7 +110,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-       // [Authorize(Roles = "Manager, Admin")]
+        // [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Update(string id)
         {
             var employee = await userService.GetAsync<EmployeeInputModel>(id);
@@ -121,7 +123,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-      //  [Authorize(Roles = "Manager, Admin")]
+      //  [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
@@ -142,7 +144,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Manager, Admin")]
+        //[Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -150,6 +152,9 @@ namespace Web.Controllers
 
             if (employee!=null)
             {
+                var userInContext = await userManager.FindByIdAsync(id);
+                await userManager.RemoveFromRoleAsync(userInContext,"Employee");
+                await userManager.AddToRoleAsync(userInContext, "User");
                 await userService.DeleteAsync(id);
             }
 

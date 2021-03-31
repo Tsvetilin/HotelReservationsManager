@@ -10,6 +10,9 @@
         <input class="form-control" name="Search" placeholder="Employee name or email" />
         <input class="btn btn-primary" type="submit" value="Try Find Employee" />
     </form>
+    <form asp-controller="Users" asp-action="Add"  method="get">
+        <input class="btn btn-info" type="submit" value="Add" />
+    </form>
 </div>
 
 <div class="col-md-12">
@@ -18,17 +21,28 @@
 <br />
 
 <ul class="list-inline text-dark">
-    @foreach (var employeeCard in Model?.Employees)
+    @foreach (var employeeCard in Model?.Employees.Where(x=>x.IsActive==true))
     {
         <li class="pb-3">
-                <div class="col-md-6 ml-4">
-                    <h3 class="text-dark font-weight-bold">@employeeCard.UserName</h3>
+            <div class="d-flex">
+                <div class="m-5 col-md-6 ml-4">
+                    <h3 class="text-dark font-weight-bold">@employeeCard.UserUserName</h3>
                     <h5 class="text-dark "> @employeeCard.UserFirstName</h5>
                     <p class="text-dark "> @employeeCard.SecondName</p>
                     <p class="text-dark ">@employeeCard.UserLastName</p>
                     <p class="text-dark ">Is Active: @employeeCard.IsActive</p>
                     <p class="text-dark ">Date of appointment: @employeeCard.DateOfAppointment.ToString("dd/MM/yyyyг.")</p>
                 </div>
+                <div class="m-5 col-md-6 float-end">
+                    <form asp-controller="Users" asp-action="Update" asp-route-id="@employeeCard.UserId" method="get">
+                        <input class="btn btn-info" type="submit" value="Update" />
+                    </form>
+                    <form asp-controller="Users" asp-action="Delete" asp-route-id="@employeeCard.UserId"
+                         method="post" >
+                        <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Delete" />
+                    </form>
+                </div>
+            </div>
         </li>
     }
 </ul>
