@@ -41,6 +41,7 @@ namespace Web
                 .AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddSingleton(this.Configuration);
