@@ -1,11 +1,10 @@
-﻿using AutoMapper;
-using Data.Models;
+﻿using Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using Services.Mapping;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Models.InputModels;
@@ -17,28 +16,26 @@ namespace Web.Controllers
     {
         private readonly IUserService userService;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IMapper mapper;
+
         private const int usersOnPage = 10;
         public UsersController(IUserService userService,
-                               UserManager<ApplicationUser> userManager,
-                               IMapper mapper)
+                               UserManager<ApplicationUser> userManager)
         {
             this.userService = userService;
             this.userManager = userManager;
-            this.mapper = mapper;
         }
-        public IActionResult Index(int id = 1, string search = "")
+        public async Task< IActionResult> Index(int id = 1, string search = "")
         {
             if (!string.IsNullOrEmpty(search))
             {
-                var searchResult = userService.GetSearchResults<EmployeeDataViewModel>(search).ToList();
-                if (searchResult.Count != 0)
+                var searchResult = await userService.GetSearchResults<EmployeeDataViewModel>(search);
+                if (searchResult.Any())
                 {
                     return View(new EmployeesIndexViewModel
                     {
                         PagesCount = 1,
                         CurrentPage = 1,
-                        Employees = searchResult
+                        Employees = searchResult.ToList()
                     });
                 }
                 ModelState.AddModelError("Found", "User not found!");
@@ -49,12 +46,12 @@ namespace Web.Controllers
             {
                 id = 1;
             }
-            var employees = userService.GetPageItems<EmployeeDataViewModel>(id, usersOnPage).ToList();
-            EmployeesIndexViewModel viewModel = new EmployeesIndexViewModel
+            var employees = await userService.GetPageItems<EmployeeDataViewModel>(id, usersOnPage);
+            EmployeesIndexViewModel viewModel = new()
             {
                 PagesCount = pageCount,
                 CurrentPage = id,
-                Employees = employees,
+                Employees = employees.ToList(),
             };
 
             return View(viewModel);
@@ -98,7 +95,7 @@ namespace Web.Controllers
                 UCN = input.UCN,
                 SecondName = input.SecondName,
                 IsActive = true,
-                DateOfAppointment = DateTime.Now
+                DateOfAppointment = DateTime.UtcNow
             };
 
             await userService.AddAsync(employee);
@@ -109,12 +106,11 @@ namespace Web.Controllers
         [Authorize(Roles = "Manager, Admin")]
         public async Task<IActionResult> Update(string id)
         {
-            var employee = await userService.GetAsync(id);
+            var employee = await userService.GetAsync<EmployeeInputModel>(id);
             
-            if (employee?.UserId != null)
+            if (employee != null)
             {
-                var inputModel = mapper.Map<EmployeeData, EmployeeInputModel>(employee); ;
-                return this.View(inputModel);
+                return this.View(employee);
             }
 
             return RedirectToAction("Index");
@@ -124,14 +120,14 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
-            var employee = await userService.GetAsync(id);
+            var employee = await userService.GetAsync<EmployeeDataViewModel>(id);
 
             if (!ModelState.IsValid)
             {
                 return this.View(input);
             }
 
-            var data = mapper.Map< EmployeeInputModel, EmployeeData>(input);
+            var data = MappingConfig.Instance.Map<EmployeeData>(input);
             data.UserId = employee.UserId;
             
             await userService.UpdateAsync(data);
@@ -143,9 +139,9 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            var employee = await userService.GetAsync(id);
+            var employee = await userService.GetAsync<EmployeeDataViewModel>(id);
 
-            if (employee?.UserId!=null)
+            if (employee!=null)
             {
                 await userService.DeleteAsync(id);
             }

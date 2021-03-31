@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using Data;
+﻿using Data;
 using Data.Enums;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Services.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ namespace Services
      public class RoomServices : IRoomService
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
         public RoomServices(ApplicationDbContext context)
         {
             this.context = context;
@@ -23,20 +21,17 @@ namespace Services
             await context.Rooms.AddAsync(room);
             await context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity) where T:class
+        public async Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity)
         {
-            var roomsInContext = await context.Rooms.Where(x => x.Capacity == capacity).ToListAsync();
-            return mapper.Map<List<Room>, IEnumerable<T>>(roomsInContext);
+            return await context.Rooms.Where(x => x.Capacity == capacity).ProjectTo<T>().ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllByType<T>(RoomType type) where T:class
+        public async Task<IEnumerable<T>> GetAllByType<T>(RoomType type)
         {
-            var roomsInContext = await context.Rooms.Where(x => x.Type == type).ToListAsync();
-            return mapper.Map<List<Room>, IEnumerable<T>>(roomsInContext);
+            return await context.Rooms.Where(x => x.Type == type).ProjectTo<T>().ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllReservedRooms<T>() where T:class
+        public async Task<IEnumerable<T>> GetAllReservedRooms<T>()
         {
-            var reservedRooms = await context.Rooms.Where(x => x.IsTaken == true).ToListAsync();
-            return mapper.Map<List<Room>, IEnumerable<T>>(reservedRooms);
+            return await context.Rooms.Where(x => x.IsTaken).ProjectTo<T>().ToListAsync();
         }
         public async Task DeleteRoom(string id)
         {
@@ -56,10 +51,9 @@ namespace Services
                 await context.SaveChangesAsync();
             }
         }
-        public async Task<T> GetRoom<T>(string id) where T : class
+        public async Task<T> GetRoom<T>(string id)
         {
-            var room = await this.context.Reservations.FindAsync(id);
-            return mapper.Map(room, typeof(Reservation), typeof(T)) as T;
+            return await this.context.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
         }
     }
 }

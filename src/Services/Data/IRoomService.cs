@@ -11,17 +11,17 @@ namespace Services
     {
         public Task AddRoom(Room room);
 
-        public Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity) where T : class;
+        public Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity);
 
-        public Task<IEnumerable<T>> GetAllByType<T>(RoomType type) where T : class;
+        public Task<IEnumerable<T>> GetAllByType<T>(RoomType type);
 
-        public Task<IEnumerable<T>> GetAllReservedRooms<T>() where T : class;
+        public Task<IEnumerable<T>> GetAllReservedRooms<T>();
 
         public Task DeleteRoom(string id);
 
         public Task UpdateRoom(Room room);
 
-        public Task<T> GetRoom<T>(string id) where T : class;
+        public Task<T> GetRoom<T>(string id);
        
     }
   
