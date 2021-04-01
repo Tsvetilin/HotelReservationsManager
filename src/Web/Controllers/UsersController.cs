@@ -16,15 +16,12 @@ namespace Web.Controllers
     {
         private readonly IUserService userService;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<ApplicationRole> roleManager;
         private const int usersOnPage = 10;
         public UsersController(IUserService userService,
-                               UserManager<ApplicationUser> userManager,
-                               RoleManager<ApplicationRole> roleManager)
+                               UserManager<ApplicationUser> userManager)
         {
             this.userService = userService;
             this.userManager = userManager;
-            this.roleManager = roleManager;
         }
         public async Task< IActionResult> Index(int id = 1, string search = "")
         {

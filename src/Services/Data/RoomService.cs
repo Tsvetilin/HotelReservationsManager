@@ -78,6 +78,8 @@ namespace Services
                 await context.SaveChangesAsync();
             }
         }
+
+        // TODO: Cancel reservations if 
         public async Task UpdateRoom(string id,Room room)
         {
             var roomToChange = await context.Rooms.FindAsync(id);
@@ -90,6 +92,11 @@ namespace Services
         public async Task<T> GetRoom<T>(string id)
         {
             return await this.context.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
+        }
+
+        public int CountAllRooms()
+        {
+            return context.Rooms.Count();
         }
     }
 }
