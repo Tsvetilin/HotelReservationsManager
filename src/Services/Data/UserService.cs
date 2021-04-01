@@ -35,20 +35,7 @@ namespace Services
             return await context.EmployeeData.AsQueryable().ProjectTo<T>().ToListAsync();
         }
 
-        //public async Task<IEnumerable<T>> GetAllByUserName<T>(string username)
-        //{
-        //    return await context.Users.Where(x => x.UserName == username).ProjectTo<T>().ToListAsync();
-        //}
-        //public async Task<IEnumerable<T>> GetAllByFirstName<T>(string firstName)
-        //{
-        //    return await context.Users.Where(x => x.FirstName == firstName).ProjectTo<T>().ToListAsync();
-        //}
-        //public async Task<IEnumerable<T>> GetAllBySecondName<T>(string secondName)
-        //{
-        //    return await context.EmployeeData.Where(x => x.SecondName == secondName).ProjectTo<T>().ToListAsync();
-        //}
-
-        public async Task<IEnumerable<string>> GetAllByFamilyName(string searchString)
+        public async Task<IEnumerable<string>> GetAllBySearch(string searchString)
         {
             return await context.Users.Where(x => x.Email == searchString ||
                                              x.FirstName == searchString ||
@@ -56,7 +43,7 @@ namespace Services
                                              x.UserName == searchString).Select(x => x.Id).ToListAsync();
         }
 
-        public async Task<IEnumerable<string>> GetAllByEmail(string searchString)
+        public async Task<IEnumerable<string>> GetAllBySecondName(string searchString)
         {
             return await context.EmployeeData.Where(x => x.SecondName == searchString).Select(x=>x.UserId).ToListAsync();
         }
@@ -66,42 +53,21 @@ namespace Services
             return await GetAll<T>().GetPageItems(page,usersOnPage);
         }
 
-       //Dublirane
         public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
         {
             var result = new List<string>();
 
-            var emailResults = await GetAllByEmail(searchString);
-            //var firstNameResults = await GetAllByFirstName<T>(searchString);
-            //var secondNameResults = await GetAllBySecondName<T>(searchString);
-            var familyNameResults = await GetAllByFamilyName(searchString);
-            //var userNameResults = await GetAllByUserName<T>(searchString);
-
+            var emailResults = await GetAllBySecondName(searchString);
+            var familyNameResults = await GetAllBySearch(searchString);
 
             if (emailResults != null)
             {
                 result.AddRange(emailResults);
             }
-
-            //if (firstNameResults != null)
-            //{
-            //    result.AddRange(firstNameResults);
-            //}
-
-            //if (secondNameResults != null)
-            //{
-            //    result.AddRange(secondNameResults);
-            //}
-
             if (familyNameResults != null)
             {
                 result.AddRange(familyNameResults);
             }
-
-            //if (userNameResults != null)
-            //{
-            //    result.AddRange(userNameResults);
-            //}
             result = result.Distinct().ToList();
 
             return await context.EmployeeData.Where(x=>result.Contains(x.UserId)).ProjectTo<T>().ToListAsync();
@@ -137,6 +103,47 @@ namespace Services
         public bool IsAlreadyAdded(string email)
         {
             return context.Users.Any(x => x.Email.ToLower().Equals(email.ToLower()));
+        }
+
+        public async Task<ClientData> CreateClient(string email, string name, bool adult)
+        {
+            var client = new ClientData
+            {
+                Email = email,
+                FullName = name,
+                IsAdult = adult,
+            };
+
+            context.ClientData.Add(client);
+            await context.SaveChangesAsync();
+
+            return client;
+        }
+
+        public async Task<ClientData> UpdateClient(string id, string email, string name, bool adult)
+        {
+            var client = new ClientData
+            {
+                Id=id,
+                Email = email,
+                FullName = name,
+                IsAdult = adult,
+            };
+
+            context.Update(client);
+            await context.SaveChangesAsync();
+
+            return client;
+        }
+
+        public async Task DeleteClient(string id)
+        {
+            var client = await context.ClientData.FindAsync(id);
+            if(client!=null)
+            {
+                context.ClientData.Remove(client);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

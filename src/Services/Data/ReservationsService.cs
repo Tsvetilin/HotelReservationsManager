@@ -19,24 +19,72 @@ namespace Services
             this.dbContext = dbContext;
         }
 
-        public async Task AddReservation(double price, DateTime accomodationDate, DateTime releaseDate, bool allInclusive, bool breakfast, IEnumerable<ClientData> clients)
+        //TODO: allincl+breakf
+        public async Task<Reservation> AddReservation(string roomId,
+                                                      DateTime accomodationDate,
+                                                      DateTime releaseDate,
+                                                      bool allInclusive,
+                                                      bool breakfast,
+                                                      IEnumerable<ClientData> clients,
+                                                      ApplicationUser user)
         {
+            var room = await dbContext.Rooms.FindAsync(roomId);
+
+            var price = 
+                clients.Count(x => x.IsAdult) * room.AdultPrice +
+                clients.Count(x => !x.IsAdult) * room.ChildrenPrice;
+
+            if (allInclusive)
+            {
+                price += 0000;
+            }
+            else if (breakfast)
+            {
+                price += 000;
+            }
+
             var reservation = new Reservation
             {
                 AccommodationDate = accomodationDate,
                 AllInclusive = allInclusive,
                 Breakfast = breakfast,
                 Price = price,
+                Room = room,
                 ReleaseDate = releaseDate,
                 Clients = clients,
+                User=user,
             };
 
             this.dbContext.Reservations.Add(reservation);
             await this.dbContext.SaveChangesAsync();
+
+            return reservation;
         }
 
-        public async Task UpdateReservation(string id, double price, DateTime accomodationDate, DateTime releaseDate, bool allInclusive, bool breakfast, IEnumerable<ClientData> clients)
+        public async Task UpdateReservation(string id,
+                                            string roomId,
+                                            DateTime accomodationDate,
+                                            DateTime releaseDate,
+                                            bool allInclusive,
+                                            bool breakfast,
+                                            IEnumerable<ClientData> clients,
+                                            ApplicationUser user)
         {
+            var room = await dbContext.Rooms.FindAsync(roomId);
+
+            var price =
+                clients.Count(x => x.IsAdult) * room.AdultPrice +
+                clients.Count(x => !x.IsAdult) * room.ChildrenPrice;
+
+            if (allInclusive)
+            {
+                price += 0000;
+            }
+            else if (breakfast)
+            {
+                price += 000;
+            }
+
             var reservation = new Reservation
             {
                 Id = id,
@@ -45,7 +93,9 @@ namespace Services
                 Breakfast = breakfast,
                 Price = price,
                 ReleaseDate = releaseDate,
+                Room=room,
                 Clients = clients,
+                User=user
             };
 
             if (reservation != null)
@@ -67,7 +117,7 @@ namespace Services
 
         public async Task<T> GetReservation<T>(string id)
         {
-            return await this.dbContext.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
+            return await this.dbContext.Reservations.Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
@@ -78,6 +128,35 @@ namespace Services
         public async Task<IEnumerable<T>> GetForUserOnPage<T>(string userId, int page, int elementsOnPage)
         {
             return await GetReservationsForUser<T>(userId).GetPageItems(page, elementsOnPage);
+        }
+
+        public async Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId, IEnumerable<ClientData> clients)
+        {
+            var reservation = await dbContext.Reservations.FindAsync(reservationId);
+
+            var initialClients = reservation.Clients;
+
+            if (initialClients.Count() > clients.Count())
+            {
+                var deletedClients = initialClients.Where(x => !clients.Select(u => u.Id).Contains(x.Id)).ToList();
+                dbContext.ClientData.RemoveRange(deletedClients);
+            }
+
+            var newClients = clients.Where(x => !initialClients.Select(u => u.Id).Contains(x.Id)).ToList();
+            if (newClients?.Any() ?? false)
+            {
+                dbContext.ClientData.AddRange(newClients);
+            }
+
+            var clientsToUpdate = clients.Where(x => !newClients.Select(u => u.Id).Contains(x.Id));
+            if (clientsToUpdate?.Any() ?? false)
+            {
+                dbContext.ClientData.UpdateRange(clientsToUpdate);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return clients;
         }
     }
 }

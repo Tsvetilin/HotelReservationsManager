@@ -15,6 +15,8 @@ namespace Web.Models
             CreateMap<Reservation, ReservationViewModel>();
             CreateMap<ClientViewModel, ClientData>();
             CreateMap<ClientData, ClientViewModel>();
+            CreateMap<ClientData, ClientInputModel>();
+            CreateMap<ClientInputModel, ClientData>();
             CreateMap<ReservationInputModel, Reservation>();
             CreateMap<Reservation, ReservationPeriod>();
             CreateMap<EmployeeData, EmployeeDataViewModel>();

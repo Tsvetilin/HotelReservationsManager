@@ -1,10 +1,12 @@
 ﻿using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Common;
 using Services.Mapping;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Models.Reservations;
@@ -12,6 +14,7 @@ using Web.Models.Rooms;
 
 namespace Web.Controllers
 {
+    //[Authorize]
     public class ReservarionsController : Controller
     {
         private readonly IReservationService reservationService;
@@ -20,7 +23,7 @@ namespace Web.Controllers
         private readonly UserManager<ApplicationUser> userManager;
 
         public ReservarionsController(IReservationService reservationService,
-                                      IUserService userService, 
+                                      IUserService userService,
                                       IRoomService roomService,
                                       UserManager<ApplicationUser> userManager)
         {
@@ -30,9 +33,7 @@ namespace Web.Controllers
             this.userManager = userManager;
         }
 
-
-        //[Authorize]
-        public async Task<IActionResult> Index(int id = 0, int elementsOnPage=10)
+        public async Task<IActionResult> Index(int id = 0, int elementsOnPage = 10)
         {
             var user = await userManager.GetUserAsync(User);
             var reservations = await reservationService.GetReservationsForUser<ReservationViewModel>(user.Id);
@@ -50,14 +51,15 @@ namespace Web.Controllers
                 PagesCount = pageCount,
                 Reservations = reservations.GetPageItems(id, elementsOnPage),
             };
-            
+
             return this.View(viewModel);
         }
 
         public async Task<IActionResult> Details(string id)
         {
+            var user = await userManager.GetUserAsync(User);
             var viewModel = await this.reservationService.GetReservation<ReservationViewModel>(id);
-            if (viewModel == null)
+            if (viewModel == null || user.Id != viewModel.UserId)
             {
                 return this.NotFound();
             }
@@ -68,27 +70,17 @@ namespace Web.Controllers
         public async Task<IActionResult> Create(string id)
         {
             var room = await roomService.GetRoom<RoomViewModel>(id);
-            if(room==null || (room?.IsTaken??true))
+            if (room == null || (room?.IsTaken ?? true))
             {
                 return this.NotFound();
             }
 
-            var inputModel = new ReservationInputModel
-            {
-                RoomId = room.Id,
-                Reservations = room.Reservations,
-                RoomCapacity=room.Capacity,
-                AllInclusivePrice=000,
-                RoomAdultPrice=room.AdultPrice,
-                BreakfastPrice=000,
-                RoomChildrenPrice=room.ChildrenPrice,
-                RoomType=room.Type,
-            };
+            var inputModel = FillRoomData(new ReservationInputModel(), room);
 
             return this.View(inputModel);
         }
 
-
+        [HttpPost]
         public async Task<IActionResult> Create(string id, ReservationInputModel inputModel)
         {
             var room = await roomService.GetRoom<RoomViewModel>(id);
@@ -97,61 +89,105 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            // TODO: Check if room is empty in the selected time, if atlest 1 person is going, calculate price
-            //       Pass room properties again if view is returned
+            var roomIsEmpty = !room.Reservations.Any(x =>
+                (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
+                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
 
-            /*
-            var inputModel = new ReservationInputModel
+            if (!roomIsEmpty)
             {
-                RoomId = room.Id,
-                Reservations = room.Reservations,
-                RoomCapacity = room.Capacity,
-                AllInclusivePrice = 000,
-                RoomAdultPrice = room.AdultPrice,
-                BreakfastPrice = 000,
-                RoomChildrenPrice = room.ChildrenPrice,
-                RoomType = room.Type,
-            };*/
+                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), "Room is already reserved at that time");
+            }
 
-            return this.View(inputModel);
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(FillRoomData(inputModel, room));
+            }
+
+            var clients = new List<ClientData>();
+            foreach (var client in inputModel.ClientData)
+            {
+                clients.Add(await this.userService.CreateClient(client.Email, client.FullName, client.IsAdult));
+            }
+
+            var user = await userManager.GetUserAsync(User);
+
+            var reservation = await reservationService.AddReservation(
+                room.Id,
+                inputModel.AccommodationDate,
+                inputModel.ReleaseDate,
+                inputModel.AllInclusive,
+                inputModel.Breakfast,
+                clients,
+                user);
+
+            return this.RedirectToAction(nameof(Details), new { id = reservation.Id });
         }
-
-        // TODO: Concurrancy concerns
-
 
         public async Task<IActionResult> Update(string id)
         {
-            //Same as create, but have to exclude the particular date periods and sat they are free
+            var user = await userManager.GetUserAsync(User);
+            //TODO: Have to exclude the particular date periods and say they are free
 
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-
-            if (reservation == null)
+            if (reservation == null || user.Id != reservation.UserId)
             {
-                return RedirectToAction(nameof(Index));
+                return this.NotFound();
             }
+            reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
 
-            return this.View(reservation);
+            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+
+            return this.View(FillRoomData(reservation, room));
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(string id, ReservationInputModel inputModel)
         {
+            var user = await userManager.GetUserAsync(User);
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-
-            if (reservation == null)
+            if (reservation == null || user.Id != reservation.UserId)
             {
-                return RedirectToAction(nameof(Index));
+                return this.NotFound();
             }
 
-            if (!ModelState.IsValid)
+            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+            reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+
+            var roomIsEmpty = !reservation.Reservations.Any(x =>
+                (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
+                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
+
+            if (!roomIsEmpty)
             {
-                return this.View(inputModel);
+                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), "Room is already reserved at that time");
             }
 
-            var clientsData = inputModel.ClientData.AsQueryable().ProjectTo<ClientData>().ToList();
-            await reservationService.UpdateReservation(id, inputModel.Price, inputModel.AccommodationDate, inputModel.ReleaseDate, inputModel.AllInclusive, inputModel.Breakfast,clientsData);
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(FillRoomData(inputModel, room));
+            }
 
-            return this.View();
+            var cls = inputModel.ClientData.Select(x => new ClientData
+            {
+                IsAdult = x.IsAdult,
+                Email = x.Email,
+                FullName = x.FullName,
+                Id = x.Id,
+            });
+
+            var clients = await reservationService.UpdateClientsForReservation(reservation.Id, cls);
+
+            await reservationService.UpdateReservation(
+                reservation.Id,
+                room.Id,
+                inputModel.AccommodationDate,
+                inputModel.ReleaseDate,
+                inputModel.AllInclusive,
+                inputModel.Breakfast,
+                clients,
+                user);
+
+            return this.RedirectToAction(nameof(Details), new { id = reservation.Id });
         }
 
         [HttpPost]
@@ -167,6 +203,20 @@ namespace Web.Controllers
             await reservationService.DeleteReservation(id);
 
             return this.View();
+        }
+
+        private static ReservationInputModel FillRoomData(ReservationInputModel inputModel, RoomViewModel room)
+        {
+            inputModel.RoomId = room.Id;
+            inputModel.Reservations = room.Reservations;
+            inputModel.RoomCapacity = room.Capacity;
+            inputModel.AllInclusivePrice = 000;
+            inputModel.RoomAdultPrice = room.AdultPrice;
+            inputModel.BreakfastPrice = 000;
+            inputModel.RoomChildrenPrice = room.ChildrenPrice;
+            inputModel.RoomType = room.Type;
+
+            return inputModel;
         }
     }
 }
