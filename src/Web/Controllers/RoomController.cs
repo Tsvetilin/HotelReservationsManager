@@ -17,7 +17,7 @@ namespace Web.Controllers
     public class RoomController : Controller
     {
         private readonly IRoomService roomService;
-        private readonly ApplicationDbContext context;      
+        private ApplicationDbContext context;
         public RoomController(IRoomService _roomService)
         {
             roomService = _roomService;
