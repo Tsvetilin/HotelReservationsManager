@@ -10,6 +10,7 @@ using Data;
 using Data.Models;
 using Web.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Web.Models.Rooms;
 
 namespace Web.Controllers
 {
@@ -27,13 +28,13 @@ namespace Web.Controllers
             model.Pager ??= new PageViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
 
-            List<RoomDataViewModel> rooms = await context.Rooms.Skip((model.Pager.CurrentPage - 1) * pageSize).Take(pageSize).Select(x => new RoomDataViewModel()
+            List<RoomViewModel> rooms = await context.Rooms.Skip((model.Pager.CurrentPage - 1) * pageSize).Take(pageSize).Select(x => new RoomViewModel()
             {
                 Id = x.Id,
                 Capacity = x.Capacity,
                 AdultPrice = x.AdultPrice,
                 ChildrenPrice = x.ChildrenPrice,
-                Reservations = x.Reservations,
+                Reservations = (IEnumerable<ReservationPeriod>)x.Reservations,
                 IsTaken = x.IsTaken,
                 Type = x.Type
 
