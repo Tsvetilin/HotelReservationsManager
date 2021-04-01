@@ -20,9 +20,9 @@ namespace Services
 
         //public Task<IEnumerable<T>> GetAllBySecondName<T>(string secondName);
 
-        public Task<IEnumerable<string>> GetAllByFamilyName(string familyName);
+        public Task<IEnumerable<string>> GetAllBySearch(string familyName);
 
-        public Task<IEnumerable<string>> GetAllByEmail(string email);
+        public Task<IEnumerable<string>> GetAllBySecondName(string email);
 
         public Task<IEnumerable<T>> GetPageItems<T>(int page, int usersOnPage);
 
@@ -34,5 +34,9 @@ namespace Services
         public int CountAllEmployees();
 
         public bool IsAlreadyAdded(string email);
+        public Task<ClientData> CreateClient(string email, string name, bool adult);
+
+        public Task<ClientData> UpdateClient(string id, string email, string name, bool adult);
+        public Task DeleteClient(string id);
     }
 }

@@ -37,13 +37,13 @@ namespace Web
                     //options.SignIn.RequireConfirmedAccount = true;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IReservationService, ReservationsService>();
+            services.AddTransient<IRoomService, RoomServices>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
