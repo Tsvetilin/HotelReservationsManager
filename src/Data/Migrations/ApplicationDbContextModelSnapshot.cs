@@ -65,9 +65,6 @@ namespace Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("EmployeeDataUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
@@ -112,8 +109,6 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeDataUserId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -135,6 +130,9 @@ namespace Data.Migrations
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdult")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ReservationId")
                         .HasColumnType("nvarchar(450)");
@@ -222,6 +220,9 @@ namespace Data.Migrations
 
                     b.Property<bool>("IsTaken")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -335,20 +336,22 @@ namespace Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Data.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Data.Models.EmployeeData", "EmployeeData")
-                        .WithMany()
-                        .HasForeignKey("EmployeeDataUserId");
-
-                    b.Navigation("EmployeeData");
-                });
-
             modelBuilder.Entity("Data.Models.ClientData", b =>
                 {
                     b.HasOne("Data.Models.Reservation", null)
                         .WithMany("Clients")
                         .HasForeignKey("ReservationId");
+                });
+
+            modelBuilder.Entity("Data.Models.EmployeeData", b =>
+                {
+                    b.HasOne("Data.Models.ApplicationUser", "User")
+                        .WithOne("EmployeeData")
+                        .HasForeignKey("Data.Models.EmployeeData", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.Reservation", b =>
@@ -415,6 +418,11 @@ namespace Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Data.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("EmployeeData");
                 });
 
             modelBuilder.Entity("Data.Models.Reservation", b =>

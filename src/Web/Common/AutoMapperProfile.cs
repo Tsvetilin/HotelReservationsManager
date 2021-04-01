@@ -3,6 +3,7 @@ using Data.Models;
 using Web.Models.Clients;
 using Web.Models.InputModels;
 using Web.Models.Reservations;
+using Web.Models.Rooms;
 using Web.Models.ViewModels;
 
 namespace Web.Models
@@ -12,8 +13,12 @@ namespace Web.Models
         public AutoMapperProfile()
         {
             CreateMap<Reservation, ReservationViewModel>();
+            CreateMap<ClientViewModel, ClientData>();
             CreateMap<ClientData, ClientViewModel>();
-            CreateMap<EmployeeData, EmployeeDataViewModel>();          
+            CreateMap<ReservationInputModel, Reservation>();
+            CreateMap<Reservation, ReservationPeriod>();
+            CreateMap<EmployeeData, EmployeeDataViewModel>();
+            CreateMap<EmployeeDataViewModel, EmployeeDataViewModel>();
             CreateMap<EmployeeData, EmployeeInputModel>();
             CreateMap<ApplicationUser, EmployeeDataViewModel>();
             CreateMap<Room, RoomDataViewModel>();
