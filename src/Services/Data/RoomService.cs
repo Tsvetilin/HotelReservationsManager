@@ -69,9 +69,9 @@ namespace Services
                 await context.SaveChangesAsync();
             }
         }
-        public async Task UpdateRoom(Room room)
+        public async Task UpdateRoom(string id,Room room)
         {
-            var roomToChange = await context.Rooms.FindAsync(room.Id);
+            var roomToChange = await context.Rooms.FindAsync(id);
             if (roomToChange != null)
             {
                 context.Entry(roomToChange).CurrentValues.SetValues(room);

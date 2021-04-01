@@ -16,10 +16,11 @@ namespace Services
         public Task<IEnumerable<T>> GetAllByType<T>(RoomType type);
 
         public Task<IEnumerable<T>> GetAllReservedRooms<T>();
+        public Task<IEnumerable<T>> GetAll<T>();
 
         public Task DeleteRoom(string id);
 
-        public Task UpdateRoom(Room room);
+        public Task UpdateRoom(string id,Room room);
 
         public Task<T> GetRoom<T>(string id);
        

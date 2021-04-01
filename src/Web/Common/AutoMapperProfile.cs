@@ -13,10 +13,10 @@ namespace Web.Models
         {
             CreateMap<Reservation, ReservationViewModel>();
             CreateMap<ClientData, ClientViewModel>();
-            CreateMap<EmployeeData, EmployeeDataViewModel>();
-            CreateMap<EmployeeDataViewModel, EmployeeDataViewModel>();
+            CreateMap<EmployeeData, EmployeeDataViewModel>();          
             CreateMap<EmployeeData, EmployeeInputModel>();
             CreateMap<ApplicationUser, EmployeeDataViewModel>();
+            CreateMap<Room, RoomDataViewModel>();
         }
     }
 }
