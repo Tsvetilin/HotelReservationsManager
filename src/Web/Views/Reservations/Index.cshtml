@@ -1,0 +1,59 @@
+﻿@model Web.Models.Reservations.ReservationsIndexViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-inline-flex w-100">
+    <h1>My reservations</h1>
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Users" asp-action="Index" method="get">
+        <input class="form-control" name="Search" placeholder="Employee name or email" />
+        <input class="btn btn-primary" type="submit" value="Try Find Employee" />
+    </form>
+    <form asp-controller="Users" asp-action="Add" method="get">
+        <input class="btn btn-info" type="submit" value="Add" />
+    </form>
+</div>
+
+<div class="col-md-12">
+    <div asp-validation-summary="All" class="d-flex justify-content-center m-auto text-danger w-100"></div>
+</div>
+<br />
+@if (Model.Reservations?.Any() ?? false)
+{
+    <ul class="list-inline text-dark">
+
+        @foreach (var reservation in Model.Reservations)
+        {
+            <li class="pb-3">
+                <div class="d-flex">
+                    <div class="m-5 col-md-6 ml-4">
+                        <h3 class="text-dark font-weight-bold">@reservation.RoomNumber</h3>
+                        <h5 class="text-dark "> @reservation.RoomType.ToString()</h5>
+                        <p class="text-dark "> @reservation.Price</p>
+                        <p class="text-dark ">@reservation.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+                        <p class="text-dark ">@reservation.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+                        <p class="text-dark "> @reservation.Breakfast</p>
+                        <p class="text-dark "> @reservation.AllInclusive</p>
+                    </div>
+                    <div class="m-5 col-md-6 float-end">
+                        <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get">
+                            <input class="btn btn-info" type="submit" value="Info" />
+                        </form>
+                        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get">
+                            <input class="btn btn-primary" type="submit" value="Change" />
+                        </form>
+                        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id"
+                              method="post">
+                            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Cancel" />
+                        </form>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h1>No reservations made yet</h1>
+}

@@ -15,14 +15,14 @@ using Web.Models.Rooms;
 namespace Web.Controllers
 {
     //[Authorize]
-    public class ReservarionsController : Controller
+    public class ReservationsController : Controller
     {
         private readonly IReservationService reservationService;
         private readonly IUserService userService;
         private readonly IRoomService roomService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public ReservarionsController(IReservationService reservationService,
+        public ReservationsController(IReservationService reservationService,
                                       IUserService userService,
                                       IRoomService roomService,
                                       UserManager<ApplicationUser> userManager)
