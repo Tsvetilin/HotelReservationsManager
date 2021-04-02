@@ -18,7 +18,7 @@ namespace Web.Controllers
         {
             roomService = _roomService;
         }
-        public async Task<IActionResult> Index(int id=1, int pageSize = 10)
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
         {
             var model = new RoomIndexViewModel();
             model.PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize);
@@ -29,7 +29,7 @@ namespace Web.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Add(RoomInputModel createModel)
+        public async Task<IActionResult> Create(RoomInputModel createModel)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace Web.Controllers
             }
             return this.RedirectToAction("Index", "Rooms");
         }
-
+        [Authorize]
         public async Task<IActionResult> Update(string id)
         {
             if (id == null)
@@ -68,7 +68,7 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            Room room = await context.Rooms.FindAsync(id);
+            var room = await roomService.GetRoom<RoomViewModel>(id);
             if (room == null)
             {
                 return NotFound();
@@ -76,6 +76,17 @@ namespace Web.Controllers
 
             return RedirectToAction("Index", "Rooms");
         }
+        public async Task<IActionResult> Details(string id)
+        {
+            var viewModel = await this.roomService.GetRoom<RoomViewModel>(id);
+            if (viewModel == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.View(viewModel);
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Update(string id, RoomInputModel input)
@@ -90,8 +101,8 @@ namespace Web.Controllers
                 }
                 var room = new Room
                 {
-                    Id=id,
-                    Capacity=input.Capacity,
+                    Id = id,
+                    Capacity = input.Capacity,
                     AdultPrice = input.AdultPrice,
                     ChildrenPrice = input.ChildrenPrice,
                     Type = input.Type
@@ -102,6 +113,6 @@ namespace Web.Controllers
                 return RedirectToAction("Index", "Rooms");
             }
             return this.View(input);
-        }   
-    } 
+        }
+    }
 }

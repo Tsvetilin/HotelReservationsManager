@@ -1,0 +1,55 @@
+﻿@*@model Data.Models.Room
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Rooms/Index.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Room</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Capacity)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsTaken)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsTaken)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AdultPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AdultPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ChildrenPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ChildrenPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Number)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Number)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>*@
