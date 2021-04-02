@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Common;
-using Services.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ using Web.Models.Rooms;
 
 namespace Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class ReservationsController : Controller
     {
         private readonly IReservationService reservationService;
