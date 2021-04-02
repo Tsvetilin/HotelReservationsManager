@@ -6,9 +6,8 @@ using Web.Models.Rooms;
 
 namespace Web.Models.ViewModels
 {
-    public class RoomIndexViewModel:RoomViewModel
-    {
-        public PageViewModel Pager { get; set; }
+    public class RoomIndexViewModel : PageViewModel
+    {   
         public ICollection<RoomViewModel> Rooms { get; set; }
     }
 }
