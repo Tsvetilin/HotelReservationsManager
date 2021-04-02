@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Web.Models.Rooms;
 
 namespace Web.Models.ViewModels
 {
-    public class RoomIndexViewModel : PageViewModel
-    {   
+    public class RoomIndexViewModel:PageViewModel
+    {
         public ICollection<RoomViewModel> Rooms { get; set; }
     }
 }

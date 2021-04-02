@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Enums;
+using System;
 using System.Collections.Generic;
 using Web.Models.Clients;
 
@@ -15,5 +16,7 @@ namespace Web.Models.Reservations
         public double Price { get; set; }
         public string RoomId { get; set; }
         public string UserId { get; set; }
+        public RoomType RoomType { get; set; }
+        public string RoomNumber { get; set; }
     }
 }

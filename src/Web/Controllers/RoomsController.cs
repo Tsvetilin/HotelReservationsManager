@@ -18,7 +18,7 @@ namespace Web.Controllers
         {
             roomService = _roomService;
         }
-        public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int id=1, int pageSize = 10)
         {
             var model = new RoomIndexViewModel();
             model.PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize);
@@ -90,8 +90,8 @@ namespace Web.Controllers
                 }
                 var room = new Room
                 {
-                    Id = id,
-                    Capacity = input.Capacity,
+                    Id=id,
+                    Capacity=input.Capacity,
                     AdultPrice = input.AdultPrice,
                     ChildrenPrice = input.ChildrenPrice,
                     Type = input.Type
@@ -102,6 +102,6 @@ namespace Web.Controllers
                 return RedirectToAction("Index", "Rooms");
             }
             return this.View(input);
-        }
-    }
+        }   
+    } 
 }

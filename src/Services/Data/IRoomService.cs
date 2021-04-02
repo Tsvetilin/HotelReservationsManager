@@ -23,7 +23,10 @@ namespace Services
         public Task UpdateRoom(string id,Room room);
 
         public Task<T> GetRoom<T>(string id);
-       
+        public Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage);
+        public int CountAllRooms();
+
+
     }
   
 }
