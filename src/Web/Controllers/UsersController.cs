@@ -78,6 +78,11 @@ namespace Web.Controllers
                 return View(input);
             }
 
+            if (!ModelState.IsValid)
+            {
+                return this.View(input);
+            }
+
             var appUser = new ApplicationUser
             {
                 UserName = input.UserName,
