@@ -1,5 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Web.Models.Reservations.ReservationViewModel
 @{
+    ViewData["Title"] = "Index";
 }
+
+<div class="d-inline-flex w-100">
+    <h1>Details for reservation #@Model.Id</h1>
+</div>
+<hr />
+<br />
+
+<div class="d-flex">
+    <div class="m-5 col-md-6 ml-4">
+        <h3 class="text-dark font-weight-bold">@Model.RoomNumber</h3>
+        <h5 class="text-dark "> @Model.RoomType.ToString()</h5>
+        <p class="text-dark "> @Model.Price</p>
+        <p class="text-dark ">@Model.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+        <p class="text-dark ">@Model.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+        <p class="text-dark "> @Model.Breakfast</p>
+        <p class="text-dark "> @Model.AllInclusive</p>
+    </div>
+    <div class="m-5 col-md-6 float-end">
+        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@Model.Id" method="get">
+            <input class="btn btn-primary" type="submit" value="Change" />
+        </form>
+        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@Model.Id"
+              method="post">
+            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
+        </form>
+    </div>
+</div>

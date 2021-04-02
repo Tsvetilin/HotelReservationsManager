@@ -1,5 +1,76 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Web.Models.Reservations.ReservationInputModel
+
 @{
+    ViewData["Title"] = "Update a reservation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h2>Update a Reservation for room:</h2>
+<hr />
+<h4>Room data:</h4>
+<p>@Model.RoomType.ToString();</p>
+<p>@Model.RoomCapacity</p>
+<p>@Model.RoomAdultPrice</p>
+<p>@Model.RoomChildrenPrice</p>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AccommodationDate" class="control-label"></label>
+                <input asp-for="AccommodationDate" class="form-control" />
+                <span asp-validation-for="AccommodationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReleaseDate" class="control-label"></label>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="AllInclusive" /> @Html.DisplayNameFor(model => model.AllInclusive)
+                    </label>
+                </div>
+                <small>Note: ALlInclusive price: @Model.AllInclusivePrice</small>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Breakfast" /> @Html.DisplayNameFor(model => model.Breakfast)
+                    </label>
+                </div>
+                <small>Note: Breakfast price: @Model.BreakfastPrice></small>
+            </div>
+            <div>
+                <h5>Clients data:</h5>
+                <small>Leave a row blank if necessary</small>
+                @for (int i = 0; i < Model.RoomCapacity; i++)
+                {
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="ClientData[i].FullName" class="control-label"></label>
+                            <input asp-for="ClientData[i].FullName" class="form-control" />
+                            <span asp-validation-for="ClientData[i].FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClientData[i].Email" class="control-label"></label>
+                            <input asp-for="ClientData[i].Email" class="form-control" />
+                            <span asp-validation-for="ClientData[i].Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClientData[i].IsAdult" class="control-label"></label>
+                            <input asp-for="ClientData[i].IsAdult" class="form-control" />
+                            <span asp-validation-for="ClientData[i].IsAdult" class="text-danger"></span>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>

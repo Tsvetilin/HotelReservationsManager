@@ -11,7 +11,7 @@ namespace Web.Models.Reservations
     {
         // Should add breakfast and all inclusive prices as well as dynamic price calculation
         public string Id { get; set; }
-        public IEnumerable<ClientInputModel> ClientData { get; set; }
+        public IList<ClientInputModel> ClientData { get; set; }
         public DateTime AccommodationDate { get; set; }
         public DateTime ReleaseDate { get; set; }
         public bool Breakfast { get; set; }
