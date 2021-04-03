@@ -17,6 +17,7 @@ namespace Services
 
         public Task<IEnumerable<T>> GetAllReservedRooms<T>();
         public Task<IEnumerable<T>> GetAll<T>();
+        public Task<IEnumerable<T>> GetSearchResults<T>(string searchString);
 
         public Task DeleteRoom(string id);
 
