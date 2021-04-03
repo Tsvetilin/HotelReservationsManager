@@ -217,5 +217,26 @@ namespace Web.Controllers
 
             return inputModel;
         }
+
+        //[Authorize("Admin, Employee")]
+        public async Task<IActionResult> All(int id = 0, int elementsOnPage = 10)
+        {
+            var reservations = await reservationService.GetAll<ReservationViewModel>();
+
+            int pageCount = (int)Math.Ceiling((double)reservations.Count() / elementsOnPage);
+            if (id > pageCount || id < 1)
+            {
+                id = 1;
+            }
+
+            var viewModel = new ReservationsIndexViewModel
+            {
+                CurrentPage = id,
+                PagesCount = pageCount,
+                Reservations = reservations.GetPageItems(id, elementsOnPage),
+            };
+
+            return this.View(viewModel);
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace Web.Models.Reservations
     public class ReservationViewModel
     {
         public string Id { get; set; }
-        public IEnumerable<ClientViewModel> Clients { get; set; }
+        public IList<ClientViewModel> Clients { get; set; }
         public DateTime AccommodationDate { get; set; }
         public DateTime ReleaseDate { get; set; }
         public bool Breakfast { get; set; }
@@ -18,5 +18,8 @@ namespace Web.Models.Reservations
         public string UserId { get; set; }
         public RoomType RoomType { get; set; }
         public string RoomNumber { get; set; }
+        public string UserFullName { get; set; }
+        public string UserEmail { get; set; }
+        public bool UserIsAdult { get; set; }
     }
 }

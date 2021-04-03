@@ -1,0 +1,79 @@
+﻿@model Web.Models.Reservations.ReservationsIndexViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-inline-flex w-100">
+    <h1>All reservations</h1>
+</div>
+<hr />
+<div class="form-group">
+    <div class="checkbox">
+        <label>
+            <input id="past-dates" onchange="ChangeVisibil()" /> Show reservation with a past date
+        </label>
+    </div>
+</div>
+<br />
+@if (Model.Reservations?.Any() ?? false)
+{
+    <ul class="list-inline text-dark">
+
+        @foreach (var reservation in Model.Reservations)
+        {
+            var past = "p-no";
+            if (reservation.ReleaseDate < DateTime.Today)
+            {
+                past = "p-yes";
+            }
+
+            <li class="pb-3 @past d-none">
+                <div class="d-flex">
+                    <div class="m-5 col-md-6 ml-4">
+                        <h3 class="text-dark font-weight-bold">@reservation.RoomNumber</h3>
+                        <h5 class="text-dark "> @reservation.RoomType.ToString()</h5>
+                        <p class="text-dark "> @reservation.Price</p>
+                        <p class="text-dark ">@reservation.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+                        <p class="text-dark ">@reservation.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+                        <p class="text-dark "> @reservation.Breakfast</p>
+                        <p class="text-dark "> @reservation.AllInclusive</p>
+                    </div>
+                    <div class="m-5 col-md-6 float-end">
+                        <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get">
+                            <input class="btn btn-info" type="submit" value="Info" />
+                        </form>
+                        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get">
+                            <input class="btn btn-primary" type="submit" value="Change" />
+                        </form>
+                        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id"
+                              method="post">
+                            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
+                        </form>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h3>No reservations made yet</h3>
+}
+
+@section Scripts{
+    <script>
+        var pasts = document.getElementsByClassName("p-yes");
+
+        function ChangeVisibil() {
+            var styl = "display:block!important"
+
+            if (!document.getElementById("past-dates").checked) {
+                styl = "display:none!important";
+            }
+
+            for (let res of pasts) {
+                res.style = styl;
+            }
+        }
+    </script>
+}

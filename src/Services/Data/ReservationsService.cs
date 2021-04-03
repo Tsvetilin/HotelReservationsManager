@@ -158,5 +158,10 @@ namespace Services
 
             return clients;
         }
+
+        public async Task<IEnumerable<T>> GetAll<T>()
+        {
+            return await this.dbContext.Reservations.OrderBy(x=>x.ReleaseDate).ProjectTo<T>().ToListAsync();
+        }
     }
 }
