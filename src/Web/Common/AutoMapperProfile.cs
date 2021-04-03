@@ -30,6 +30,7 @@ namespace Web.Models
             CreateMap<RoomViewModel, RoomViewModel>();
             CreateMap<EmployeeData, ApplicationUser>();
             CreateMap<ApplicationUser, ApplicationUser>();
+            CreateMap<ApplicationUser, EmployeeInputModel>();
         }
     }
 }

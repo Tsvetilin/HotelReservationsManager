@@ -25,9 +25,14 @@ namespace Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<T> GetAsync<T>(string id)
+        public async Task<T> GetEmployeeAsync<T>(string id)
         {
             return await context.EmployeeData.Where(x => x.UserId == id).ProjectTo<T>().FirstOrDefaultAsync();
+        }
+
+        public async Task<T> GetUserAsync<T>(string id)
+        {
+            return await context.Users.Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllEmployees<T>()
@@ -42,15 +47,17 @@ namespace Services
 
         public async Task<IEnumerable<string>> GetAllBySearch(string searchString)
         {
-            return await context.Users.Where(x => x.Email == searchString ||
-                                             x.FirstName == searchString ||
-                                             x.LastName == searchString ||
-                                             x.UserName == searchString).Select(x => x.Id).ToListAsync();
+            return await context.Users.Where(x => x.Email.ToUpper().Contains(searchString) ||
+                                             x.FirstName.ToUpper().Contains(searchString) ||
+                                             x.LastName.ToUpper().Contains(searchString) ||
+                                             x.UserName.ToUpper().Contains(searchString)).
+                                             Select(x => x.Id).ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetAllBySecondName(string searchString)
         {
-            return await context.EmployeeData.Where(x => x.SecondName == searchString).Select(x=>x.UserId).ToListAsync();
+            return await context.EmployeeData.Where(x => x.SecondName.ToUpper().Contains(searchString)).
+                                                    Select(x=>x.UserId).ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetEmployeePageItems<T>(int page, int usersOnPage)
@@ -119,6 +126,11 @@ namespace Services
         public int CountAllEmployees()
         {
             return context.EmployeeData.Count();
+        }
+
+        public int CountAllUsers()
+        {
+            return context.Users.Count();
         }
 
         public bool IsAlreadyAdded(string email)

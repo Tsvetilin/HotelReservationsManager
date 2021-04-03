@@ -10,7 +10,8 @@ namespace Services
     {
         public Task AddAsync(EmployeeData user);
 
-        public Task<T> GetAsync<T>(string id);
+        public Task<T> GetEmployeeAsync<T>(string id);
+        public Task<T> GetUserAsync<T>(string id);
 
         public Task<IEnumerable<T>> GetAllEmployees<T>();
 
@@ -32,6 +33,7 @@ namespace Services
 
         public Task DeleteAsync(string id);
         public int CountAllEmployees();
+        public int CountAllUsers();
 
         public bool IsAlreadyAdded(string email);
         public Task<ClientData> CreateClient(string email, string name, bool adult);

@@ -1,5 +1,67 @@
-﻿@{
-    ViewData["Title"] = "Promote Users";
+﻿@model Web.Models.InputModels.EmployeeInputModel
+@using Data.Enums;
+@{
+    ViewData["Title"] = "Promote user";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<p>Still nothing to show...</p>
+<h1 class="text-center">Promote User</h1>
+<hr />
+
+<div class="d-flex justify-content-center">
+    <div class="col-md-4">
+        <form enctype="multipart/form-data" asp-controller="Users" asp-action="Promote" method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.UserFirstName"></label>
+                <input asp-for="@Model.UserFirstName" class="form-control" />
+                <span asp-validation-for="@Model.UserFirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.SecondName"></label>
+                <input asp-for="@Model.SecondName" class="form-control" />
+                <span asp-validation-for="@Model.SecondName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserLastName"></label>
+                <input asp-for="@Model.UserLastName" class="form-control" />
+                <span asp-validation-for="@Model.UserLastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UCN"></label>
+                <input asp-for="@Model.UCN" class="form-control" />
+                <span asp-validation-for="@Model.UCN" class="text-danger"></span>
+                <small class="text-dark">Note: Please enter valid UCN</small>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserUserName"></label>
+                <input asp-for="@Model.UserUserName" class="form-control" />
+                <span asp-validation-for="@Model.UserUserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserPassword"></label>
+                <input type="password" asp-for="@Model.UserPassword" class="form-control" />
+                <span asp-validation-for="@Model.UserPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserEmail"></label>
+                <input asp-for="@Model.UserEmail" class="form-control" />
+                <span asp-validation-for="@Model.UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserPhoneNumber"></label>
+                <input asp-for="@Model.UserPhoneNumber" class="form-control" />
+                <span asp-validation-for="@Model.UserPhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.UserIsAdult"></label>
+                <input asp-for="@Model.UserIsAdult" class="form-control" />
+                <span asp-validation-for="@Model.UserIsAdult" class="text-danger"></span>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success submit-but ">Promote Employee</button>
+            </div>
+        </form>
+    </div>
+</div>

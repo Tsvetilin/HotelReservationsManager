@@ -18,7 +18,7 @@
 <br />
 
 <ul class="list-inline text-dark">
-    @foreach (var userCard in Model?.Users)
+    @foreach (var userCard in Model?.Users.Where(x=>x.EmployeeData==null))
     {
     <li class="pb-3">
         <a asp-controller="Users" asp-action="Promote" asp-route-id="@userCard.Id"

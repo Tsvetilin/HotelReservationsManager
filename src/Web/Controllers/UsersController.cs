@@ -114,8 +114,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Update(string id)
         {
-            var employee = await userService.GetAsync<EmployeeInputModel>(id);
-            var appUser = await userManager.FindByIdAsync(id);
+            var employee = await userService.GetEmployeeAsync<EmployeeInputModel>(id);
 
             if (employee != null)
             {
@@ -129,7 +128,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
-            var employee = await userService.GetAsync<EmployeeDataViewModel>(id);
+            var employee = await userService.GetEmployeeAsync<EmployeeDataViewModel>(id);
 
             if (!ModelState.IsValid)
             {
@@ -150,7 +149,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            var employee = await userService.GetAsync<EmployeeDataViewModel>(id);
+            var employee = await userService.GetEmployeeAsync<EmployeeDataViewModel>(id);
 
             if (employee != null)
             {
@@ -163,8 +162,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-
-        //Add userscounter
+        //All users or without employees?
         [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> All(int id = 1, string search = "")
         {
@@ -184,7 +182,7 @@ namespace Web.Controllers
                 ModelState.AddModelError("Found", "User not found!");
             }
 
-            int pageCount = (int)Math.Ceiling((double)userService.CountAllEmployees() / usersOnPage);
+            int pageCount = (int)Math.Ceiling((double)userService.CountAllUsers() / usersOnPage);
             if (id > pageCount || id < 1)
             {
                 id = 1;
@@ -200,11 +198,57 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> Promote(string id = null)
+        [Authorize(Roles = "Employee, Admin")]
+        public async Task<IActionResult> Promote(string id)
         {
-            //Todo
+            var userContext = await userService.GetUserAsync<ApplicationUser>(id);
+            
+            var user = new EmployeeInputModel
+             {
+                 UserEmail = userContext.Email,
+                 UserFirstName = userContext.FirstName,
+                 UserIsAdult = userContext.IsAdult,
+                 UserLastName = userContext.LastName,
+                 UserPassword = userContext.PasswordHash,
+                 UserPhoneNumber = userContext.PhoneNumber,
+                 UserUserName = userContext.UserName
+             };
 
-            return this.View();
+            if (user != null)
+            {
+                return this.View(user);
+            }
+
+            return RedirectToAction("Index", "Users");
+        }
+
+        //Password show?
+        //Disable fields
+        [Authorize(Roles = "Employee, Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Promote(EmployeeInputModel input, string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return this.View(input);
+            }
+
+            var appUser = await userManager.FindByIdAsync(id);
+            await userManager.AddToRoleAsync(appUser, "Employee");
+
+            var employee = new EmployeeData
+            {
+                UserId = id,
+                UCN = input.UCN,
+                SecondName = input.SecondName,
+                IsActive = true,
+                DateOfAppointment = DateTime.UtcNow,
+                User = appUser 
+            };
+
+            await userService.AddAsync(employee);
+
+            return RedirectToAction("Index", "Users");
         }
     }
 }
