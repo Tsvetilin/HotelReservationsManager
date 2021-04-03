@@ -31,10 +31,14 @@ namespace Web.Models.InputModels
         
         [Required]
         [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+
         public string UserPassword { get; set; }
         
         [Required]
         [EmailAddress]
+        [Display(Name = "Email")]
+
         public string UserEmail { get; set; }
         
         [Required]    
@@ -44,8 +48,12 @@ namespace Web.Models.InputModels
        
         [Required]
         [Phone]
+        [Display(Name = "Phone number")]
+
         public string UserPhoneNumber { get; set; }
         [Required]
+        [Display(Name = "Is Adult")]
+
         public bool UserIsAdult { get; set; }
         public string Еrror { get; set; }
     }
