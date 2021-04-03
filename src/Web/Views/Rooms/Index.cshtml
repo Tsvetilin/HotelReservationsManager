@@ -2,6 +2,15 @@
 @{
     ViewData["Title"] = "Index";
 }
+
+<div class="d-inline-flex w-100">
+    <h1>Rooms</h1>
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Room" asp-action="Index" method="get">
+        <input class="form-control" name="Search" placeholder="Filter by capacity or type" />
+        <input class="btn btn-primary" type="submit" value="Search for rooms" />
+    </form>
+</div>
 @if (Model.Rooms?.Any() ?? false)
 {
     <ul class="list-inline text-dark">
