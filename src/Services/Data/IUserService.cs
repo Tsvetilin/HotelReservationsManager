@@ -10,28 +10,30 @@ namespace Services
     {
         public Task AddAsync(EmployeeData user);
 
-        public Task<T> GetAsync<T>(string id);
+        public Task<T> GetEmployeeAsync<T>(string id);
+        public Task<T> GetUserAsync<T>(string id);
 
-        public Task<IEnumerable<T>> GetAll<T>();
+        public Task<IEnumerable<T>> GetAllEmployees<T>();
 
-        //public Task<IEnumerable<T>> GetAllByUserName<T>(string username);
+        public Task<IEnumerable<T>> GetAllUsers<T>();
 
-        //public Task<IEnumerable<T>> GetAllByFirstName<T>(string firstName);
-
-        //public Task<IEnumerable<T>> GetAllBySecondName<T>(string secondName);
 
         public Task<IEnumerable<string>> GetAllBySearch(string familyName);
 
         public Task<IEnumerable<string>> GetAllBySecondName(string email);
 
-        public Task<IEnumerable<T>> GetPageItems<T>(int page, int usersOnPage);
+        public Task<IEnumerable<T>> GetEmployeePageItems<T>(int page, int usersOnPage);
 
-        public Task<IEnumerable<T>> GetSearchResults<T>(string searchString);
+        public Task<IEnumerable<T>> GetUserPageItems<T>(int page, int usersOnPage);
+
+        public Task<IEnumerable<T>> GetEmployeesSearchResults<T>(string searchString);
+        public Task<IEnumerable<T>> GetUsersSearchResults<T>(string searchString);
 
         public Task UpdateAsync(EmployeeData user);
 
         public Task DeleteAsync(string id);
         public int CountAllEmployees();
+        public int CountAllUsers();
 
         public bool IsAlreadyAdded(string email);
         public Task<ClientData> CreateClient(string email, string name, bool adult);

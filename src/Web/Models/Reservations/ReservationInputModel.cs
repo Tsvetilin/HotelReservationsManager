@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Web.Models.Clients;
 using Web.Models.Rooms;
 
@@ -11,8 +13,12 @@ namespace Web.Models.Reservations
     {
         // Should add breakfast and all inclusive prices as well as dynamic price calculation
         public string Id { get; set; }
-        public IEnumerable<ClientInputModel> ClientData { get; set; }
+        public IList<ClientInputModel> ClientData { get; set; }
+
+        [Required]
         public DateTime AccommodationDate { get; set; }
+
+        [Required]
         public DateTime ReleaseDate { get; set; }
         public bool Breakfast { get; set; }
         public bool AllInclusive { get; set; }
@@ -36,5 +42,18 @@ namespace Web.Models.Reservations
         [BindNever]
         public double RoomChildrenPrice { get; set; }
         public string UserId { get; set; }
+
+        public string GetPeriods()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+            foreach (var period in Reservations)
+            {
+                sb.Append($"{{start: new Date({period.AccommodationDate}), end: new Date({period.ReleaseDate})}},");
+            }
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append("]");
+            return sb.ToString();
+        }
     }
 }

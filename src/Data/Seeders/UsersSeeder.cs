@@ -16,7 +16,7 @@ namespace Data.Seeders
                 return;
             }
 
-            var name = "Admin";
+            var name = "admin@hms.com";
             var email = "admin@hms.com";
             var user = new ApplicationUser
             {
@@ -37,6 +37,11 @@ namespace Data.Seeders
             user.PasswordHash = passwordHasher.HashPassword(user, "AdminPass");
             await dbContext.Users.AddAsync(user);
 
+            await dbContext.UserRoles.AddAsync(new IdentityUserRole<string>()
+            {
+                UserId = user.Id,
+                RoleId = dbContext.Roles.FirstOrDefault(x => x.Name == "Admin").Id
+            });
 
             await dbContext.SaveChangesAsync();
             logger.LogInformation($"Finished executing {nameof(UsersSeeder)}");

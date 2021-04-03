@@ -4,9 +4,16 @@
 }
 
 <div class="d-inline-flex w-100">
-    <h1>My reservations</h1>
+    <h1>All reservations</h1>
 </div>
-<hr/>
+<hr />
+<div class="form-group">
+    <div class="checkbox">
+        <label>
+            <input id="past-dates" onchange="ChangeVisibil()" /> Show reservation with a past date
+        </label>
+    </div>
+</div>
 <br />
 @if (Model.Reservations?.Any() ?? false)
 {
@@ -14,7 +21,13 @@
 
         @foreach (var reservation in Model.Reservations)
         {
-            <li class="pb-3">
+            var past = "p-no";
+            if (reservation.ReleaseDate < DateTime.Today)
+            {
+                past = "p-yes";
+            }
+
+            <li class="pb-3 @past d-none">
                 <div class="d-flex">
                     <div class="m-5 col-md-6 ml-4">
                         <h3 class="text-dark font-weight-bold">@reservation.RoomNumber</h3>
@@ -44,5 +57,23 @@
 }
 else
 {
-    <h1>No reservations made yet</h1>
+    <h3>No reservations made yet</h3>
+}
+
+@section Scripts{
+    <script>
+        var pasts = document.getElementsByClassName("p-yes");
+
+        function ChangeVisibil() {
+            var styl = "display:block!important"
+
+            if (!document.getElementById("past-dates").checked) {
+                styl = "display:none!important";
+            }
+
+            for (let res of pasts) {
+                res.style = styl;
+            }
+        }
+    </script>
 }

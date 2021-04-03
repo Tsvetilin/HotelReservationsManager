@@ -27,5 +27,6 @@ namespace Services
         public Task<IEnumerable<T>> GetReservationsForUser<T>(string userId);
         public Task<IEnumerable<T>> GetForUserOnPage<T>(string userId, int page, int elementsOnPage);
         public Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId, IEnumerable<ClientData> clients);
+        public Task<IEnumerable<T>> GetAll<T>();
     }
 }
