@@ -15,7 +15,7 @@
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="@Model.UserFirstName"></label>
-                <input asp-for="@Model.UserFirstName" class="form-control" />
+                <input readonly asp-for="@Model.UserFirstName" class="form-control" />
                 <span asp-validation-for="@Model.UserFirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="@Model.UserLastName"></label>
-                <input asp-for="@Model.UserLastName" class="form-control" />
+                <input readonly asp-for="@Model.UserLastName" class="form-control" />
                 <span asp-validation-for="@Model.UserLastName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,31 +36,27 @@
             </div>
             <div class="form-group">
                 <label asp-for="@Model.UserUserName"></label>
-                <input asp-for="@Model.UserUserName" class="form-control" />
+                <input readonly asp-for="@Model.UserUserName" class="form-control" />
                 <span asp-validation-for="@Model.UserUserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserPassword"></label>
-                <input type="password" asp-for="@Model.UserPassword" class="form-control" />
-                <span asp-validation-for="@Model.UserPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="@Model.UserEmail"></label>
-                <input asp-for="@Model.UserEmail" class="form-control" />
+                <input readonly asp-for="@Model.UserEmail" class="form-control" />
                 <span asp-validation-for="@Model.UserEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.UserPhoneNumber"></label>
-                <input asp-for="@Model.UserPhoneNumber" class="form-control" />
+                <input readonly asp-for="@Model.UserPhoneNumber" class="form-control" />
                 <span asp-validation-for="@Model.UserPhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.UserIsAdult"></label>
-                <input asp-for="@Model.UserIsAdult" class="form-control" />
+                <input readonly asp-for="@Model.UserIsAdult" class="form-control" />
                 <span asp-validation-for="@Model.UserIsAdult" class="text-danger"></span>
             </div>
+            <input hidden asp-for="@Model.UserPassword" class="form-control" value="password"/>
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-success submit-but ">Promote Employee</button>
+                <button type="submit" class="btn btn-success submit-but">Promote Employee</button>
             </div>
         </form>
     </div>

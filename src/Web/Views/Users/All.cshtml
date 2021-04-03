@@ -1,4 +1,5 @@
 ﻿@model Web.Models.ViewModels.UserIndexViewModel
+
 @{
     ViewData["Title"] = "All Users";
 }
@@ -18,23 +19,23 @@
 <br />
 
 <ul class="list-inline text-dark">
-    @foreach (var userCard in Model?.Users.Where(x=>x.EmployeeData?.DateOfResignation!=null ||
-                                                    x.EmployeeData==null))
+    @foreach (var userCard in Model?.Users.Where(x => x.EmployeeData?.DateOfResignation != null ||
+                                                   x.EmployeeData == null))
     {
-    <li class="pb-3">
-        <a asp-controller="Users" asp-action="Promote" asp-route-id="@userCard.Id"
-           class="content-heading clearfix media box-hover text-decoration-none">
-            <div class="d-flex">
-                <div class="m-5 col-md-6 ml-4">
-                    <h3 class="text-dark font-weight-bold">@userCard.UserName</h3>
-                    <h5 class="text-dark "> @userCard.FirstName</h5>
-                    <p class="text-dark "> @userCard.LastName</p>
-                    <p class="text-dark ">@userCard.Email</p>
-                    <p class="text-dark ">Phone number: @userCard.PhoneNumber</p>
-                    <p class="text-dark ">Is Adult: @userCard.IsAdult</p>
+        <li class="pb-3">
+            <a asp-controller="Users" asp-action="Promote" asp-route-id="@userCard.Id"
+               class="content-heading clearfix media box-hover text-decoration-none">
+                <div class="d-flex">
+                    <div class="m-5 col-md-6 ml-4">
+                        <h3 class="text-dark font-weight-bold">@userCard.UserName</h3>
+                        <h5 class="text-dark "> @userCard.FirstName</h5>
+                        <p class="text-dark "> @userCard.LastName</p>
+                        <p class="text-dark ">@userCard.Email</p>
+                        <p class="text-dark ">Phone number: @userCard.PhoneNumber</p>
+                        <p class="text-dark ">Is Adult: @userCard.IsAdult</p>
+                    </div>
                 </div>
-            </div>
-        </a>
-    </li>
+            </a>
+        </li>
     }
 </ul>

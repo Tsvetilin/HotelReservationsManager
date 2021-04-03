@@ -222,8 +222,6 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        //Password show?
-        //Disable fields
         [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Promote(EmployeeInputModel input, string id)

@@ -14,11 +14,12 @@
         <input class="form-control" name="Search" placeholder="Employee name or email" />
         <input class="btn btn-primary" type="submit" value="Try Find Employee" />
     </form>
-    <form asp-controller="Users" asp-action="All" method="get">
-        <input class="btn btn-info" type="submit" value="All Users" />
-    </form>
     @if (SignInManager.Context.User.IsInRole("Admin"))
     {
+        <form asp-controller="Users" asp-action="All" method="get">
+            <input class="btn btn-info" type="submit" value="All Users" />
+        </form>
+
         <form asp-controller="Users" asp-action="Add" method="get">
             <input class="btn btn-info" type="submit" value="Add" />
         </form>
