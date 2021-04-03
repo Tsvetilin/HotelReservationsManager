@@ -57,25 +57,24 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
-        // [Authorize(Roles = "Employee, Admin")]
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Add()
         {
             var user = await userManager.GetUserAsync(User);
             if (user?.EmployeeData != null)
             {
-                return RedirectToAction("Index", "Userr");
+                return RedirectToAction("Index", "Users");
             }
             return this.View();
         }
 
-        // [Authorize(Roles = "Employee, Admin")]
+        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(EmployeeInputModel input)
         {
             if (userService.IsAlreadyAdded(input.Email))
             {
                 ModelState.AddModelError("Added", "User already added!");
-                return View(input);
             }
 
             if (!ModelState.IsValid)
@@ -112,7 +111,8 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        // [Authorize(Roles = "Employee, Admin")]
+        [Authorize(Roles = "Employee, Admin")]
+        //TODO
         public async Task<IActionResult> Update(string id)
         {
             var employee = await userService.GetAsync<EmployeeInputModel>(id);
@@ -125,7 +125,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-      //  [Authorize(Roles = "Employee, Admin")]
+        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
@@ -146,7 +146,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        //[Authorize(Roles = "Employee, Admin")]
+        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
