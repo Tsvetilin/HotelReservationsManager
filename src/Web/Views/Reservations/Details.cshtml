@@ -19,6 +19,22 @@
         <p class="text-dark "> @Model.Breakfast</p>
         <p class="text-dark "> @Model.AllInclusive</p>
     </div>
+    <div class="m-5 col-md-6 ml-4">
+        <h5>Clients</h5>
+        <p class="text-dark "> @Model.UserFullName</p>
+        <p class="text-dark ">@Model.UserEmail</p>
+        <p class="text-dark ">@Model.UserIsAdult</p>
+        <br/>
+        @for (int i = 0; i < Model.Clients.Count(); i++)
+        {
+            <p class="text-dark "> @Model.Clients[i].FullName</p>
+            <p class="text-dark ">@Model.Clients[i].Email</p>
+            <p class="text-dark ">@Model.Clients[i].IsAdult</p>
+        <br />
+        }
+
+    </div>
+
     <div class="m-5 col-md-6 float-end">
         <form asp-controller="Reservations" asp-action="Update" asp-route-id="@Model.Id" method="get">
             <input class="btn btn-primary" type="submit" value="Change" />
