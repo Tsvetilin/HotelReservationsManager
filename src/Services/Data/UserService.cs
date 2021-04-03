@@ -30,9 +30,14 @@ namespace Services
             return await context.EmployeeData.Where(x => x.UserId == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAll<T>()
+        public async Task<IEnumerable<T>> GetAllEmployees<T>()
         {
             return await context.EmployeeData.AsQueryable().ProjectTo<T>().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllUsers<T>()
+        {
+            return await context.Users.AsQueryable().ProjectTo<T>().ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetAllBySearch(string searchString)
@@ -48,12 +53,17 @@ namespace Services
             return await context.EmployeeData.Where(x => x.SecondName == searchString).Select(x=>x.UserId).ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetPageItems<T>(int page, int usersOnPage)
+        public async Task<IEnumerable<T>> GetEmployeePageItems<T>(int page, int usersOnPage)
         {
-            return await GetAll<T>().GetPageItems(page,usersOnPage);
+            return await GetAllEmployees<T>().GetPageItems(page,usersOnPage);
         }
 
-        public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
+        public async Task<IEnumerable<T>> GetUserPageItems<T>(int page, int usersOnPage)
+        {
+            return await GetAllUsers<T>().GetPageItems(page, usersOnPage);
+        }
+
+        private async Task<List<string>> GetSearchResults(string searchString)
         {
             var result = new List<string>();
 
@@ -68,11 +78,22 @@ namespace Services
             {
                 result.AddRange(familyNameResults);
             }
-            result = result.Distinct().ToList();
+            return result.Distinct().ToList();
+        }
+
+        public async Task<IEnumerable<T>> GetEmployeesSearchResults<T>(string searchString)
+        {
+            List<string> result = await GetSearchResults(searchString);
 
             return await context.EmployeeData.Where(x=>result.Contains(x.UserId)).ProjectTo<T>().ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetUsersSearchResults<T>(string searchString)
+        {
+            List<string> result = await GetSearchResults(searchString);
+
+            return await context.Users.Where(x => result.Contains(x.Id)).ProjectTo<T>().ToListAsync();
+        }
         public async Task UpdateAsync(EmployeeData user)
         {
             var userInContext = await context.EmployeeData.FindAsync(user.UserId);

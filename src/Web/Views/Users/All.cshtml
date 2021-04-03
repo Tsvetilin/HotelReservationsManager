@@ -1,6 +1,39 @@
-﻿@model Web.Models.ViewModels.EmployeesIndexViewModel
+﻿@model Web.Models.ViewModels.UserIndexViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "All Users";
 }
 
-<p>Coming soon...</p>
+<div class="d-inline-flex w-100">
+    <h1>Users</h1>
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Users" asp-action="All" method="get">
+        <input class="form-control" name="Search" placeholder="User name or email" />
+        <input class="btn btn-primary" type="submit" value="Try Find Users" />
+    </form>
+</div>
+
+<div class="col-md-12">
+    <div asp-validation-summary="All" class="d-flex justify-content-center m-auto text-danger w-100"></div>
+</div>
+<br />
+
+<ul class="list-inline text-dark">
+    @foreach (var userCard in Model?.Users)
+    {
+    <li class="pb-3">
+        <a asp-controller="Users" asp-action="Promote" asp-route-id="@userCard.Id"
+           class="content-heading clearfix media box-hover text-decoration-none">
+            <div class="d-flex">
+                <div class="m-5 col-md-6 ml-4">
+                    <h3 class="text-dark font-weight-bold">@userCard.UserName</h3>
+                    <h5 class="text-dark "> @userCard.FirstName</h5>
+                    <p class="text-dark "> @userCard.LastName</p>
+                    <p class="text-dark ">@userCard.Email</p>
+                    <p class="text-dark ">Phone number: @userCard.PhoneNumber</p>
+                    <p class="text-dark ">Is Adult: @userCard.IsAdult</p>
+                </div>
+            </div>
+        </a>
+    </li>
+    }
+</ul>
