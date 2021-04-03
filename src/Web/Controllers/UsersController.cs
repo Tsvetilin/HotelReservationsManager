@@ -72,7 +72,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(EmployeeInputModel input)
         {
-            if (userService.IsAlreadyAdded(input.Email))
+            if (userService.IsAlreadyAdded(input.UserEmail))
             {
                 ModelState.AddModelError("Added", "User already added!");
             }
@@ -84,16 +84,16 @@ namespace Web.Controllers
 
             var appUser = new ApplicationUser
             {
-                UserName = input.UserName,
-                IsAdult = input.IsAdult,
-                Email = input.Email,
-                FirstName = input.FirstName,
-                LastName = input.LastName,
-                PhoneNumber = input.PhoneNumber,
+                UserName = input.UserUserName,
+                IsAdult = input.UserIsAdult,
+                Email = input.UserEmail,
+                FirstName = input.UserFirstName,
+                LastName = input.UserLastName,
+                PhoneNumber = input.UserPhoneNumber,
                 SecurityStamp = DateTime.UtcNow.Ticks.ToString()
             };
             
-            await userManager.CreateAsync(appUser, input.Password);
+            await userManager.CreateAsync(appUser, input.UserPassword);
             await userManager.AddToRoleAsync(appUser, "Employee");
 
             var employee = new EmployeeData
@@ -112,11 +112,11 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "Employee, Admin")]
-        //TODO
         public async Task<IActionResult> Update(string id)
         {
             var employee = await userService.GetAsync<EmployeeInputModel>(id);
-            
+            var appUser = await userManager.FindByIdAsync(id);
+
             if (employee != null)
             {
                 return this.View(employee);

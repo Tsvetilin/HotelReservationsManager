@@ -12,12 +12,12 @@ namespace Web.Models.InputModels
         [MaxLength(50)]
         [Required]
         [Display(Name = "Username")]
-        public string UserName { get; set; }
+        public string UserUserName { get; set; }
        
         [MaxLength(50)]
         [Required]
         [Display(Name = "First name")]
-        public string FirstName { get; set; }
+        public string UserFirstName { get; set; }
         
         [MaxLength(50)]
         [Required]
@@ -27,15 +27,15 @@ namespace Web.Models.InputModels
         [MaxLength(50)]
         [Required]
         [Display(Name = "Last name")]
-        public string LastName { get; set; }
+        public string UserLastName { get; set; }
         
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string UserPassword { get; set; }
         
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string UserEmail { get; set; }
         
         [Required]    
         [UCNValidator]
@@ -44,9 +44,9 @@ namespace Web.Models.InputModels
        
         [Required]
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string UserPhoneNumber { get; set; }
         [Required]
-        public bool IsAdult { get; set; }
+        public bool UserIsAdult { get; set; }
         public string Еrror { get; set; }
     }
 }
