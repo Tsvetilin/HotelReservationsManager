@@ -5,8 +5,10 @@ namespace Web.Models.InputModels
 {
     public class RoomInputModel
     {
+      
         [Required]
         [Range(1, 10, ErrorMessage = "The capacity should be between {0} and {1}")]
+
         public int Capacity { get; set; }
         [Required]
         public RoomType Type { get; set; }

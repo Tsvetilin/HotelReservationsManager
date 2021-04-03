@@ -8,6 +8,7 @@ using Services;
 using Data.Models;
 using Web.Models.ViewModels;
 using Web.Models.Rooms;
+using System.Linq;
 
 namespace Web.Controllers
 {
@@ -18,10 +19,27 @@ namespace Web.Controllers
         {
             roomService = _roomService;
         }
-        public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string search,int id = 1, int pageSize = 10)
         {
-            var model = new RoomIndexViewModel();
-            model.PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize);
+            if (!string.IsNullOrEmpty(search))
+            {
+                var searchResults = await roomService.GetSearchResults<RoomViewModel>(search);
+
+                if (searchResults.Any())
+                {
+                    return View(new RoomIndexViewModel
+                    {
+                        PagesCount = 1,
+                        CurrentPage = 1,
+                        Rooms = searchResults.ToList()
+                    });
+                }
+                ModelState.AddModelError("Found", "Room not found!");
+            }
+            var model = new RoomIndexViewModel
+            {
+                PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize)
+            };
             model.CurrentPage = model.CurrentPage <= 0 ? 1 : id;
             model.CurrentPage = model.CurrentPage > model.PagesCount ? model.PagesCount : model.CurrentPage;
             model.Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
@@ -75,16 +93,6 @@ namespace Web.Controllers
             }
 
             return RedirectToAction("Index", "Rooms");
-        }
-        public async Task<IActionResult> Details(string id)
-        {
-            var viewModel = await this.roomService.GetRoom<RoomViewModel>(id);
-            if (viewModel == null)
-            {
-                return this.NotFound();
-            }
-
-            return this.View(viewModel);
         }
 
         [Authorize]

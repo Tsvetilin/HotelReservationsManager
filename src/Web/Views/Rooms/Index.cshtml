@@ -1,65 +1,40 @@
-﻿@*@model Web.Models.ViewModels.RoomIndexViewModel
+﻿@model Web.Models.ViewModels.RoomIndexViewModel
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Rooms/Index.cshtml";
 }
+@if (Model.Rooms?.Any() ?? false)
+{
+    <ul class="list-inline text-dark">
 
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Index">Create New</a>
-</p>
-
-<table class="table">
-    @foreach (var room in Model.Rooms)
-    {
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => room.Capacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => room.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => room.IsTaken)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => room.AdultPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => room.ChildrenPrice)
-            </th>
-            
-            <th></th>
-        </tr>
-    </thead>
+        @foreach (var room in Model.Rooms)
+        {
+            <li class="pb-3">
+                <div class="d-flex">
+                    <div class="m-5 col-md-6 ml-4">
+                        <h3 class="text-dark font-weight-bold">@room.Number</h3>
+                        <h5 class="text-dark "> @room.Type.ToString()</h5>
+                        <p class="text-dark "> @room.AdultPrice</p>
+                        <p class="text-dark ">@room.ChildrenPrice</p>                       
+                        <p class="text-dark "> @room.IsTaken</p>
+                    </div>
+                    <div class="m-5 col-md-6 float-end">
+                        <form asp-controller="Room" asp-action="Details" asp-route-id="@room.Id" method="get">
+                            <input class="btn btn-info" type="submit" value="Info" />
+                        </form>
+                        <form asp-controller="Room" asp-action="Update" asp-route-id="@room.Id" method="get">
+                            <input class="btn btn-primary" type="submit" value="Change" />
+                        </form>
+                        <form asp-controller="Room" asp-action="Delete" asp-route-id="@room.Id"
+                              method="post">
+                            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Cancel" />
+                        </form>
+                    </div>
+                </div>
+            </li>
         }
-    }
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsTaken)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AdultPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChildrenPrice)
-            </td>           
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    </ul>
 }
-    </tbody>
-</table>*@
+else
+{
+    <h1>No rooms added yet</h1>
+}

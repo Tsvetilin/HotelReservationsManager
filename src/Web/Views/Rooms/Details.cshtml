@@ -1,4 +1,4 @@
-﻿@*@model Data.Models.Room
+﻿@model Web.Models.Rooms.RoomViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,6 +11,12 @@
     <h4>Room</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Capacity)
         </dt>
@@ -47,9 +53,15 @@
         <dd>
             @Html.DisplayFor(model => model.Number)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Reservations)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Reservations)
+        </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>*@
+</div>

@@ -55,12 +55,12 @@ namespace Services
         public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
         {
             var result = new List<T>();
-            var capacitResults = await GetAllByCapacity<T>(int.Parse(searchString));
+            var capacityResults = await GetAllByCapacity<T>(int.Parse(searchString));
             var typeResults = await GetAllByType<T>(((RoomType)Enum.Parse(typeof(RoomType), searchString)));
            
-            if (capacitResults != null)
+            if (capacityResults != null)
             {
-                result.AddRange(capacitResults);
+                result.AddRange(capacityResults);
             }
             if (typeResults != null)
             {
