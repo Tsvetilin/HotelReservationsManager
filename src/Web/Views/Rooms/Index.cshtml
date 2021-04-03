@@ -14,6 +14,14 @@
         <input class="btn btn-info" type="submit" value="Add room" />
     </form>
 }
+
+<div class="d-inline-flex w-100">
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Rooms" asp-action="Index" method="get">
+        <input class="form-control" name="search" placeholder="Filter by capacity or type" />
+        <input class="btn btn-primary" type="submit" value="Search for rooms" />
+    </form>
+</div>
 <hr />
 
 @if (Model?.Rooms?.Any() ?? false)
