@@ -1,22 +1,23 @@
 ﻿@model Web.Models.Rooms.RoomViewModel
+@using Microsoft.AspNetCore.Identity
+@using Data.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
 
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Rooms/Index.cshtml";
 }
 
-<h2>Details</h2>
+<h2>Room Details</h2>
 
 <div>
-    <h4>Room</h4>
+    <h4>Room №@Model.Number</h4>
+    <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get">
+        <input class="btn btn-success" type="submit" value="Reserve" />
+    </form>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Id)
-        </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.Capacity)
         </dt>
@@ -29,12 +30,7 @@
         <dd>
             @Html.DisplayFor(model => model.Type)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IsTaken)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IsTaken)
-        </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.AdultPrice)
         </dt>
@@ -47,21 +43,41 @@
         <dd>
             @Html.DisplayFor(model => model.ChildrenPrice)
         </dd>
+
+        @if (SignInManager.Context.User.IsInRole("Admin") || SignInManager.Context.User.IsInRole("Admin"))
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Reservations)
+            </dt>
+            <dd>
+                <ul>
+                    @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
+                    {
+                        <li>
+                            <p class="text-dark "> @res.Price</p>
+                            <p class="text-dark ">@res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+                            <p class="text-dark ">@res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+                            <p class="text-dark "> @res.Breakfast</p>
+                            <p class="text-dark "> @res.AllInclusive</p>
+                            <p class="text-dark "> @(res.Clients.Count+1) clients</p>
+                        </li>
+                    }
+                </ul>
+            </dd>
+        }
         <dt>
-            @Html.DisplayNameFor(model => model.Number)
+            @*TODOOOOO:  CURRENTLY TAKEN*@
+            @Html.DisplayNameFor(model => model.IsTaken)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Number)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Reservations)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Reservations)
+            @Html.DisplayFor(model => model.IsTaken)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> |
+    @if (SignInManager.Context.User.IsInRole("Admin") || SignInManager.Context.User.IsInRole("Admin"))
+    {
+        <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

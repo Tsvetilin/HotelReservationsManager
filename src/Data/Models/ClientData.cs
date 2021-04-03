@@ -14,5 +14,6 @@ namespace Data.Models
         public string Email { get; set; }
         public bool IsAdult { get; set; }
 
+        public virtual Reservation Reservation { get; set; }
     }
 }

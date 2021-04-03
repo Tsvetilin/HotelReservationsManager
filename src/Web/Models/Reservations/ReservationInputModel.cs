@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using Web.Models.Clients;
 using Web.Models.Rooms;
@@ -16,9 +17,13 @@ namespace Web.Models.Reservations
         public IList<ClientInputModel> ClientData { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime AccommodationDate { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime ReleaseDate { get; set; }
         public bool Breakfast { get; set; }
         public bool AllInclusive { get; set; }
@@ -47,11 +52,14 @@ namespace Web.Models.Reservations
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[");
-            foreach (var period in Reservations)
+            if (Reservations.Any())
             {
-                sb.Append($"{{start: new Date({period.AccommodationDate}), end: new Date({period.ReleaseDate})}},");
+                foreach (var period in Reservations)
+                {
+                    sb.Append($"{{start: new Date({period.AccommodationDate}), end: new Date({period.ReleaseDate})}},");
+                }
+                sb.Remove(sb.Length - 1, 1);
             }
-            sb.Remove(sb.Length - 1, 1);
             sb.Append("]");
             return sb.ToString();
         }

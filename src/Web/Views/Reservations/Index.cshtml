@@ -1,4 +1,11 @@
 ﻿@model Web.Models.Reservations.ReservationsIndexViewModel
+
+
+@using Microsoft.AspNetCore.Identity
+@using Data.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -6,7 +13,13 @@
 <div class="d-inline-flex w-100">
     <h1>My reservations</h1>
 </div>
-<hr/>
+<hr />
+@if (SignInManager.Context.User.IsInRole("Admin"))
+{
+    <form asp-controller="Reservations" asp-action="All" method="get">
+        <input class="btn btn-info" type="submit" value="All reservations" />
+    </form>
+}
 <br />
 @if (Model.Reservations?.Any() ?? false)
 {

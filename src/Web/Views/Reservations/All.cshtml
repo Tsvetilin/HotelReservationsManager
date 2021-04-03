@@ -10,7 +10,7 @@
 <div class="form-group">
     <div class="checkbox">
         <label>
-            <input id="past-dates" onchange="ChangeVisibil()" /> Show reservation with a past date
+            <input id="past-dates" onchange="ChangeVisibil()" type="checkbox" value="true" /> Show reservation with a past date
         </label>
     </div>
 </div>
@@ -27,7 +27,7 @@
                 past = "p-yes";
             }
 
-            <li class="pb-3 @past d-none">
+            <li class="pb-3 @past">
                 <div class="d-flex">
                     <div class="m-5 col-md-6 ml-4">
                         <h3 class="text-dark font-weight-bold">@reservation.RoomNumber</h3>

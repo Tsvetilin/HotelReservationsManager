@@ -1,5 +1,6 @@
 ﻿using Data.Enums;
 using System.Collections.Generic;
+using Web.Models.Reservations;
 
 namespace Web.Models.Rooms
 {
@@ -12,7 +13,7 @@ namespace Web.Models.Rooms
         public bool IsTaken { get; set; }
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
-        public IEnumerable<ReservationPeriod> Reservations {get;set;}
+        public IEnumerable<ReservationViewModel> Reservations {get;set;}
 
     }
 }

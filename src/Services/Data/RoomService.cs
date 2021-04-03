@@ -79,7 +79,7 @@ namespace Services
             }
         }
 
-        // TODO: Cancel reservations if 
+        // TODO: Cancel reservations if less Capacity than it was before & Send Email
         public async Task UpdateRoom(string id,Room room)
         {
             var roomToChange = await context.Rooms.FindAsync(id);
@@ -91,7 +91,7 @@ namespace Services
         }
         public async Task<T> GetRoom<T>(string id)
         {
-            return await this.context.Reservations.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
+            return await this.context.Rooms.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
         public int CountAllRooms()

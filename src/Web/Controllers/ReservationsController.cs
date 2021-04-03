@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Common;
+using Services.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace Web.Controllers
             this.userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(int id = 0, int elementsOnPage = 10)
+        public async Task<IActionResult> Index(int id = 1, int elementsOnPage = 10)
         {
             var user = await userManager.GetUserAsync(User);
             var reservations = await reservationService.GetReservationsForUser<ReservationViewModel>(user.Id);
@@ -132,8 +133,12 @@ namespace Web.Controllers
             {
                 return this.NotFound();
             }
-            reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
 
+            if (reservation.Reservations?.Any() ?? false)
+            {
+                reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+            }
+          
             var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
 
             return this.View(FillRoomData(reservation, room));
@@ -149,8 +154,12 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
-            reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+           var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+
+            if (reservation.Reservations?.Any() ?? false)
+            {
+                reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+            }
 
             var roomIsEmpty = !reservation.Reservations.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
@@ -201,13 +210,13 @@ namespace Web.Controllers
 
             await reservationService.DeleteReservation(id);
 
-            return this.View();
+            return this.RedirectToAction(nameof(Index));
         }
 
         private static ReservationInputModel FillRoomData(ReservationInputModel inputModel, RoomViewModel room)
         {
             inputModel.RoomId = room.Id;
-            inputModel.Reservations = room.Reservations;
+            inputModel.Reservations = room.Reservations.AsQueryable().ProjectTo<ReservationPeriod>().ToList();
             inputModel.RoomCapacity = room.Capacity;
             inputModel.AllInclusivePrice = 000;
             inputModel.RoomAdultPrice = room.AdultPrice;
@@ -219,7 +228,7 @@ namespace Web.Controllers
         }
 
         //[Authorize("Admin, Employee")]
-        public async Task<IActionResult> All(int id = 0, int elementsOnPage = 10)
+        public async Task<IActionResult> All(int id = 1, int elementsOnPage = 10)
         {
             var reservations = await reservationService.GetAll<ReservationViewModel>();
 

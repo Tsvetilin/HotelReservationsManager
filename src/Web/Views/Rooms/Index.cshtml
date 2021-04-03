@@ -1,8 +1,22 @@
 ﻿@model Web.Models.ViewModels.RoomIndexViewModel
+@using Microsoft.AspNetCore.Identity
+@using Data.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "Index";
 }
-@if (Model.Rooms?.Any() ?? false)
+<h1>Rooms</h1>
+
+@if (SignInManager.Context.User.IsInRole("Admin"))
+{
+    <form asp-controller="Rooms" asp-action="Create" method="get">
+        <input class="btn btn-info" type="submit" value="Add room" />
+    </form>
+}
+<hr />
+
+@if (Model?.Rooms?.Any() ?? false)
 {
     <ul class="list-inline text-dark">
 
@@ -14,20 +28,26 @@
                         <h3 class="text-dark font-weight-bold">@room.Number</h3>
                         <h5 class="text-dark "> @room.Type.ToString()</h5>
                         <p class="text-dark "> @room.AdultPrice</p>
-                        <p class="text-dark ">@room.ChildrenPrice</p>                       
+                        <p class="text-dark ">@room.ChildrenPrice</p>
                         <p class="text-dark "> @room.IsTaken</p>
                     </div>
                     <div class="m-5 col-md-6 float-end">
-                        <form asp-controller="Room" asp-action="Details" asp-route-id="@room.Id" method="get">
+                        <form asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" method="get">
                             <input class="btn btn-info" type="submit" value="Info" />
                         </form>
-                        <form asp-controller="Room" asp-action="Update" asp-route-id="@room.Id" method="get">
-                            <input class="btn btn-primary" type="submit" value="Change" />
+                        <form asp-controller="Reservations" asp-action="Create" asp-route-id="@room.Id" method="get">
+                            <input class="btn btn-success" type="submit" value="Reserve" />
                         </form>
-                        <form asp-controller="Room" asp-action="Delete" asp-route-id="@room.Id"
-                              method="post">
-                            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Cancel" />
-                        </form>
+                        @if (SignInManager.Context.User.IsInRole("Admin"))
+                        {
+                            <form asp-controller="Rooms" asp-action="Update" asp-route-id="@room.Id" method="get">
+                                <input class="btn btn-primary" type="submit" value="Change" />
+                            </form>
+                            <form asp-controller="Rooms" asp-action="Delete" asp-route-id="@room.Id"
+                                  method="post">
+                                <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Delete" />
+                            </form>
+                        }
                     </div>
                 </div>
             </li>

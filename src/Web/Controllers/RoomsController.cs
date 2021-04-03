@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Web.Models.InputModels;
 using Services;
 using Data.Models;
 using Web.Models.ViewModels;
@@ -40,12 +39,29 @@ namespace Web.Controllers
             {
                 PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize)
             };
+
             model.CurrentPage = model.CurrentPage <= 0 ? 1 : id;
             model.CurrentPage = model.CurrentPage > model.PagesCount ? model.PagesCount : model.CurrentPage;
             model.Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
 
             return View(model);
         }
+
+        public IActionResult Create()
+        {
+            return this.View();
+        }
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var room = await roomService.GetRoom<RoomViewModel>(id);
+            if (room != null)
+            {
+                return this.View(room);
+            }
+            return this.RedirectToAction("Index", "Rooms");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(RoomInputModel createModel)
         {
@@ -56,7 +72,8 @@ namespace Web.Controllers
                     Capacity = createModel.Capacity,
                     AdultPrice = createModel.AdultPrice,
                     ChildrenPrice = createModel.ChildrenPrice,
-                    Type = createModel.Type
+                    Type = createModel.Type,
+                    Number = createModel.Number,
                 };
 
                 await roomService.AddRoom(room);
@@ -71,13 +88,14 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            var room = await roomService.GetRoom<RoomInputModel>(id);
+            var room = await roomService.GetRoom<RoomViewModel>(id);
             if (room != null)
             {
                 await roomService.DeleteRoom(id);
             }
             return this.RedirectToAction("Index", "Rooms");
         }
+
         [Authorize]
         public async Task<IActionResult> Update(string id)
         {
@@ -86,13 +104,13 @@ namespace Web.Controllers
                 return NotFound();
             }
 
-            var room = await roomService.GetRoom<RoomViewModel>(id);
+            var room = await roomService.GetRoom<RoomInputModel>(id);
             if (room == null)
             {
                 return NotFound();
             }
 
-            return RedirectToAction("Index", "Rooms");
+            return this.View(room);
         }
 
         [Authorize]
@@ -113,13 +131,14 @@ namespace Web.Controllers
                     Capacity = input.Capacity,
                     AdultPrice = input.AdultPrice,
                     ChildrenPrice = input.ChildrenPrice,
-                    Type = input.Type
-
+                    Type = input.Type,
+                    Number = input.Number,
                 };
 
                 await roomService.UpdateRoom(id, room);
                 return RedirectToAction("Index", "Rooms");
             }
+
             return this.View(input);
         }
     }

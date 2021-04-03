@@ -5,72 +5,180 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Update a Reservation for room:</h2>
+<h2>Make a Reservation for room:</h2>
 <hr />
 <h4>Room data:</h4>
-<p>@Model.RoomType.ToString();</p>
+<p>@Model.RoomType.ToString()</p>
 <p>@Model.RoomCapacity</p>
 <p>@Model.RoomAdultPrice</p>
 <p>@Model.RoomChildrenPrice</p>
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="AccommodationDate" class="control-label"></label>
-                <input asp-for="AccommodationDate" class="form-control" />
-                <span asp-validation-for="AccommodationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReleaseDate" class="control-label"></label>
-                <input asp-for="ReleaseDate" class="form-control" />
-                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="AllInclusive" /> @Html.DisplayNameFor(model => model.AllInclusive)
-                    </label>
+    <div class="col-md-12">
+        <form asp-action="Update" method="post">
+            <div class="col-md-4 mx-auto">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="AccommodationDate" class="control-label"></label>
+                    <input asp-for="AccommodationDate" class="form-control" min="@DateTime.Today.ToString("d")" id="acc-date" onchange="CheckDates()" />
+                    <span asp-validation-for="AccommodationDate" class="text-danger"></span>
                 </div>
-                <small>Note: ALlInclusive price: @Model.AllInclusivePrice</small>
-            </div>
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="Breakfast" /> @Html.DisplayNameFor(model => model.Breakfast)
-                    </label>
+                <div class="form-group">
+                    <label asp-for="ReleaseDate" class="control-label"></label>
+                    <input asp-for="ReleaseDate" class="form-control" min="@DateTime.Today.ToString("d")" id="rel-date" onchange="CheckDates()" />
+                    <span asp-validation-for="ReleaseDate" class="text-danger"></span>
                 </div>
-                <small>Note: Breakfast price: @Model.BreakfastPrice></small>
+                <div class="form-group">
+                    <span class="text-danger d-none" id="date-inval">Invalid date!</span>
+                </div>
+                <div class="form-group">
+                    <span class="text-danger d-none" id="date-error">The room is already reserved in that period.</span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="AllInclusive" id="all-incl" /> @Html.DisplayNameFor(model => model.AllInclusive)
+                        </label>
+                    </div>
+                    <small><strong>Note:</strong> AllInclusive price: @Model.AllInclusivePrice</small>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="Breakfast" id="breakfast" /> @Html.DisplayNameFor(model => model.Breakfast)
+                        </label>
+                    </div>
+                    <small><strong>Note:</strong> Breakfast price: @Model.BreakfastPrice &diams; Breakfast included in allInclusive</small>
+                </div>
             </div>
-            <div>
+            <div class="col-md-12">
                 <h5>Clients data:</h5>
                 <small>Leave a row blank if necessary</small>
-                @for (int i = 0; i < Model.RoomCapacity; i++)
+                @for (int i = 0; i < Model.RoomCapacity - 1; i++)
                 {
-                    <div>
-                        <div class="form-group">
+                    var id = i.ToString();
+                    <div class="d-flex justify-content-around border-dark">
+                        <div class="form-group col-md-3 col-12">
                             <label asp-for="ClientData[i].FullName" class="control-label"></label>
-                            <input asp-for="ClientData[i].FullName" class="form-control" />
+                            <input asp-for="ClientData[i].FullName" class="form-control client-@id" />
                             <span asp-validation-for="ClientData[i].FullName" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-md-3 col-12">
                             <label asp-for="ClientData[i].Email" class="control-label"></label>
-                            <input asp-for="ClientData[i].Email" class="form-control" />
+                            <input asp-for="ClientData[i].Email" class="form-control client-@id" />
                             <span asp-validation-for="ClientData[i].Email" class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label asp-for="ClientData[i].IsAdult" class="control-label"></label>
-                            <input asp-for="ClientData[i].IsAdult" class="form-control" />
-                            <span asp-validation-for="ClientData[i].IsAdult" class="text-danger"></span>
+                        <div class="form-group col-md-3 col-12">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="ClientData[i].IsAdult" id="client-@id" /> @Html.DisplayNameFor(model => model.ClientData[i].IsAdult)
+                                </label>
+                            </div>
                         </div>
                     </div>
                 }
             </div>
+            <div class="text-dark">
+                Total price: <span id="price">@Model.Price</span>
+            </div>
             <div class="form-group">
-                <input type="submit" value="Update" class="btn btn-default" />
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
+
+@section Scripts{
+    <script>
+        var childPrice = @Model.RoomChildrenPrice;
+        var adultPrice = @Model.RoomAdultPrice;
+        var allInclusicePrice =@Model.AllInclusivePrice;
+        var breakfastPrice = @Model.BreakfastPrice;
+
+        var totalPrice = 0;
+
+        var isValidDate = false;
+
+        document.body.addEventListener('keydown', this.handleInteraction);
+        document.body.addEventListener('click', this.handleInteraction);
+        document.body.addEventListener('scroll', this.handleInteraction);
+
+
+        function handleInteraction() {
+            totalPrice = 0;
+            if (document.getElementById("all-incl").checked) {
+                totalPrice += allInclusicePrice;
+            }
+            else if (document.getElementById("breakfast").checked) {
+                totalPrice += breakfastPrice;
+            }
+            CheckClients();
+
+            var pr = totalPrice;
+            if (isValidDate) {
+                var days = Math.round((new Date(document.getElementById("rel-date").value) - new Date(document.getElementById("acc-date").value)) / (1000 * 60 * 60 * 24));
+                console.log(days);
+                pr = pr * days;
+            }
+            document.getElementById("price").innerHTML = pr;
+        }
+
+        function CheckClients() {
+            var indecies = [@string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1))];
+            indecies.forEach(index => {
+                var areAllFilled = true;
+                var allFieldsForPerson = document.getElementsByClassName(`client-${index}`);
+                for (let node of allFieldsForPerson){
+                    if (!(node && node.value)) {
+                        areAllFilled = false;
+                        break;
+                    }
+                }
+
+                if (areAllFilled ) {
+                    if (document.getElementById(`client-${index}`).checked) {
+                        totalPrice += adultPrice;
+                    }
+                    else {
+                        totalPrice += childPrice;
+                    }
+                }
+            });
+        }
+
+        var periods = @Model.GetPeriods();
+
+        function CheckDates() {
+            isValidDate = false;
+            var accDate = document.getElementById("acc-date");
+            var relDate = document.getElementById("rel-date");
+            var isPresentValid = false;
+            if (new Date(accDate.value) < new Date() || new Date(relDate.value) < new Date() || new Date(relDate.value) <= new Date(accDate.value)) {
+                document.getElementById("date-inval").style = "display:block!important";
+            }
+            else {
+                document.getElementById("date-inval").style = "display:none!important";
+                isPresentValid = true;
+            }
+            if (accDate && accDate.value && relDate && relDate.value && isPresentValid) {
+                var isTaken = false;
+                periods.forEach(period => {
+                    if ((period.start > new Date(accDate.value) && period.accDate < new Date(relDate.value)) ||
+                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value))){
+                        isTaken = true;
+                    }
+                });
+                if (isTaken) {
+                    document.getElementById("date-error").style = "display:block!important";
+                }
+                else {
+                    document.getElementById("date-error").style = "display:none!important";
+                    isValidDate = true;
+                }
+            }
+        }
+
+    </script>
+}

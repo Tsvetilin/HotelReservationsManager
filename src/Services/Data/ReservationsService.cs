@@ -110,6 +110,7 @@ namespace Services
             var reservation = await this.dbContext.Reservations.FindAsync(id);
             if (reservation != null)
             {
+                this.dbContext.ClientData.RemoveRange(this.dbContext.ClientData.Where(x=>x.Reservation.Id==reservation.Id));
                 this.dbContext.Reservations.Remove(reservation);
                 await this.dbContext.SaveChangesAsync();
             }

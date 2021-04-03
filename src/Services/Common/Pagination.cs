@@ -11,13 +11,13 @@ namespace Services.Common
     {
         public static IEnumerable<T> GetPageItems<T>(this IEnumerable<T> items, int page, int elementsOnPage)
         {
-            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ProjectTo<T>().ToList();
+            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ToList();
         }
 
         public static async Task<IEnumerable<T>> GetPageItems<T>(this Task<IEnumerable<T>> itemsTask, int page, int elementsOnPage)
         {
             var items = await itemsTask;
-            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ProjectTo<T>().ToList();
+            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ToList();
         }
     }
 }
