@@ -127,10 +127,13 @@ namespace Web.Controllers
         public async Task<IActionResult> Update(string id)
         {
             var employee = await userService.GetEmployeeAsync<EmployeeInputModel>(id);
+            var userData = await userService.GetUserAsync<EmployeeInputModel>(id);
 
-            if (employee != null)
+            if (userData != null)
             {
-                return this.View(employee);
+                userData.UCN = employee.UCN;
+                userData.SecondName = employee.SecondName;
+                return this.View(userData);
             }
 
             return RedirectToAction("Index", "Users");

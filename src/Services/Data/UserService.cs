@@ -109,6 +109,10 @@ namespace Services
                 context.Entry(userInContext).CurrentValues.SetValues(user);
                 await context.SaveChangesAsync();
             }
+            else
+            {
+                await AddAsync(user);
+            }
         }
 
         public async Task DeleteAsync(string id)

@@ -19,7 +19,7 @@
 <br />
 
 <ul class="list-inline text-dark">
-    @foreach (var userCard in Model.Users.Where(x => string.IsNullOrWhiteSpace(x.EmployeeDataUserId)))
+    @foreach (var userCard in Model.Users.Where(x => !(x.EmployeeDataIsActive??false)))
     {
         <li class="pb-3">
             <a asp-controller="Users" asp-action="Promote" asp-route-id="@userCard.Id"
