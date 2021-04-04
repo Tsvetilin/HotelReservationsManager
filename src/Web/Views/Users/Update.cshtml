@@ -6,7 +6,7 @@
 }
 
 <h1 class="text-center">Update employee</h1>
-<hr />
+
 
 <div class="d-flex justify-content-center">
     <div class="col-md-4">
@@ -39,11 +39,6 @@
                 <span asp-validation-for="@Model.UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.Password"></label>
-                <input type="password" asp-for="@Model.Password" class="form-control" />
-                <span asp-validation-for="@Model.Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="@Model.Email"></label>
                 <input asp-for="@Model.Email" class="form-control" />
                 <span asp-validation-for="@Model.Email" class="text-danger"></span>
@@ -54,17 +49,20 @@
                 <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.IsAdult"></label>
-                <input asp-for="@Model.IsAdult" class="form-control" />
-                <span asp-validation-for="@Model.IsAdult" class="text-danger"></span>
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="@Model.IsAdult" /> @Html.DisplayNameFor(model => model.IsAdult)
+                    </label>
+                </div>
             </div>
+            <input hidden asp-for="@Model.Password"  class="form-control" value="password" />
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-success submit-but ">Add Employee</button>
+                <button type="submit" class="btn btn-success submit-but ">Update Employee</button>
             </div>
         </form>
     </div>
 </div>
 
-@section Scripts{ 
-@{ await Html.RenderPartialAsync("_ValidationScriptsParial.cshtml");}
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

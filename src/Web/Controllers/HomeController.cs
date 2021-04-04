@@ -1,18 +1,42 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Web.Models;
+using Web.Models.Rooms;
+using Web.Models.ViewModels;
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController()
+        public IRoomService roomService { get; }
+
+        public HomeController(IRoomService roomService)
         {
+            this.roomService = roomService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
         {
-            return View();
+            int pageCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize);
+            if (id > pageCount || id < 1)
+            {
+                id = 1;
+            }
+
+            RoomIndexViewModel viewModel = new()
+            {
+                PagesCount = pageCount,
+                CurrentPage = id,
+                Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(id, pageSize),
+                Controller = "Home",
+                Action = nameof(Index),
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

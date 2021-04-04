@@ -35,6 +35,8 @@ namespace Web.Models
             CreateMap<ApplicationUser, EmployeeDataViewModel>();
             CreateMap<ApplicationUser, EmployeeInputModel>();
             CreateMap<EmployeeData, ApplicationUser>();
+            CreateMap<EmployeeInputModel, EmployeeData>();
+            CreateMap<EmployeeInputModel, ApplicationUser>();
 
             //Rooms
             CreateMap<Room, RoomViewModel>();

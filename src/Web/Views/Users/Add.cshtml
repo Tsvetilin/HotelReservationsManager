@@ -54,9 +54,11 @@
                 <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.IsAdult"></label>
-                <input asp-for="@Model.IsAdult" class="form-control" />
-                <span asp-validation-for="@Model.IsAdult" class="text-danger"></span>
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="@Model.IsAdult"/> @Html.DisplayNameFor(model => model.IsAdult)
+                    </label>
+                </div>
             </div>
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary submit-but ">Add Employee</button>
