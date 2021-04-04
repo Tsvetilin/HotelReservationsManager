@@ -129,7 +129,18 @@
         
         function CheckClients() {
             var total = @Model.RoomAdultPrice;
-            var indecies = [@Html.Raw(string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1)))];
+            @{
+                var res = "";
+                if (Model.RoomCapacity - 1 <= 0)
+                {
+                    res = "0";
+                }
+                else
+                {
+                    res = string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1));
+                }
+            }
+            var indecies = [@Html.Raw(res)];
             indecies.forEach(index => {
                 var areAllFilled = true;
                 var allFieldsForPerson = document.getElementsByClassName(`client-${index}`);

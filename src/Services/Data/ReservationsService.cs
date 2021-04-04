@@ -2,6 +2,7 @@
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
+using Services.Data;
 using Services.Mapping;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace Services
     public class ReservationsService : IReservationService
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly ISettingService settingService;
 
-        public ReservationsService(ApplicationDbContext dbContext)
+        public ReservationsService(ApplicationDbContext dbContext, ISettingService settingService)
         {
             this.dbContext = dbContext;
+            this.settingService = settingService;
         }
 
         //TODO: allincl+breakf
@@ -36,11 +39,11 @@ namespace Services
 
             if (allInclusive)
             {
-                price += 0000;
+                price +=  double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
             }
             else if (breakfast)
             {
-                price += 000;
+                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
             }
 
             var reservation = new Reservation
@@ -80,11 +83,11 @@ namespace Services
 
             if (allInclusive)
             {
-                price += 0000;
+                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
             }
             else if (breakfast)
             {
-                price += 000;
+                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
             }
 
             var newReservation = new Reservation
