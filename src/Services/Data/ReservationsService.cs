@@ -70,6 +70,8 @@ namespace Services
                                             IEnumerable<ClientData> clients,
                                             ApplicationUser user)
         {
+            var reservation = await dbContext.Reservations.FindAsync(id);
+
             var room = await dbContext.Rooms.FindAsync(roomId);
 
             var price =
@@ -85,7 +87,7 @@ namespace Services
                 price += 000;
             }
 
-            var reservation = new Reservation
+            var newReservation = new Reservation
             {
                 Id = id,
                 AccommodationDate = accomodationDate,
@@ -98,7 +100,7 @@ namespace Services
                 User = user
             };
 
-            this.dbContext.Reservations.Update(reservation);
+            dbContext.Entry(reservation).CurrentValues.SetValues(newReservation);
             await this.dbContext.SaveChangesAsync();
         }
 
