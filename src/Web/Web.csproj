@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <Compile Remove="Data\**" />
+    <Compile Remove="wwwroot\images\**" />
     <Content Remove="Data\**" />
+    <Content Remove="wwwroot\images\**" />
     <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="wwwroot\images\**" />
     <None Remove="Data\**" />
+    <None Remove="wwwroot\images\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,9 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
@@ -49,5 +51,11 @@
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\lib\jquery\dist\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Shared\_PaginationPartial.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

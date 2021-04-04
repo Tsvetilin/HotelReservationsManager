@@ -13,6 +13,7 @@
 <div class="d-inline-flex w-100">
     <h1>My reservations</h1>
 </div>
+
 <hr />
 @if (SignInManager.Context.User.IsInRole("Admin"))
 {
@@ -20,6 +21,7 @@
         <input class="btn btn-info" type="submit" value="All reservations" />
     </form>
 }
+
 <br />
 @if (Model.Reservations?.Any() ?? false)
 {
@@ -59,3 +61,5 @@ else
 {
     <h1>No reservations made yet</h1>
 }
+
+<partial name="_PaginationPartial" model="Model" />

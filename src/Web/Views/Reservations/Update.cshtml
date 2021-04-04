@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Make a Reservation for room:</h2>
+<h2>Update a Reservation for room:</h2>
 <hr />
 <h4>Room data:</h4>
 <p>@Model.RoomType.ToString()</p>
@@ -16,17 +16,17 @@
 <hr />
 <div class="row">
     <div class="col-md-12">
-        <form asp-action="Update" method="post">
+        <form asp-action="Update">
             <div class="col-md-4 mx-auto">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="AccommodationDate" class="control-label"></label>
-                    <input asp-for="AccommodationDate" class="form-control" min="@DateTime.Today.ToString("d")" id="acc-date" onchange="CheckDates()" />
+                    <input asp-for="AccommodationDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" id="acc-date" onchange="CheckDates()" />
                     <span asp-validation-for="AccommodationDate" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="ReleaseDate" class="control-label"></label>
-                    <input asp-for="ReleaseDate" class="form-control" min="@DateTime.Today.ToString("d")" id="rel-date" onchange="CheckDates()" />
+                    <input asp-for="ReleaseDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" id="rel-date" onchange="CheckDates()" />
                     <span asp-validation-for="ReleaseDate" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -60,19 +60,19 @@
                     var id = i.ToString();
                     <div class="d-flex justify-content-around border-dark">
                         <div class="form-group col-md-3 col-12">
-                            <label asp-for="ClientData[i].FullName" class="control-label"></label>
-                            <input asp-for="ClientData[i].FullName" class="form-control client-@id" />
-                            <span asp-validation-for="ClientData[i].FullName" class="text-danger"></span>
+                            <label asp-for="Clients[i].FullName" class="control-label"></label>
+                            <input asp-for="Clients[i].FullName" class="form-control client-@id" />
+                            <span asp-validation-for="Clients[i].FullName" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-3 col-12">
-                            <label asp-for="ClientData[i].Email" class="control-label"></label>
-                            <input asp-for="ClientData[i].Email" class="form-control client-@id" />
-                            <span asp-validation-for="ClientData[i].Email" class="text-danger"></span>
+                            <label asp-for="Clients[i].Email" class="control-label"></label>
+                            <input asp-for="Clients[i].Email" class="form-control client-@id" />
+                            <span asp-validation-for="Clients[i].Email" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-3 col-12">
                             <div class="checkbox">
                                 <label>
-                                    <input asp-for="ClientData[i].IsAdult" id="client-@id" /> @Html.DisplayNameFor(model => model.ClientData[i].IsAdult)
+                                    <input asp-for="Clients[i].IsAdult" id="client-@id" /> @Html.DisplayNameFor(model => model.Clients[i].IsAdult)
                                 </label>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                 Total price: <span id="price">@Model.Price</span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Update" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -91,13 +91,15 @@
 
 
 @section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         var childPrice = @Model.RoomChildrenPrice;
         var adultPrice = @Model.RoomAdultPrice;
         var allInclusicePrice =@Model.AllInclusivePrice;
         var breakfastPrice = @Model.BreakfastPrice;
 
-        var totalPrice = 0;
+        var totalPrice = @Model.RoomAdultPrice;
 
         var isValidDate = false;
 
@@ -108,25 +110,26 @@
 
         function handleInteraction() {
             totalPrice = 0;
+            CheckClients();
             if (document.getElementById("all-incl").checked) {
                 totalPrice += allInclusicePrice;
             }
             else if (document.getElementById("breakfast").checked) {
                 totalPrice += breakfastPrice;
             }
-            CheckClients();
 
             var pr = totalPrice;
             if (isValidDate) {
                 var days = Math.round((new Date(document.getElementById("rel-date").value) - new Date(document.getElementById("acc-date").value)) / (1000 * 60 * 60 * 24));
-                console.log(days);
+                console.log("days: ",days);
                 pr = pr * days;
             }
             document.getElementById("price").innerHTML = pr;
         }
 
         function CheckClients() {
-            var indecies = [@string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1))];
+            var total = @Model.RoomAdultPrice;
+            var indecies = [@Html.Raw(string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1)))];
             indecies.forEach(index => {
                 var areAllFilled = true;
                 var allFieldsForPerson = document.getElementsByClassName(`client-${index}`);
@@ -139,16 +142,17 @@
 
                 if (areAllFilled ) {
                     if (document.getElementById(`client-${index}`).checked) {
-                        totalPrice += adultPrice;
+                        total += adultPrice;
                     }
                     else {
-                        totalPrice += childPrice;
+                        total += childPrice;
                     }
                 }
             });
+            totalPrice = total;
         }
 
-        var periods = @Model.GetPeriods();
+        var periods = @Html.Raw(Model.GetPeriods());
 
         function CheckDates() {
             isValidDate = false;
@@ -157,24 +161,31 @@
             var isPresentValid = false;
             if (new Date(accDate.value) < new Date() || new Date(relDate.value) < new Date() || new Date(relDate.value) <= new Date(accDate.value)) {
                 document.getElementById("date-inval").style = "display:block!important";
+                console.log("date invalid")
             }
             else {
                 document.getElementById("date-inval").style = "display:none!important";
+                console.log("date valid")
                 isPresentValid = true;
             }
             if (accDate && accDate.value && relDate && relDate.value && isPresentValid) {
                 var isTaken = false;
                 periods.forEach(period => {
-                    if ((period.start > new Date(accDate.value) && period.accDate < new Date(relDate.value)) ||
+                    console.log(period.start, period.end, new Date(accDate.value), new Date(relDate.value));
+                    if ((period.start > new Date(accDate.value) && period.start < new Date(relDate.value)) ||
                         (period.end > new Date(accDate.value) && period.end < new Date(relDate.value))){
                         isTaken = true;
                     }
                 });
                 if (isTaken) {
                     document.getElementById("date-error").style = "display:block!important";
+                    console.log("date taken")
+
                 }
                 else {
                     document.getElementById("date-error").style = "display:none!important";
+                    console.log("date free")
+
                     isValidDate = true;
                 }
             }

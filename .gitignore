@@ -351,6 +351,8 @@ MigrationBackup/
 
 # Custom ignores
 **/wwwroot/lib
+**/wwwroot/img
+**/wwwroot/images
 **/appsettings.Production.json
 **/appsettings.Development.json
 **/sitemap.xml

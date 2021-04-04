@@ -14,7 +14,7 @@ namespace Web.Models.Reservations
     {
         // Should add breakfast and all inclusive prices as well as dynamic price calculation
         public string Id { get; set; }
-        public IList<ClientInputModel> ClientData { get; set; }
+        public IList<ClientInputModel> Clients { get; set; }
 
         [Required]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -25,25 +25,36 @@ namespace Web.Models.Reservations
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime ReleaseDate { get; set; }
+
         public bool Breakfast { get; set; }
+
         public bool AllInclusive { get; set; }
+
         //should be passed down
         [BindNever]
         public double BreakfastPrice { get; set; }
+
         [BindNever]
         public double AllInclusivePrice { get; set; }
+
         [BindNever]
         public double Price { get; set; }
+
         [BindNever]
         public string RoomId { get; set; }
+
         [BindNever]
         public IEnumerable<ReservationPeriod> Reservations { get; set; }
+
         [BindNever]
         public int RoomCapacity { get; set; }
+
         [BindNever]
         public RoomType RoomType { get; set; }
+
         [BindNever]
         public double RoomAdultPrice { get; set; }
+
         [BindNever]
         public double RoomChildrenPrice { get; set; }
         public string UserId { get; set; }
@@ -56,7 +67,7 @@ namespace Web.Models.Reservations
             {
                 foreach (var period in Reservations)
                 {
-                    sb.Append($"{{start: new Date({period.AccommodationDate}), end: new Date({period.ReleaseDate})}},");
+                    sb.Append($@"{{start: new Date(""{period.AccommodationDate.ToString("yyyy-MM-dd")}""), end: new Date(""{period.ReleaseDate.ToString("yyyy-MM-dd")}"")}},");
                 }
                 sb.Remove(sb.Length - 1, 1);
             }

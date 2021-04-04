@@ -12,18 +12,19 @@ using Web.Models.ViewModels;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly IUserService userService;
         private readonly UserManager<ApplicationUser> userManager;
-        private const int usersOnPage = 10;
+
         public UsersController(IUserService userService,
                                UserManager<ApplicationUser> userManager)
         {
             this.userService = userService;
             this.userManager = userManager;
         }
-        public async Task<IActionResult> Index(int id = 1, string search = "")
+        public async Task<IActionResult> Index(int id = 1, string search = "", int pageSize=10)
         {
             if (!string.IsNullOrEmpty(search))
             {
@@ -35,29 +36,32 @@ namespace Web.Controllers
                     {
                         PagesCount = 1,
                         CurrentPage = 1,
-                        Employees = searchResult.ToList()
+                        Employees = searchResult.ToList(),
+                        Controller = "Users",
+                        Action = nameof(Index),
                     });
                 }
                 ModelState.AddModelError("Found", "User not found!");
             }
 
-            int pageCount = (int)Math.Ceiling((double)userService.CountAllEmployees() / usersOnPage);
+            int pageCount = (int)Math.Ceiling((double)userService.CountAllEmployees() / pageSize);
             if (id > pageCount || id < 1)
             {
                 id = 1;
             }
-            var employees = await userService.GetEmployeePageItems<EmployeeDataViewModel>(id, usersOnPage);
+            var employees = await userService.GetEmployeePageItems<EmployeeDataViewModel>(id, pageSize);
             EmployeesIndexViewModel viewModel = new()
             {
                 PagesCount = pageCount,
                 CurrentPage = id,
                 Employees = employees.ToList(),
+                Controller = "Users",
+                Action = nameof(Index),
             };
 
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Add()
         {
             var user = await userManager.GetUserAsync(User);
@@ -68,11 +72,10 @@ namespace Web.Controllers
             return this.View();
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Add(EmployeeInputModel input)
         {
-            if (userService.IsAlreadyAdded(input.UserEmail))
+            if (userService.IsAlreadyAdded(input.Email))
             {
                 ModelState.AddModelError("Added", "User already added!");
             }
@@ -84,17 +87,27 @@ namespace Web.Controllers
 
             var appUser = new ApplicationUser
             {
-                UserName = input.UserUserName,
-                IsAdult = input.UserIsAdult,
-                Email = input.UserEmail,
-                FirstName = input.UserFirstName,
-                LastName = input.UserLastName,
-                PhoneNumber = input.UserPhoneNumber,
+                UserName = input.UserName,
+                IsAdult = input.IsAdult,
+                Email = input.Email,
+                FirstName = input.FirstName,
+                LastName = input.LastName,
+                PhoneNumber = input.PhoneNumber,
                 SecurityStamp = DateTime.UtcNow.Ticks.ToString()
             };
 
-            await userManager.CreateAsync(appUser, input.UserPassword);
-            await userManager.AddToRoleAsync(appUser, "Employee");
+            var res = await userManager.CreateAsync(appUser, input.Password);
+            if (res.Errors?.Any()??false)
+            {
+                ModelState.AddModelError("General", string.Join("; ", res.Errors.Select(x => x.Description)));
+                return this.View(input);
+            }
+            res = await userManager.AddToRoleAsync(appUser, "Employee");
+            if (res.Errors?.Any() ?? false)
+            {
+                ModelState.AddModelError(nameof(input.Password), string.Join("; ", res.Errors.Select(x=>x.Description)));
+                return this.View(input);
+            }
 
             var employee = new EmployeeData
             {
@@ -111,7 +124,6 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Update(string id)
         {
             var employee = await userService.GetEmployeeAsync<EmployeeInputModel>(id);
@@ -124,7 +136,6 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
@@ -136,7 +147,9 @@ namespace Web.Controllers
             }
 
             var data = MappingConfig.Instance.Map<EmployeeData>(input);
+
             var appUserData = MappingConfig.Instance.Map<ApplicationUser>(input);
+
             data.UserId = employee.UserId;
 
             await userService.UpdateAsync(data);
@@ -145,7 +158,6 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -162,13 +174,11 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        //All users or without employees?
-        [Authorize(Roles = "Employee, Admin")]
-        public async Task<IActionResult> All(int id = 1, string search = "")
+        public async Task<IActionResult> All(int id = 1, string search = "",int pageSize=10)
         {
             if (!string.IsNullOrEmpty(search))
             {
-                var searchResult = await userService.GetUsersSearchResults<ApplicationUser>(search);
+                var searchResult = await userService.GetUsersSearchResults<UserDataViewModel>(search);
 
                 if (searchResult.Any())
                 {
@@ -176,44 +186,36 @@ namespace Web.Controllers
                     {
                         PagesCount = 1,
                         CurrentPage = 1,
-                        Users = searchResult.ToList()
+                        Users = searchResult.ToList(),
+                        Controller = "Users",
+                        Action = nameof(All),
                     });
                 }
                 ModelState.AddModelError("Found", "User not found!");
             }
 
-            int pageCount = (int)Math.Ceiling((double)userService.CountAllUsers() / usersOnPage);
+            int pageCount = (int)Math.Ceiling((double)userService.CountAllUsers() / pageSize);
             if (id > pageCount || id < 1)
             {
                 id = 1;
             }
-            var users = await userService.GetUserPageItems<ApplicationUser>(id, usersOnPage);
+            var users = await userService.GetUserPageItems<UserDataViewModel>(id, pageSize);
             UserIndexViewModel viewModel = new()
             {
                 PagesCount = pageCount,
                 CurrentPage = id,
                 Users = users.ToList(),
+                Controller = "Users",
+                Action = nameof(Index),
             };
 
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Promote(string id)
         {
-            var userContext = await userService.GetUserAsync<ApplicationUser>(id);
+            var user = await userService.GetUserAsync<EmployeeInputModel>(id);
             
-            var user = new EmployeeInputModel
-             {
-                 UserEmail = userContext.Email,
-                 UserFirstName = userContext.FirstName,
-                 UserIsAdult = userContext.IsAdult,
-                 UserLastName = userContext.LastName,
-                 UserPassword = userContext.PasswordHash,
-                 UserPhoneNumber = userContext.PhoneNumber,
-                 UserUserName = userContext.UserName
-             };
-
             if (user != null)
             {
                 return this.View(user);
@@ -222,7 +224,6 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
         public async Task<IActionResult> Promote(EmployeeInputModel input, string id)
         {
@@ -241,10 +242,11 @@ namespace Web.Controllers
                 SecondName = input.SecondName,
                 IsActive = true,
                 DateOfAppointment = DateTime.UtcNow,
-                User = appUser 
+                User = appUser,
+                DateOfResignation=null,
             };
 
-            await userService.AddAsync(employee);
+            await userService.UpdateAsync(employee);
 
             return RedirectToAction("Index", "Users");
         }

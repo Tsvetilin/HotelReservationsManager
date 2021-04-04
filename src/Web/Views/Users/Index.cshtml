@@ -14,6 +14,10 @@
         <input class="form-control" name="Search" placeholder="Employee name or email" />
         <input class="btn btn-primary" type="submit" value="Try Find Employee" />
     </form>
+    <form class="d-inline-flex col-md-4 m-auto"
+          asp-controller="Users" asp-action="Index" method="get">
+        <input class="btn btn-primary" type="submit" value="Show All" />
+    </form>
     @if (SignInManager.Context.User.IsInRole("Admin"))
     {
         <form asp-controller="Users" asp-action="All" method="get">
@@ -61,3 +65,4 @@
         </li>
     }
 </ul>
+<partial name="_PaginationPartial" model="Model"/>

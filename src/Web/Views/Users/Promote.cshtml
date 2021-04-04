@@ -14,9 +14,9 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="@Model.UserFirstName"></label>
-                <input readonly asp-for="@Model.UserFirstName" class="form-control" />
-                <span asp-validation-for="@Model.UserFirstName" class="text-danger"></span>
+                <label asp-for="@Model.FirstName"></label>
+                <input readonly asp-for="@Model.FirstName" class="form-control" />
+                <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.SecondName"></label>
@@ -24,9 +24,9 @@
                 <span asp-validation-for="@Model.SecondName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserLastName"></label>
-                <input readonly asp-for="@Model.UserLastName" class="form-control" />
-                <span asp-validation-for="@Model.UserLastName" class="text-danger"></span>
+                <label asp-for="@Model.LastName"></label>
+                <input readonly asp-for="@Model.LastName" class="form-control" />
+                <span asp-validation-for="@Model.LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.UCN"></label>
@@ -35,29 +35,33 @@
                 <small class="text-dark">Note: Please enter valid UCN</small>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserUserName"></label>
-                <input readonly asp-for="@Model.UserUserName" class="form-control" />
-                <span asp-validation-for="@Model.UserUserName" class="text-danger"></span>
+                <label asp-for="@Model.UserName"></label>
+                <input readonly asp-for="@Model.UserName" class="form-control" />
+                <span asp-validation-for="@Model.UserName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserEmail"></label>
-                <input readonly asp-for="@Model.UserEmail" class="form-control" />
-                <span asp-validation-for="@Model.UserEmail" class="text-danger"></span>
+                <label asp-for="@Model.Email"></label>
+                <input readonly asp-for="@Model.Email" class="form-control" />
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserPhoneNumber"></label>
-                <input readonly asp-for="@Model.UserPhoneNumber" class="form-control" />
-                <span asp-validation-for="@Model.UserPhoneNumber" class="text-danger"></span>
+                <label asp-for="@Model.PhoneNumber"></label>
+                <input readonly asp-for="@Model.PhoneNumber" class="form-control" />
+                <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.UserIsAdult"></label>
-                <input readonly asp-for="@Model.UserIsAdult" class="form-control" />
-                <span asp-validation-for="@Model.UserIsAdult" class="text-danger"></span>
+                <label asp-for="@Model.IsAdult"></label>
+                <input readonly asp-for="@Model.IsAdult" class="form-control" />
+                <span asp-validation-for="@Model.IsAdult" class="text-danger"></span>
             </div>
-            <input hidden asp-for="@Model.UserPassword" class="form-control" value="password"/>
+            <input hidden asp-for="@Model.Password" class="form-control" value="password" />
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-success submit-but">Promote Employee</button>
             </div>
         </form>
     </div>
 </div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

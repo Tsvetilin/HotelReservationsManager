@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using Web.Common;
 
 namespace Web.Models.InputModels
@@ -12,12 +9,12 @@ namespace Web.Models.InputModels
         [MaxLength(50)]
         [Required]
         [Display(Name = "Username")]
-        public string UserUserName { get; set; }
+        public string UserName { get; set; }
        
         [MaxLength(50)]
         [Required]
         [Display(Name = "First name")]
-        public string UserFirstName { get; set; }
+        public string FirstName { get; set; }
         
         [MaxLength(50)]
         [Required]
@@ -27,19 +24,17 @@ namespace Web.Models.InputModels
         [MaxLength(50)]
         [Required]
         [Display(Name = "Last name")]
-        public string UserLastName { get; set; }
+        public string LastName { get; set; }
         
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
-
-        public string UserPassword { get; set; }
+        public string Password { get; set; }
         
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-
-        public string UserEmail { get; set; }
+        public string Email { get; set; }
         
         [Required]    
         [UCNValidator]
@@ -49,12 +44,11 @@ namespace Web.Models.InputModels
         [Required]
         [Phone]
         [Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; }
 
-        public string UserPhoneNumber { get; set; }
         [Required]
         [Display(Name = "Is Adult")]
-
-        public bool UserIsAdult { get; set; }
+        public bool IsAdult { get; set; }
         public string Еrror { get; set; }
     }
 }

@@ -60,6 +60,8 @@ else
     <h3>No reservations made yet</h3>
 }
 
+<partial name="_PaginationPartial" model="Model" />
+
 @section Scripts{
     <script>
         var pasts = document.getElementsByClassName("p-yes");
@@ -77,3 +79,4 @@ else
         }
     </script>
 }
+

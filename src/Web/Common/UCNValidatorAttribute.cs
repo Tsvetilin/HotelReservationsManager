@@ -7,8 +7,8 @@ namespace Web.Common
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var ucn = value.ToString().ToCharArray();
-            if (ucn.Any(x => !char.IsDigit(x)) || ucn.Length != 10)
+            var ucn = value?.ToString()?.ToCharArray();
+            if ((ucn?.Any(x => !char.IsDigit(x))?? true) || ((ucn?.Length ?? 0) != 10 ))
             {
                 return new ValidationResult("Invalid UCN");
             }

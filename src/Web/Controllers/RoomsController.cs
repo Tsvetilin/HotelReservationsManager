@@ -30,14 +30,18 @@ namespace Web.Controllers
                     {
                         PagesCount = 1,
                         CurrentPage = 1,
-                        Rooms = searchResults.ToList()
+                        Rooms = searchResults.ToList(),
+                        Controller = "Rooms",
+                        Action = nameof(Index),
                     });
                 }
                 ModelState.AddModelError("Found", "Room not found!");
             }
             var model = new RoomIndexViewModel
             {
-                PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize)
+                PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize),
+                Controller = "Rooms",
+                Action = nameof(Index),
             };
 
             model.CurrentPage = model.CurrentPage <= 0 ? 1 : id;

@@ -1,0 +1,168 @@
+﻿@model Web.Models.ViewModels.PageViewModel
+
+@{
+    var searchString = Context.Request.Query["search"].ToString();
+    var pageItems = Context.Request.Query["pageSize"].ToString();
+}
+<nav>
+    <ul class="pagination justify-content-center" style="padding-top:30px; margin-bottom:0px;">
+        @if (this.Model.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="@(this.Model.CurrentPage - 1)"
+                   asp-route-search="@searchString"
+                   asp-route-pageSize="@pageItems"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        }
+        @{
+            const int MorePagesToShow = 3;
+            var pagesToShow = new List<int>();
+
+            for (var i = 1; i <= MorePagesToShow; i++)
+            {
+                pagesToShow.Add(i);
+            }
+            for (var i = this.Model.CurrentPage - MorePagesToShow; i <= this.Model.CurrentPage + MorePagesToShow; i++)
+            {
+                if (i > 0)
+                {
+                    pagesToShow.Add(i);
+                }
+            }
+            for (var i = this.Model.PagesCount - MorePagesToShow + 1; i <= this.Model.PagesCount; i++)
+            {
+                if (i > 0)
+                {
+                    pagesToShow.Add(i);
+                }
+            }
+            pagesToShow = pagesToShow.Where(x => x <= this.Model.PagesCount).Distinct().OrderBy(x => x).ToList();
+        }
+        @for (var i = 0; i < pagesToShow.Count; i++)
+        {
+            var className = string.Empty;
+            var pageNumber = pagesToShow[i];
+            if (pageNumber == this.Model.CurrentPage)
+            {
+                className = "active";
+            }
+            if (i > 0 && pageNumber - 1 != pagesToShow[i - 1])
+            {
+                <li class="page-item @className">
+                    <a class="page-link"
+                       asp-controller="@Model.Controller"
+                       asp-action="@Model.Action"
+                       asp-route-id="@(pagesToShow[i - 1] + 1)"
+                       asp-route-search="@searchString"
+                       asp-route-pageSize="@pageItems">
+                        ...
+                    </a>
+                </li>
+            }
+            <li class="page-item @className">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="@pageNumber"
+                   asp-route-search="@searchString"
+                   asp-route-pageSize="@pageItems">
+                    @pageNumber
+                </a>
+            </li>
+        }
+        @if (this.Model.CurrentPage < this.Model.PagesCount)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="@(this.Model.CurrentPage + 1)"
+                   asp-route-search="@searchString"
+                   asp-route-pageSize="@pageItems"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>
+
+<nav>
+    <div class="d-flex justify-content-center" style="padding-top:30px; margin-bottom:0px;">
+        <p class="align-items-center align-self-center mx-2 mb-0" >Elements on page: </p>
+        <ul class="pagination justify-content-center mb-0">
+            @{
+            if (string.IsNullOrWhiteSpace(pageItems))
+            {
+                pageItems="10";
+            }
+                int curPageSize = int.Parse(pageItems);
+                var classNameSize = "";
+            }
+
+            @if (curPageSize == 10)
+            {
+                classNameSize = "active";
+            }
+            <li class="page-item @classNameSize">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="1"
+                   asp-route-search=""
+                   asp-route-pageSize="10"
+                   aria-label="10">
+                    <span aria-hidden="true">10</span>
+                </a>
+            </li>
+
+            @if (curPageSize == 20)
+            {
+                classNameSize = "active";
+            }
+            else
+            {
+                classNameSize = "";
+            }
+            <li class="page-item @classNameSize">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="1"
+                   asp-route-search=""
+                   asp-route-pageSize="20"
+                   aria-label="20">
+                    <span aria-hidden="true">20</span>
+                </a>
+            </li>
+
+            @if (curPageSize == 50)
+            {
+                classNameSize = "active";
+            }
+            else
+            {
+                classNameSize = "";
+            }
+
+            <li class="page-item @classNameSize">
+                <a class="page-link"
+                   asp-controller="@Model.Controller"
+                   asp-action="@Model.Action"
+                   asp-route-id="1"
+                   asp-route-search=""
+                   asp-route-pageSize="50"
+                   aria-label="50">
+                    <span aria-hidden="true">50</span>
+                </a>
+            </li>
+        </ul >
+    </div>
+</nav>

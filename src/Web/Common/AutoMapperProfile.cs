@@ -12,23 +12,33 @@ namespace Web.Models
     {
         public AutoMapperProfile()
         {
-            CreateMap<Reservation, ReservationViewModel>();
-            CreateMap<ClientViewModel, ClientData>();
-            CreateMap<ClientData, ClientViewModel>();
-            CreateMap<EmployeeData, EmployeeDataViewModel>();
-            CreateMap<ClientData, ClientInputModel>();
-            CreateMap<ClientInputModel, ClientData>();
+            //Reservations 
+            CreateMap<Reservation, ReservationViewModel>(); 
             CreateMap<ReservationInputModel, Reservation>();
             CreateMap<Reservation, ReservationPeriod>();
             CreateMap<ReservationViewModel, ReservationPeriod>();
             CreateMap<Reservation, ReservationInputModel>();
+
+            //Clients
+            CreateMap<ClientViewModel, ClientData>();
+            CreateMap<ClientData, ClientViewModel>();
+            CreateMap<ClientData, ClientInputModel>();
+            CreateMap<ClientInputModel, ClientData>();
+            
+            //Users
+            CreateMap<ApplicationUser, UserDataViewModel>();
+
+            //Employees
+            CreateMap<EmployeeData, EmployeeDataViewModel>();
             CreateMap<EmployeeData, EmployeeDataViewModel>();
             CreateMap<EmployeeData, EmployeeInputModel>();
             CreateMap<ApplicationUser, EmployeeDataViewModel>();
+            CreateMap<ApplicationUser, EmployeeInputModel>();
+            CreateMap<EmployeeData, ApplicationUser>();
+
+            //Rooms
             CreateMap<Room, RoomViewModel>();
             CreateMap<Room, RoomInputModel>();
-            CreateMap<EmployeeData, ApplicationUser>();
-            CreateMap<ApplicationUser, EmployeeInputModel>();
         }
     }
 }

@@ -50,6 +50,8 @@ namespace Web.Controllers
                 CurrentPage = id,
                 PagesCount = pageCount,
                 Reservations = reservations.GetPageItems(id, elementsOnPage),
+                Controller = "Reservations",
+                Action = nameof(Index),
             };
 
             return this.View(viewModel);
@@ -104,7 +106,7 @@ namespace Web.Controllers
             }
 
             var clients = new List<ClientData>();
-            foreach (var client in inputModel.ClientData)
+            foreach (var client in inputModel.Clients)
             {
                 clients.Add(await this.userService.CreateClient(client.Email, client.FullName, client.IsAdult));
             }
@@ -126,7 +128,6 @@ namespace Web.Controllers
         public async Task<IActionResult> Update(string id)
         {
             var user = await userManager.GetUserAsync(User);
-            //TODO: Have to exclude the particular date periods and say they are free
 
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
             if (reservation == null || user.Id != reservation.UserId)
@@ -134,14 +135,15 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
+            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+            reservation = FillRoomData(reservation, room);
+
             if (reservation.Reservations?.Any() ?? false)
             {
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
           
-            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
-
-            return this.View(FillRoomData(reservation, room));
+            return this.View(reservation);
         }
 
         [HttpPost]
@@ -154,16 +156,17 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-           var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+            var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
+            reservation = FillRoomData(reservation, room);
 
             if (reservation.Reservations?.Any() ?? false)
             {
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
 
-            var roomIsEmpty = !reservation.Reservations.Any(x =>
+            var roomIsEmpty = !reservation.Reservations?.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
-                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
+                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate)) ?? true;
 
             if (!roomIsEmpty)
             {
@@ -172,10 +175,10 @@ namespace Web.Controllers
 
             if (!this.ModelState.IsValid)
             {
-                return this.View(FillRoomData(inputModel, room));
+                return this.View(inputModel);
             }
 
-            var cls = inputModel.ClientData.Select(x => new ClientData
+            var cls = inputModel.Clients.Select(x => new ClientData
             {
                 IsAdult = x.IsAdult,
                 Email = x.Email,
@@ -243,6 +246,8 @@ namespace Web.Controllers
                 CurrentPage = id,
                 PagesCount = pageCount,
                 Reservations = reservations.GetPageItems(id, elementsOnPage),
+                Controller = "Reservations",
+                Action = nameof(All),
             };
 
             return this.View(viewModel);

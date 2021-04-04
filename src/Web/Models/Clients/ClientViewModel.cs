@@ -1,6 +1,4 @@
-﻿
-
-namespace Web.Models.Clients
+﻿namespace Web.Models.Clients
 {
     public class ClientViewModel
     {
