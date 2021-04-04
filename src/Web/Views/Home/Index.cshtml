@@ -1,8 +1,35 @@
-﻿@{
+﻿@model Web.Models.ViewModels.RoomIndexViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="text-center">Rooms</h1>
+
+<div class="col-md-12">
+    <div asp-validation-summary="All" class="d-flex justify-content-center m-auto text-danger w-100"></div>
 </div>
+<br />
+
+<ul class="list-inline text-dark">
+    @foreach (var roomCard in Model?.Rooms)
+    {
+        <li class="pb-3">
+            <a asp-controller="Rooms" asp-action="Details" asp-route-id="@roomCard.Id"
+               class="content-heading clearfix media box-hover text-decoration-none">
+                <div class="d-flex">
+                    <div class="m-5 col-md-6 ml-4">
+                        <h3 class="text-dark font-weight-bold">Room number: @roomCard.Number</h3>
+                        <h5 class="text-dark ">Capacity: @roomCard.Capacity.</h5>
+                        <p class="text-dark ">Room type: @roomCard.Type</p>
+                        <p class="text-dark ">Children price: @roomCard.ChildrenPrice</p>
+                        <p class="text-dark ">Adult price: @roomCard.AdultPrice</p>
+                        <p class="text-dark ">Is Taken: @roomCard.IsTaken</p>
+                    </div>
+                </div>
+            </a>
+        </li>
+    }
+</ul>
+
+<partial name="_PaginationPartial" model="Model" />
