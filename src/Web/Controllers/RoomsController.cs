@@ -18,7 +18,7 @@ namespace Web.Controllers
         {
             roomService = _roomService;
         }
-        public async Task<IActionResult> Index(string search,int id = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string search, int id = 1, int pageSize = 10)
         {
             if (!string.IsNullOrEmpty(search))
             {
@@ -44,8 +44,11 @@ namespace Web.Controllers
                 Action = nameof(Index),
             };
 
-            model.CurrentPage = model.CurrentPage <= 0 ? 1 : id;
-            model.CurrentPage = model.CurrentPage > model.PagesCount ? model.PagesCount : model.CurrentPage;
+            if (id <= 0 || id > model.PagesCount)
+            {
+                id = 1;
+            }
+            model.CurrentPage = id;
             model.Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
 
             return View(model);

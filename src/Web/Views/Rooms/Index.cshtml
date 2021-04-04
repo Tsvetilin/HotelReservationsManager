@@ -20,7 +20,7 @@
 {
     <ul class="list-inline text-dark">
 
-        @foreach (var room in Model.Rooms)
+        @foreach (var room in Model.Rooms.OrderBy(x=>x.Number))
         {
             <li class="pb-3">
                 <div class="d-flex">

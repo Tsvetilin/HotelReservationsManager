@@ -142,21 +142,35 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
-            var employee = await userService.GetEmployeeAsync<EmployeeDataViewModel>(id);
-
             if (!ModelState.IsValid)
             {
                 return this.View(input);
             }
+            var user = await userManager.FindByIdAsync(id);
+            user.FirstName = input.FirstName;
+            user.LastName = input.LastName;
+            user.IsAdult = input.IsAdult;
+            user.PhoneNumber = input.PhoneNumber;
+            user.UserName = input.UserName;
+            user.Email = input.Email;
 
-            var data = MappingConfig.Instance.Map<EmployeeData>(input);
+            var data = await userService.GetEmployeeAsync<EmployeeDataViewModel>(id);
+            var employee = new EmployeeData
+            {
+                IsActive = true,
+                DateOfAppointment = data.DateOfAppointment,
+                DateOfResignation = null,
+                SecondName = data.SecondName,
+                UCN = input.UCN,
+                User = user,
+                UserId = id
 
-            var appUserData = MappingConfig.Instance.Map<ApplicationUser>(input);
-
-            data.UserId = employee.UserId;
-
-            await userService.UpdateAsync(data);
-            await userManager.UpdateAsync(appUserData);
+        };
+            
+            user.EmployeeData = employee;
+           
+            await userService.UpdateAsync(employee);
+            await userManager.UpdateAsync(user);
 
             return RedirectToAction("Index", "Users");
         }

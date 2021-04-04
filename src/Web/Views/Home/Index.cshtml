@@ -1,4 +1,5 @@
-﻿@model Web.Models.ViewModels.RoomIndexViewModel
+﻿
+@model Web.Models.ViewModels.RoomIndexViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -11,20 +12,19 @@
 </div>
 <br />
 
-<ul class="list-inline text-dark">
-    @foreach (var roomCard in Model?.Rooms)
+<ul class="list-inline text-dark d-flex flex-wrap flex-column flex-md-row w-100">
+    @foreach (var roomCard in Model?.Rooms.OrderBy(x=>x.Number))
     {
-        <li class="pb-3">
+        <li class="pb-3 col-md-6 col-12">
             <a asp-controller="Rooms" asp-action="Details" asp-route-id="@roomCard.Id"
-               class="content-heading clearfix media box-hover text-decoration-none">
+               class="content-heading clearfix media box-hover text-decoration-none border border-info">
                 <div class="d-flex">
-                    <div class="m-5 col-md-6 ml-4">
-                        <h3 class="text-dark font-weight-bold">Room number: @roomCard.Number</h3>
-                        <h5 class="text-dark ">Capacity: @roomCard.Capacity.</h5>
+                    <div class="m-5 ml-4">
+                        <h3 class="text-dark font-weight-bold">Room №@roomCard.Number</h3>
+                        <p class="text-dark ">Capacity: @roomCard.Capacity</p>
                         <p class="text-dark ">Room type: @roomCard.Type</p>
-                        <p class="text-dark ">Children price: @roomCard.ChildrenPrice</p>
-                        <p class="text-dark ">Adult price: @roomCard.AdultPrice</p>
-                        <p class="text-dark ">Is Taken: @roomCard.IsTaken</p>
+                        <p class="text-dark ">Children price: @roomCard.ChildrenPrice$</p>
+                        <p class="text-dark ">Adult price: @roomCard.AdultPrice$</p>
                     </div>
                 </div>
             </a>
