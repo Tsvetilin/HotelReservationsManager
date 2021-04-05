@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +15,6 @@ namespace Tests.Common
             {
                 await context.AddAsync(item);
             }
-
             await context.SaveChangesAsync();
             return context;
         }

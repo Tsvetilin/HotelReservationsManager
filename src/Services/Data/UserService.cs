@@ -47,16 +47,16 @@ namespace Services
 
         public async Task<IEnumerable<string>> GetAllBySearch(string searchString)
         {
-            return await context.Users.Where(x => x.Email.ToUpper().Contains(searchString) ||
-                                             x.FirstName.ToUpper().Contains(searchString) ||
-                                             x.LastName.ToUpper().Contains(searchString) ||
-                                             x.UserName.ToUpper().Contains(searchString)).
+            return await context.Users.Where(x => x.Email.ToUpper().Contains(searchString.ToUpper()) ||
+                                             x.FirstName.ToUpper().Contains(searchString.ToUpper()) ||
+                                             x.LastName.ToUpper().Contains(searchString.ToUpper()) ||
+                                             x.UserName.ToUpper().Contains(searchString.ToUpper())).
                                              Select(x => x.Id).ToListAsync();
         }
 
         public async Task<IEnumerable<string>> GetAllBySecondName(string searchString)
         {
-            return await context.EmployeeData.Where(x => x.SecondName.ToUpper().Contains(searchString)).
+            return await context.EmployeeData.Where(x => x.SecondName.ToUpper().Contains(searchString.ToUpper())).
                                                     Select(x=>x.UserId).ToListAsync();
         }
 
@@ -167,7 +167,8 @@ namespace Services
                 IsAdult = adult,
             };
 
-            context.Update(client);
+            var clientInContext = await context.ClientData.FindAsync(id);
+            context.Entry<ClientData>(clientInContext).CurrentValues.SetValues(client);
             await context.SaveChangesAsync();
 
             return client;
