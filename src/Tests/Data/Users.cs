@@ -16,6 +16,14 @@ namespace Tests.Data
         public static readonly ApplicationUser User4NotEmployee = new ApplicationUser
         {
         };
+        public static readonly ClientData Client1User = new ClientData
+        {
+            Id = User1Employee.Id
+        };
+        public static readonly ClientData Client2User = new ClientData
+        {
+            Id = User2Employee.Id
+        };
 
         public static readonly EmployeeData EmployeeUser1 = new EmployeeData
         {
@@ -56,6 +64,12 @@ namespace Tests.Data
             UserId = UserForSearch2.Id,
             SecondName = searchParam2,
             UCN = searchParam2,
+        };
+        public static readonly ClientData ClientForSearch = new ClientData
+        {
+            Email = searchParam,
+            FullName = searchParam,
+            IsAdult = false
         };
     }
 }
