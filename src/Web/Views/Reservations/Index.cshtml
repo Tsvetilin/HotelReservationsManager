@@ -30,24 +30,31 @@
         @foreach (var reservation in Model.Reservations)
         {
             <li class="pb-3">
-                <div class="d-flex">
-                    <div class="m-5 col-md-6 ml-4">
-                        <h3 class="text-dark font-weight-bold">@reservation.RoomNumber</h3>
-                        <h5 class="text-dark "> @reservation.RoomType.ToString()</h5>
-                        <p class="text-dark "> @reservation.Price</p>
-                        <p class="text-dark ">@reservation.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
-                        <p class="text-dark ">@reservation.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
-                        <p class="text-dark "> @reservation.Breakfast</p>
-                        <p class="text-dark "> @reservation.AllInclusive</p>
+                <div class="d-flex border border-info justify-content-between list-inline text-dark flex-wrap flex-column flex-md-row w-100">
+                    <div class="col-md-1 col-0"></div>
+                    <div class="my-5 col-md-8 col-12">
+                        <h3 class="text-dark font-weight-bold">Room №@reservation.RoomNumber</h3>
+                        <h5 class="text-dark ">@reservation.RoomType.ToString()</h5>
+                        <div>
+                            <p class="text-dark ">Total price: @reservation.Price</p>
+                            @if (reservation.AllInclusive)
+                            {
+                                <p class="text-dark "> All-inclusive &#10004;</p>}
+                            else if (reservation.Breakfast)
+                            {
+                                <p class="text-dark "> Breakfast &#10004;</p>
+                            }
+                        </div>
+                        <p class="text-dark ">Reservarion dates: @reservation.AccommodationDate.ToString("dd/MM/yyyy") - @reservation.ReleaseDate.ToString("dd/MM/yyyy")</p>
                     </div>
-                    <div class="m-5 col-md-6 float-end">
-                        <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get">
+                    <div class="col-md-3 col-3 float-end align-self-center">
+                        <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get" class="my-2">
                             <input class="btn btn-info" type="submit" value="Info" />
                         </form>
-                        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get">
+                        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get" class="my-2">
                             <input class="btn btn-primary" type="submit" value="Change" />
                         </form>
-                        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id"
+                        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id" class="my-2"
                               method="post">
                             <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
                         </form>
@@ -56,10 +63,10 @@
             </li>
         }
     </ul>
+<partial name="_PaginationPartial" model="Model" />
 }
 else
 {
-    <h1>No reservations made yet</h1>
+    <h3>No reservations made yet</h3>
 }
 
-<partial name="_PaginationPartial" model="Model" />

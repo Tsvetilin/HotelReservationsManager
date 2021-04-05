@@ -63,7 +63,7 @@ namespace Web.Models.Reservations
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[");
-            if (Reservations.Any())
+            if (Reservations?.Any() ?? false)
             {
                 foreach (var period in Reservations)
                 {

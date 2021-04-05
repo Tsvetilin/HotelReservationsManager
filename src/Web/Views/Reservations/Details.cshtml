@@ -3,45 +3,63 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="d-inline-flex w-100">
-    <h1>Details for reservation #@Model.Id</h1>
+<div class="d-flex w-100 align-items-center flex-wrap flex-column flex-md-row w-100">
+    <h1>Details for reservation </h1><code class="h4 mx-4">#@Model.Id</code>
 </div>
 <hr />
 <br />
+<div class="col-md-3 col-12 d-flex justify-content-around mb-5">
+    <form asp-controller="Reservations" asp-action="Update" asp-route-id="@Model.Id" method="get">
+        <input class="btn btn-primary" type="submit" value="Change" />
+    </form>
+    <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@Model.Id"
+          method="post">
+        <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
+    </form>
+</div>
+<div class="d-flex flex-wrap flex-column flex-md-row w-100">
+    <div class="col-md-6 col-12 my-3">
+        <h3 class="text-dark font-weight-bold">Room №@Model.RoomNumber</h3>
+        <h5 class="text-dark ">@Model.RoomType.ToString()</h5>
+        <div>
+            <p class="text-dark ">Total price: @Model.Price</p>
+            @if (Model.AllInclusive)
+            {
+                <p class="text-dark "> All-inclusive &#10004;</p>}
+            else if (Model.Breakfast)
+            {
+                <p class="text-dark "> Breakfast &#10004;</p>
+            }
+        </div>
+        <p class="text-dark ">Reservarion dates: @Model.AccommodationDate.ToString("dd/MM/yyyy") - @Model.ReleaseDate.ToString("dd/MM/yyyy")</p>
 
-<div class="d-flex">
-    <div class="m-5 col-md-6 ml-4">
-        <h3 class="text-dark font-weight-bold">@Model.RoomNumber</h3>
-        <h5 class="text-dark "> @Model.RoomType.ToString()</h5>
-        <p class="text-dark "> @Model.Price</p>
-        <p class="text-dark ">@Model.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
-        <p class="text-dark ">@Model.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
-        <p class="text-dark "> @Model.Breakfast</p>
-        <p class="text-dark "> @Model.AllInclusive</p>
     </div>
-    <div class="m-5 col-md-6 ml-4">
+    <div class="col-md-6 col-12">
         <h5>Clients</h5>
-        <p class="text-dark "> @Model.UserFullName</p>
-        <p class="text-dark ">@Model.UserEmail</p>
-        <p class="text-dark ">@Model.UserIsAdult</p>
-        <br/>
+        <div class="border border-info my-3">
+            <div class="m-2">
+                <p class="text-dark m-0"> @Model.UserFullName</p>
+                <p class="text-dark m-0">@Model.UserEmail</p>
+            </div>
+        </div>
         @for (int i = 0; i < Model.Clients.Count(); i++)
         {
-            <p class="text-dark "> @Model.Clients[i].FullName</p>
-            <p class="text-dark ">@Model.Clients[i].Email</p>
-            <p class="text-dark ">@Model.Clients[i].IsAdult</p>
-        <br />
+            @if (!string.IsNullOrWhiteSpace(Model.Clients[i].FullName))
+            {
+                <div class="border border-info my-3">
+                    <div class="m-2">
+                        <p class="text-dark m-0"> @Model.Clients[i].FullName</p>
+                        <p class="text-dark m-0">@Model.Clients[i].Email</p>
+                        @if (!Model.Clients[i].IsAdult)
+                        {
+                            <p class="text-dark  m-0">Child &#10004;</p>
+                        }
+                    </div>
+                </div>
+            }
         }
 
-    </div>
+        </div>
 
-    <div class="m-5 col-md-6 float-end">
-        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@Model.Id" method="get">
-            <input class="btn btn-primary" type="submit" value="Change" />
-        </form>
-        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@Model.Id"
-              method="post">
-            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
-        </form>
+
     </div>
-</div>

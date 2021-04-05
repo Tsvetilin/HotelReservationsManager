@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Common;
+using Services.Data;
 using Services.Mapping;
 using System;
 using System.Collections.Generic;
@@ -20,16 +21,19 @@ namespace Web.Controllers
         private readonly IReservationService reservationService;
         private readonly IUserService userService;
         private readonly IRoomService roomService;
+        private readonly ISettingService settingService;
         private readonly UserManager<ApplicationUser> userManager;
 
         public ReservationsController(IReservationService reservationService,
                                       IUserService userService,
                                       IRoomService roomService,
+                                      ISettingService settingService,
                                       UserManager<ApplicationUser> userManager)
         {
             this.reservationService = reservationService;
             this.userService = userService;
             this.roomService = roomService;
+            this.settingService = settingService;
             this.userManager = userManager;
         }
 
@@ -77,7 +81,7 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            var inputModel = FillRoomData(new ReservationInputModel(), room);
+            var inputModel = await FillRoomData(new ReservationInputModel(), room);
 
             return this.View(inputModel);
         }
@@ -102,7 +106,7 @@ namespace Web.Controllers
 
             if (!this.ModelState.IsValid)
             {
-                return this.View(FillRoomData(inputModel, room));
+                return this.View(await FillRoomData(inputModel, room));
             }
 
             var clients = new List<ClientData>();
@@ -136,7 +140,7 @@ namespace Web.Controllers
             }
 
             var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
-            reservation = FillRoomData(reservation, room);
+            reservation = await FillRoomData(reservation, room);
 
             if (reservation.Reservations?.Any() ?? false)
             {
@@ -157,7 +161,7 @@ namespace Web.Controllers
             }
 
             var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
-            reservation = FillRoomData(reservation, room);
+            reservation = await FillRoomData(reservation, room);
 
             if (reservation.Reservations?.Any() ?? false)
             {
@@ -206,7 +210,7 @@ namespace Web.Controllers
         {
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
 
-            if (reservation == null)
+            if (reservation == null || reservation.UserId!= userManager.GetUserId(User))
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -216,14 +220,14 @@ namespace Web.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
-        private static ReservationInputModel FillRoomData(ReservationInputModel inputModel, RoomViewModel room)
+        private async Task<ReservationInputModel> FillRoomData(ReservationInputModel inputModel, RoomViewModel room)
         {
             inputModel.RoomId = room.Id;
             inputModel.Reservations = room.Reservations.AsQueryable().ProjectTo<ReservationPeriod>().ToList();
             inputModel.RoomCapacity = room.Capacity;
-            inputModel.AllInclusivePrice = 000;
+            inputModel.AllInclusivePrice = double.Parse((await settingService.GetAsync(nameof(inputModel.AllInclusivePrice))).Value);
             inputModel.RoomAdultPrice = room.AdultPrice;
-            inputModel.BreakfastPrice = 000;
+            inputModel.BreakfastPrice = double.Parse((await settingService.GetAsync(nameof(inputModel.BreakfastPrice))).Value);
             inputModel.RoomChildrenPrice = room.ChildrenPrice;
             inputModel.RoomType = room.Type;
 

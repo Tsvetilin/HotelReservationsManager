@@ -7,16 +7,19 @@
 
 <h2>Update a Reservation for room:</h2>
 <hr />
-<h4>Room data:</h4>
-<p>@Model.RoomType.ToString()</p>
-<p>@Model.RoomCapacity</p>
-<p>@Model.RoomAdultPrice</p>
-<p>@Model.RoomChildrenPrice</p>
-
+<div class="border-info border mt-5 col-md-4 col-12">
+    <div class="ml-3 ">
+        <h4>Room data:</h4>
+        <p>Type: @Model.RoomType.ToString()</p>
+        <p>Capacity: @Model.RoomCapacity</p>
+        <p>Adult price: @Model.RoomAdultPrice</p>
+        <p>Children price: @Model.RoomChildrenPrice</p>
+    </div>
+    </div>
 <hr />
 <div class="row">
     <div class="col-md-12">
-        <form asp-action="Update">
+        <form asp-action="Update" method="post">
             <div class="col-md-4 mx-auto">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
@@ -83,7 +86,7 @@
                 Total price: <span id="price">@Model.Price</span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <input type="submit" value="Update reservation" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -99,7 +102,7 @@
         var allInclusicePrice =@Model.AllInclusivePrice;
         var breakfastPrice = @Model.BreakfastPrice;
 
-        var totalPrice = @Model.RoomAdultPrice;
+        var totalPrice = @Model.Price;
 
         var isValidDate = false;
 
@@ -129,7 +132,18 @@
 
         function CheckClients() {
             var total = @Model.RoomAdultPrice;
-            var indecies = [@Html.Raw(string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1)))];
+            @{
+                var res = "";
+                if (Model.RoomCapacity - 1 <= 0)
+                {
+                    res = "0";
+                }
+                else
+                {
+                    res = string.Join(',', Enumerable.Range(0, Model.RoomCapacity - 1));
+                }
+            }
+            var indecies = [@Html.Raw(res)];
             indecies.forEach(index => {
                 var areAllFilled = true;
                 var allFieldsForPerson = document.getElementsByClassName(`client-${index}`);

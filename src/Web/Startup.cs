@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Services;
+using Services.Data;
 using Services.External;
 using Services.Mapping;
 
@@ -47,6 +48,7 @@ namespace Web
 
             services.AddTransient<IEmailSender, EmailSender>();
 
+            services.AddTransient<ISettingService, SettingService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IReservationService, ReservationsService>();
             services.AddTransient<IRoomService, RoomServices>();
