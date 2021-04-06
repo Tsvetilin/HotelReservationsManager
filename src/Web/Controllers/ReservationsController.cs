@@ -42,13 +42,16 @@ namespace Web.Controllers
             this.memoryCache = memoryCache;
         }
 
-        public async Task<IActionResult> Index(int id = 1, int elementsOnPage = 10)
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
         {
             var user = await userManager.GetUserAsync(User);
             var reservations = await reservationService.GetReservationsForUser<ReservationViewModel>(user.Id);
 
-
-            int pageCount = (int)Math.Ceiling((double)reservations.Count() / elementsOnPage);
+            if (pageSize <= 0)
+            {
+                pageSize = 10;
+            }
+            int pageCount = (int)Math.Ceiling((double)reservations.Count() / pageSize);
             if (id > pageCount || id < 1)
             {
                 id = 1;
@@ -58,7 +61,7 @@ namespace Web.Controllers
             {
                 CurrentPage = id,
                 PagesCount = pageCount,
-                Reservations = reservations.GetPageItems(id, elementsOnPage),
+                Reservations = reservations.GetPageItems(id, pageSize),
                 Controller = "Reservations",
                 Action = nameof(Index),
             };
@@ -239,11 +242,15 @@ namespace Web.Controllers
         }
 
         [Authorize("Admin, Employee")]
-        public async Task<IActionResult> All(int id = 1, int elementsOnPage = 10)
+        public async Task<IActionResult> All(int id = 1, int pageSize = 10)
         {
             var reservations = await reservationService.GetAll<ReservationViewModel>();
 
-            int pageCount = (int)Math.Ceiling((double)reservations.Count() / elementsOnPage);
+            if (pageSize <= 0)
+            {
+                pageSize = 10;
+            }
+            int pageCount = (int)Math.Ceiling((double)reservations.Count() / pageSize);
             if (id > pageCount || id < 1)
             {
                 id = 1;
@@ -253,7 +260,7 @@ namespace Web.Controllers
             {
                 CurrentPage = id,
                 PagesCount = pageCount,
-                Reservations = reservations.GetPageItems(id, elementsOnPage),
+                Reservations = reservations.GetPageItems(id, pageSize),
                 Controller = "Reservations",
                 Action = nameof(All),
             };

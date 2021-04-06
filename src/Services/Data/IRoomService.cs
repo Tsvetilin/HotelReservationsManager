@@ -18,18 +18,18 @@ namespace Services
         public Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>();
         public Task<int> CountFreeRoomsAtPresent();
         public Task<IEnumerable<T>> GetAll<T>();
-        public Task<IEnumerable<T>> GetSearchResults<T>(string searchString);
+        public Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null);
 
         public Task DeleteRoom(string id);
 
         public Task UpdateRoom(string id,Room room);
 
         public Task<T> GetRoom<T>(string id);
-        public Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage);
         public int CountAllRooms();
         public Task<double> GetMinPrice();
         public Task<double> GetMaxPrice();
-
+        public Task<bool> IsRoomNumerFree(int number);
+        public Task<int> GetMaxCapacity();
     }
   
 }

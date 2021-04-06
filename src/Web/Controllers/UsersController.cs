@@ -44,6 +44,10 @@ namespace Web.Controllers
                 ModelState.AddModelError("Found", "User not found!");
             }
 
+            if (pageSize <= 0)
+            {
+                pageSize = 10;
+            }
             int pageCount = (int)Math.Ceiling((double)userService.CountAllEmployees() / pageSize);
             if (id > pageCount || id < 1)
             {

@@ -2,9 +2,9 @@
 {
     public enum RoomType
     {
-        DoubleBed,
-        TwoBeds,
-        Apartment,
-        Penthouse
+        DoubleBed = 1,
+        TwoBeds = 2,
+        Apartment = 3,
+        Penthouse = 4
     }
 }

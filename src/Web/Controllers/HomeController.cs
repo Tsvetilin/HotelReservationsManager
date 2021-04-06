@@ -35,6 +35,10 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
         {
+            if (pageSize <= 0)
+            {
+                pageSize = 10;
+            }
             int pageCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize);
             if (id > pageCount || id < 1)
             {
