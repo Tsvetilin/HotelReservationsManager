@@ -5,7 +5,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Room Details";
 }
 
 <h2>Room Details</h2>
@@ -41,24 +41,9 @@
         <dd>
             @Html.DisplayFor(model => model.ChildrenPrice)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IsTaken):
-        </dt>
-        @if (Model.IsTaken)
+        @if (SignInManager.Context.User.IsInRole("Employee") || SignInManager.Context.User.IsInRole("Admin"))
         {
-            <dd>
-                &#10004;
-            </dd>
-        }
-        else
-        {
-            <dd>
-                &Chi;
-            </dd>
-        }
-        @if (SignInManager.Context.User.IsInRole("Admin") || SignInManager.Context.User.IsInRole("Admin"))
-        {
-            
+
             <dt>
                 @Html.DisplayNameFor(model => model.Reservations):
             </dt>
@@ -66,28 +51,28 @@
                 <ul class="list-group pb-3 list-inline">
                     @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
                     {
-                    <li class="list-group-item">
-                        <p class="text-dark ">Price: @res.Price</p>
-                        <p class="text-dark ">Accomodation Date: @res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
-                        <p class="text-dark ">Release Date: @res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
-                        @if (res.Breakfast)
-                        {
-                    <p class="text-dark ">Breakfast: &#10004;</p>
-                        }
-                        else
-                        {
-                    <p class="text-dark ">Breakfast: &Chi;</p>
-                        }
-                        @if (res.AllInclusive)
-                        {
-                    <p class="text-dark ">All-Inclusive: &#10004;</p>
-                        }
-                        else
-                        {
-                            <p class="text-dark ">Breakfast: &Chi;</p>
-                        }
-                        <p class="text-dark ">Clients: @(res.Clients.Count+1)</p>
-                    </li>
+                        <li class="list-group-item">
+                            <p class="text-dark ">Price: @res.Price</p>
+                            <p class="text-dark ">Accomodation Date: @res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+                            <p class="text-dark ">Release Date: @res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+                            @if (res.Breakfast)
+                            {
+                                <p class="text-dark ">Breakfast: &#10004;</p>
+                            }
+                            else
+                            {
+                                <p class="text-dark ">Breakfast: &#10008;</p>
+                            }
+                            @if (res.AllInclusive)
+                            {
+                                <p class="text-dark ">All-Inclusive: &#10004;</p>
+                            }
+                            else
+                            {
+                                <p class="text-dark ">Breakfast: &#10008;</p>
+                            }
+                            <p class="text-dark ">Clients: @(res.Clients.Count+1)</p>
+                        </li>
                     }
                 </ul>
             </dd>
@@ -96,7 +81,7 @@
     </dl>
 </div>
 <div>
-    @if (SignInManager.Context.User.IsInRole("Admin") || SignInManager.Context.User.IsInRole("Admin"))
+    @if (SignInManager.Context.User.IsInRole("Employee") || SignInManager.Context.User.IsInRole("Admin"))
     {
         <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> <span>|</span>
     }

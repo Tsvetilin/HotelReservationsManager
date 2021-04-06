@@ -5,6 +5,6 @@ namespace Web.Models.ViewModels
 {
     public class RoomIndexViewModel:PageViewModel
     {
-        public ICollection<RoomViewModel> Rooms { get; set; }
+        public IEnumerable<RoomViewModel> Rooms { get; set; }
     }
 }

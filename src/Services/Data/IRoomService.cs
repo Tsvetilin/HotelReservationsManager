@@ -15,7 +15,8 @@ namespace Services
 
         public Task<IEnumerable<T>> GetAllByType<T>(RoomType type);
 
-        public Task<IEnumerable<T>> GetAllReservedRooms<T>();
+        public Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>();
+        public Task<int> CountFreeRoomsAtPresent();
         public Task<IEnumerable<T>> GetAll<T>();
         public Task<IEnumerable<T>> GetSearchResults<T>(string searchString);
 

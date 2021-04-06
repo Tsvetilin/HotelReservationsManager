@@ -5,10 +5,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h1 class="text-center">Rooms</h1>
+<h1 class="text-center">Currently free Rooms as of today</h1>
 
-<div class="col-md-12">
-    <div asp-validation-summary="All" class="d-flex justify-content-center m-auto text-danger w-100"></div>
+<hr/>
+<div class="d-flex">
+    <p class="mx-3">You can search all rooms and make a reservation</p>
+    <form asp-controller="Rooms" asp-action="Index" method="get">
+        <input type="submit" class="btn btn-primary"/>
+    </form>
 </div>
 <br />
 

@@ -7,7 +7,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "My reservations";
 }
 
 <div class="d-inline-flex w-100">
@@ -39,10 +39,20 @@
                             <p class="text-dark ">Total price: @reservation.Price</p>
                             @if (reservation.AllInclusive)
                             {
-                                <p class="text-dark "> All-inclusive &#10004;</p>}
-                            else if (reservation.Breakfast)
+                                <p class="text-dark "> All-inclusive: &#10004;</p>
+                            }
+                            else
                             {
-                                <p class="text-dark "> Breakfast &#10004;</p>
+
+                                <p class="text-dark ">All-inclusive: &#10008;</p>
+                                if (reservation.Breakfast)
+                                {
+                                    <p class="text-dark "> Breakfast: &#10004;</p>
+                                }
+                                else
+                                {
+                                    <p class="text-dark "> Breakfast: &#10008;</p>
+                                }
                             }
                         </div>
                         <p class="text-dark ">Reservarion dates: @reservation.AccommodationDate.ToString("dd/MM/yyyy") - @reservation.ReleaseDate.ToString("dd/MM/yyyy")</p>
@@ -63,7 +73,7 @@
             </li>
         }
     </ul>
-<partial name="_PaginationPartial" model="Model" />
+    <partial name="_PaginationPartial" model="Model" />
 }
 else
 {

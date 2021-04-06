@@ -22,7 +22,6 @@ namespace Services
             this.settingService = settingService;
         }
 
-        //TODO: allincl+breakf
         public async Task<Reservation> AddReservation(string roomId,
                                                       DateTime accomodationDate,
                                                       DateTime releaseDate,

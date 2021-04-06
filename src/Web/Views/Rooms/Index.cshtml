@@ -4,7 +4,7 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "All rooms";
 }
 <h1>Rooms</h1>
 
@@ -24,6 +24,7 @@
         {
             <li class="pb-3 list-inline">
                 <div class="d-flex border border-info justify-content-between list-inline text-dark flex-wrap flex-column flex-md-row w-100">
+                    <div class="col-md-1 col-0"></div>
                     <div class="my-5 col-md-8 col-12">
                         <h3 class="text-dark font-weight-bold">Number: @room.Number</h3>
                         <p class="text-dark ">Type: @room.Type.ToString()</p>
@@ -32,18 +33,18 @@
 
                     </div>
                     <div class="col-md-3 col-3 float-end align-self-center">
-                        <form asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" method="get">
+                        <form asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" method="get" class="my-2"> 
                             <input class="btn btn-info " type="submit" value="Info" />
                         </form>
-                        <form asp-controller="Reservations" asp-action="Create" asp-route-id="@room.Id" method="get">
+                        <form asp-controller="Reservations" asp-action="Create" asp-route-id="@room.Id" method="get" class="my-2">
                             <input class="btn btn-success" type="submit" value="Reserve" />
                         </form>
                         @if (SignInManager.Context.User.IsInRole("Admin"))
                         {
-                            <form asp-controller="Rooms" asp-action="Update" asp-route-id="@room.Id" method="get">
-                                <input class="btn btn-primary" type="submit" value="Change" />
-                            </form>
-                            <form asp-controller="Rooms" asp-action="Delete" asp-route-id="@room.Id"
+                    <form asp-controller="Rooms" asp-action="Update" asp-route-id="@room.Id" method="get" class="my-2">
+                        <input class="btn btn-primary" type="submit" value="Change" />
+                    </form>
+                            <form asp-controller="Rooms" asp-action="Delete" asp-route-id="@room.Id" class="my-2"
                                   method="post">
                                 <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Delete" />
                             </form>

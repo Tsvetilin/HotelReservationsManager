@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services;
+using Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace Web.Controllers
             {
                 PagesCount = pageCount,
                 CurrentPage = id,
-                Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(id, pageSize),
+                Rooms = await roomService.GetAllFreeRoomsAtPresent<RoomViewModel>().GetPageItems(id, pageSize),
                 Controller = "Home",
                 Action = nameof(Index),
             };

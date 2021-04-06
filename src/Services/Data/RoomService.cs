@@ -36,10 +36,20 @@ namespace Services
             return await context.Rooms.Where(x => x.Type == type).ProjectTo<T>().ToListAsync();
         }
 
-        // Taken now
-        public async Task<IEnumerable<T>> GetAllReservedRooms<T>()
+        public async Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>()
         {
-            return await context.Rooms.Where(x => x.IsTaken).ProjectTo<T>().ToListAsync();
+            return await context.Rooms.
+                Where(x => !x.Reservations.Any(r=>r.AccommodationDate<DateTime.Today && r.ReleaseDate>DateTime.Today)).
+                OrderBy(x=>x.Number).
+                ProjectTo<T>().
+                ToListAsync();
+        }
+
+        public async Task<int> CountFreeRoomsAtPresent()
+        {
+            return await context.Rooms.
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                CountAsync();
         }
 
         public async Task<IEnumerable<T>> GetAll<T>()

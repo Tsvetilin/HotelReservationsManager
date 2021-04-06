@@ -49,7 +49,7 @@ namespace Web.Controllers
                 id = 1;
             }
             model.CurrentPage = id;
-            model.Rooms = (ICollection<RoomViewModel>)await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
+            model.Rooms = await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
 
             return View(model);
         }

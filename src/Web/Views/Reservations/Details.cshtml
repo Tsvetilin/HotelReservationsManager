@@ -1,6 +1,6 @@
 ﻿@model Web.Models.Reservations.ReservationViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Reservation Details";
 }
 
 <div class="d-flex w-100 align-items-center flex-wrap flex-column flex-md-row w-100">
@@ -25,10 +25,19 @@
             <p class="text-dark ">Total price: @Model.Price</p>
             @if (Model.AllInclusive)
             {
-                <p class="text-dark "> All-inclusive &#10004;</p>}
-            else if (Model.Breakfast)
+                <p class="text-dark "> All-inclusive: &#10004;</p>
+            }
+            else
             {
-                <p class="text-dark "> Breakfast &#10004;</p>
+                <p class="text-dark ">All-inclusive: &#10008;</p>
+                if (Model.Breakfast)
+                {
+                    <p class="text-dark "> Breakfast: &#10004;</p>
+                }
+                else
+                {
+                    <p class="text-dark "> Breakfast: &#10008;</p>
+                }
             }
         </div>
         <p class="text-dark ">Reservarion dates: @Model.AccommodationDate.ToString("dd/MM/yyyy") - @Model.ReleaseDate.ToString("dd/MM/yyyy")</p>
@@ -59,7 +68,5 @@
             }
         }
 
-        </div>
-
-
     </div>
+</div>
