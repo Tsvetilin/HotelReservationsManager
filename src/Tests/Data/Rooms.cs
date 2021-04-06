@@ -37,7 +37,7 @@ namespace Tests.Data
             Capacity = Capacity2,
             Number = 2,
             Type = RoomType.Penthouse,
-            IsTaken = IsTaken2,
+            IsTaken = IsTaken1,
             Reservations = new List<Reservation>()
             {
                 new Reservation
@@ -53,7 +53,7 @@ namespace Tests.Data
             ChildrenPrice = ChildrenPrice2,
             Capacity = Capacity2,
             Number = 2,
-            Type = RoomType.Penthouse,
+            Type = RoomType.Apartment,
             IsTaken = IsTaken2,
             Reservations = new List<Reservation>()
             {

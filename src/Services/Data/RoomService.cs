@@ -40,7 +40,7 @@ namespace Services
         public async Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
                 OrderBy(x => x.Number).
                 ProjectTo<T>().
                 ToListAsync();
@@ -49,7 +49,7 @@ namespace Services
         public async Task<int> CountFreeRoomsAtPresent()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
                 CountAsync();
         }
 
@@ -64,7 +64,7 @@ namespace Services
 
             if (availableOnly)
             {
-                result = result.Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today
+                result = result.Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today
                                                                  && r.ReleaseDate > DateTime.Today));
             }
 
@@ -107,6 +107,8 @@ namespace Services
                         }
                     }
                 }
+
+                room.Id = id;
                 context.Entry(roomToChange).CurrentValues.SetValues(room);
                 await context.SaveChangesAsync();
             }

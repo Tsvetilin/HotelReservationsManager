@@ -81,7 +81,7 @@ namespace Services
                 return null;
             }
 
-            if (!await AreDatesAcceptable(roomId,accomodationDate ,releaseDate))
+            if (await AreDatesAcceptable(roomId,accomodationDate ,releaseDate))
             {
                 return null;
             }
