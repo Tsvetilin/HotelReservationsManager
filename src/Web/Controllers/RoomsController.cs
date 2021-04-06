@@ -8,6 +8,7 @@ using Data.Models;
 using Web.Models.ViewModels;
 using Web.Models.Rooms;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Web.Controllers
 {
@@ -74,6 +75,13 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                foreach (var _room in await roomService.GetAll<RoomInputModel>())
+                {
+                    if (_room.Number == createModel.Number)
+                    {
+                        return RedirectToAction("Index", "Rooms");
+                    }
+                }
                 var room = new Room
                 {
                     Capacity = createModel.Capacity,
@@ -98,7 +106,16 @@ namespace Web.Controllers
             var room = await roomService.GetRoom<RoomViewModel>(id);
             if (room != null)
             {
-                await roomService.DeleteRoom(id);
+                if (room.Reservations == null)
+                {
+                    await roomService.DeleteRoom(id);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "There are still reservations made");
+
+                    return this.RedirectToAction("Index", "Rooms");
+                }
             }
             return this.RedirectToAction("Index", "Rooms");
         }
@@ -127,23 +144,28 @@ namespace Web.Controllers
 
             var uRoom = roomService.GetRoom<RoomInputModel>(id);
             if (ModelState.IsValid)
-            {
-                if (uRoom == null)
+            {               
+                foreach (var _room in await roomService.GetAll<RoomInputModel>())
                 {
-                    return RedirectToAction(nameof(Index));
+                    if (_room.Number == input.Number||uRoom==null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 var room = new Room
                 {
-                    Id = id,
-                    Capacity = input.Capacity,
-                    AdultPrice = input.AdultPrice,
-                    ChildrenPrice = input.ChildrenPrice,
-                    Type = input.Type,
-                    Number = input.Number,
-                };
+                        Id = id,
+                        Capacity = input.Capacity,
+                        AdultPrice = input.AdultPrice,
+                        ChildrenPrice = input.ChildrenPrice,
+                        Type = input.Type,
+                        Number = input.Number,
+               };
 
-                await roomService.UpdateRoom(id, room);
-                return RedirectToAction("Index", "Rooms");
+
+               await roomService.UpdateRoom(id, room);
+               return RedirectToAction("Index", "Rooms");
+                
             }
 
             return this.View(input);

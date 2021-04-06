@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using System.Collections.Generic;
 
 namespace Tests.Data
 {
@@ -18,11 +19,9 @@ namespace Tests.Data
         };
         public static readonly ClientData Client1User = new ClientData
         {
-            Id = User1Employee.Id
         };
         public static readonly ClientData Client2User = new ClientData
         {
-            Id = User2Employee.Id
         };
 
         public static readonly EmployeeData EmployeeUser1 = new EmployeeData

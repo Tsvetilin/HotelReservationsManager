@@ -1,7 +1,25 @@
-﻿
+﻿using Data.Models;
+using System;
+using System.Collections.Generic;
+
 namespace Tests.Data
 {
     public static class Reservations
-    {
+    {          
+        public static readonly Reservation Reservation1User3Room1NoClient = new Reservation
+        {
+            AccommodationDate = DateTime.Today.AddDays(2),
+            ReleaseDate = DateTime.Today.AddDays(5),
+            AllInclusive = AllInClusive1,
+            Breakfast = Breakfast1,
+            Clients = new List<ClientData>(),
+            Room = Rooms.Room1,
+            User = Users.User3NotEmployee
+        };
+        public const bool AllInClusive1 = true;
+        public const bool Breakfast1 = true;
+
+        public const bool UpdateAllInClusive1 = false;
+        public const bool UpdateBreakfast1 = false;
     }
 }

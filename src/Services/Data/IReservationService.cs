@@ -15,7 +15,6 @@ namespace Services
                                                 IEnumerable<ClientData> clients,
                                                 ApplicationUser user);
         public Task UpdateReservation(string id,
-                                            string roomId,
                                             DateTime accomodationDate,
                                             DateTime releaseDate,
                                             bool allInclusive,
