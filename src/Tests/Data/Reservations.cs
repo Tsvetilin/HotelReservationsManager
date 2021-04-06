@@ -38,6 +38,18 @@ namespace Tests.Data
             Room = Rooms.Room2,
             User = Users.User4NotEmployee
         };
+
+        public static readonly Reservation Reservation4User4Room2NoClient = new Reservation
+        {
+            AccommodationDate = DateTime.Today.AddDays(12),
+            ReleaseDate = DateTime.Today.AddDays(14),
+            AllInclusive = AllInClusive1,
+            Breakfast = Breakfast1,
+            Clients = new List<ClientData>(),
+            Room = Rooms.Room2,
+            User = Users.User4NotEmployee
+        };
+
         public const bool AllInClusive1 = true;
         public const bool Breakfast1 = true;
 

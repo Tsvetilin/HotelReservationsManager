@@ -132,9 +132,9 @@ namespace Tests.Service.Tests
             //Arrange
             List<Room> rooms = new()
             {
-                Rooms.Room1TakenAtPresent,
+                Rooms.Room1TakenAtPresent1ReservationUser4,
                 Rooms.Room2TakenAtPresent,
-                Rooms.Room1FreeAtPresent
+                Rooms.Room1FreeAtPresent1ReservationUser3
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
@@ -153,12 +153,17 @@ namespace Tests.Service.Tests
             //Arrange
             List<Room> rooms = new()
             {
-                Rooms.Room1TakenAtPresent,
+                Rooms.Room1TakenAtPresent1ReservationUser4,
                 Rooms.Room2TakenAtPresent,
-                Rooms.Room1FreeAtPresent
+                Rooms.Room1FreeAtPresent1ReservationUser3
+            };
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(users)
                                                                 .SeedAsync(rooms);
             var roomService = new RoomServices(context);
 
@@ -193,9 +198,10 @@ namespace Tests.Service.Tests
         {
             List<Room> rooms = new()
             {
-                Rooms.Room1FreeAtPresent,
-                Rooms.Room1TakenAtPresent
+                Rooms.Room1FreeAtPresent1ReservationUser3,
+                Rooms.Room1TakenAtPresent1ReservationUser4
             };
+
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(rooms);
@@ -208,12 +214,12 @@ namespace Tests.Service.Tests
             //Assert
             Assert.NotNull(result1);
             Assert.NotNull(result2);
-            Assert.AreEqual(Rooms.Room1FreeAtPresent.Id, result1.FirstOrDefault().Id);
-            Assert.AreEqual(Rooms.Room1FreeAtPresent.Number, result1.FirstOrDefault().Number);
-            Assert.AreEqual(Rooms.Room1FreeAtPresent.Type, result1.FirstOrDefault().Type);
-            Assert.AreEqual(Rooms.Room1TakenAtPresent.Id, result2.FirstOrDefault().Id);
-            Assert.AreEqual(Rooms.Room1TakenAtPresent.Number, result2.FirstOrDefault().Number);
-            Assert.AreEqual(Rooms.Room1TakenAtPresent.Type, result2.FirstOrDefault().Type);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Id, result1.FirstOrDefault().Id);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Number, result1.FirstOrDefault().Number);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Type, result1.FirstOrDefault().Type);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Id, result2.FirstOrDefault().Id);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Number, result2.FirstOrDefault().Number);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Type, result2.FirstOrDefault().Type);
         }
 
         [Test]

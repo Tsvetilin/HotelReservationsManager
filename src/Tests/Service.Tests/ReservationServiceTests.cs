@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.Models;
+using Microsoft.AspNetCore.Identity;
 using NUnit.Framework;
 using Services;
 using Services.Data;
@@ -34,10 +35,10 @@ namespace Tests.Service.Tests
             List<ApplicationUser> users = new() { Users.User3NotEmployee };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                .SeedAsync(reservationsData)
                                                                 .SeedAsync(settings)
+                                                                .SeedAsync(users)
                                                                 .SeedAsync(rooms)
-                                                                .SeedAsync(users);
+                                                                .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
@@ -53,10 +54,42 @@ namespace Tests.Service.Tests
                                          Reservations.Reservation1User3Room1NoClient.User
                                          );
 
-
             // Assert
             Assert.NotNull(reservation);
             Assert.AreEqual(1, context.Reservations.Count());
+        }
+
+        [Test]
+        public async Task AddReservation_ShouldNotAddReservation()
+        {
+            // Arange
+            List<Reservation> reservationsData = new() { Reservations.Reservation3User4Room2NoClient };
+            List<Setting> settings = new() { Settings.AllInclusive, Settings.Breakfast };
+            List<Room> rooms = new() { Rooms.Room2 };
+            List<ApplicationUser> users = new() { Users.User4NotEmployee };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(settings)
+                                                                .SeedAsync(users)
+                                                                .SeedAsync(rooms)
+                                                                .SeedAsync(reservationsData);
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var reservation = await service.AddReservation(Reservations.Reservation4User4Room2NoClient.Room.Id,
+                                         Reservations.Reservation4User4Room2NoClient.AccommodationDate,
+                                         Reservations.Reservation4User4Room2NoClient.ReleaseDate,
+                                         Reservations.AllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation4User4Room2NoClient.Clients,
+                                         Reservations.Reservation4User4Room2NoClient.User
+                                         );
+
+            // Assert
+            Assert.Null(reservation);
         }
 
         [Test]
@@ -89,13 +122,28 @@ namespace Tests.Service.Tests
                 Users.Client1User
             };
 
+            List<ApplicationRole> applicationRoles = new()
+            {
+                new ApplicationRole { Name = "User" }
+            };
+
+            List<IdentityUserRole<string>> identityUserRoles = new()
+            {
+                new IdentityUserRole<string>
+                {
+                    RoleId = applicationRoles.First().Id,
+                    UserId = Users.User3NotEmployee.Id
+                }
+            };
+
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                     .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
-                                                                    .SeedAsync(users)
                                                                     .SeedAsync(clients)
+                                                                    .SeedAsync(applicationRoles)
+                                                                    .SeedAsync(users)
+                                                                    .SeedAsync(identityUserRoles)
+                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
-
             SettingService settingService = new(context);
 
             var service = new ReservationsService(context, settingService);
@@ -118,17 +166,25 @@ namespace Tests.Service.Tests
         public async Task DeleteReservation_ShouldDeleteReservation()
         {
             // Arange
-            List<Reservation> reservationsData = new() { Reservations.Reservation1User3Room1NoClient };
-            List<Setting> settings = new() { Settings.AllInclusive, Settings.Breakfast };
-            List<Room> rooms = new() { Rooms.Room1 };
-            List<ApplicationUser> users = new() { Users.User3NotEmployee };
+            List<Reservation> reservationsData = new()
+            {
+                Reservations.Reservation1User3Room1NoClient
+            };
+
+            List<Room> rooms = new()
+            {
+                Rooms.Room1
+            };
+
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(rooms)
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
@@ -139,8 +195,8 @@ namespace Tests.Service.Tests
             bool result2 = await service.DeleteReservation("2");
 
             // Assert
-            Assert.AreEqual(true, result1);
-            Assert.AreEqual(false, result2);
+            Assert.IsTrue(result1);
+            Assert.IsFalse(result2);
         }
 
         [Test]
@@ -151,12 +207,6 @@ namespace Tests.Service.Tests
             {
                 Reservations.Reservation1User3Room1NoClient,
                 Reservations.Reservation2User4Room2NoClient
-            };
-
-            List<Setting> settings = new()
-            {
-                Settings.AllInclusive,
-                Settings.Breakfast
             };
 
             List<Room> rooms = new()
@@ -172,11 +222,9 @@ namespace Tests.Service.Tests
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(rooms)
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
@@ -222,8 +270,8 @@ namespace Tests.Service.Tests
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                     .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
+                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData)
                                                                     ;
 
@@ -269,10 +317,9 @@ namespace Tests.Service.Tests
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                     .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(rooms)
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
@@ -316,10 +363,9 @@ namespace Tests.Service.Tests
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                     .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(rooms)
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
@@ -363,10 +409,9 @@ namespace Tests.Service.Tests
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                     .SeedAsync(settings)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(users)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(rooms)
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 

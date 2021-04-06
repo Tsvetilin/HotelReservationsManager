@@ -22,13 +22,13 @@ namespace Services
             this.settingService = settingService;
         }
 
-        private async Task<bool> AreDatesAcceptable(string roomId, DateTime accomodationDate, DateTime releaseDate, string reservationId=null)
+        private async Task<bool> AreDatesAcceptable(string roomId, DateTime accomodationDate, DateTime releaseDate, string reservationId = null)
         {
             if (accomodationDate >= releaseDate || accomodationDate < DateTime.Today)
             {
                 return false;
             }
-            
+
             var reservationPeriods = await dbContext.
                                            Reservations.
                                            Where(x => x.Room.Id == roomId).
@@ -40,12 +40,14 @@ namespace Services
             if (!string.IsNullOrWhiteSpace(reservationId))
             {
                 var reservation = await dbContext.Reservations.FirstOrDefaultAsync(x => x.Id == reservationId);
-                reservationPeriods.Remove((reservation.AccommodationDate,reservation.ReleaseDate));
+                reservationPeriods = reservationPeriods.Where(x=>x.Item1!=reservation.AccommodationDate && x.Item2!=reservation.ReleaseDate).ToList();
             }
 
             return !reservationPeriods.Any(x =>
                 (x.Item1 > accomodationDate && x.Item1 < releaseDate) ||
-                (x.Item2 > accomodationDate && x.Item2 < releaseDate));
+                (x.Item2 > accomodationDate && x.Item2 < releaseDate) ||
+                (x.Item1 > accomodationDate && x.Item2 < releaseDate) ||
+                (x.Item1 < accomodationDate && x.Item2 > releaseDate));
         }
 
         private async Task<double> CalculatePrice(Room room, IEnumerable<ClientData> clients, bool allInclusive, bool breakfast)
@@ -81,13 +83,13 @@ namespace Services
                 return null;
             }
 
-            if (await AreDatesAcceptable(roomId,accomodationDate ,releaseDate))
+            if (!await AreDatesAcceptable(roomId, accomodationDate, releaseDate))
             {
                 return null;
             }
 
-            if(clients.Count()+1>room.Capacity)
-                    {
+            if (clients.Count() + 1 > room.Capacity)
+            {
                 return null;
             }
 
@@ -125,7 +127,7 @@ namespace Services
 
             var areDateAcceptable = await AreDatesAcceptable(room.Id, accomodationDate, releaseDate, id);
             var isCapacityInRange = clients.Count() + 1 <= room.Capacity;
-            var isUserAuthorizedToUpdate = !(reservation.User.Id == user.Id ||
+            var isUserAuthorizedToUpdate = !(reservation.User.Id == user.Id &&
                                              !dbContext.UserRoles.Any(x => x.UserId == user.Id &&
                                               x.RoleId == dbContext.Roles.First(a => a.Name == "User").Id));
 

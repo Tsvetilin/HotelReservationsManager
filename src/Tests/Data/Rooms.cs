@@ -30,7 +30,7 @@ namespace Tests.Data
             Type = RoomType.Penthouse,
             IsTaken = IsTaken2,
         };
-        public static readonly Room Room1FreeAtPresent = new Room
+        public static readonly Room Room1FreeAtPresent1ReservationUser3 = new Room
         {
             AdultPrice = AdultPrice2,
             ChildrenPrice = ChildrenPrice2,
@@ -43,11 +43,16 @@ namespace Tests.Data
                 new Reservation
                 {
                     AccommodationDate = DateTime.Today.AddDays(-3),
-                    ReleaseDate = DateTime.Today.AddDays(-1)
+                    ReleaseDate = DateTime.Today.AddDays(-1),
+                    AllInclusive=true,
+                    Breakfast=true,
+                    Clients = new List<ClientData>(),
+                    Price = 5,
+                    User = Users.User3NotEmployee
                 }
             }
         };
-        public static readonly Room Room1TakenAtPresent = new Room
+        public static readonly Room Room1TakenAtPresent1ReservationUser4 = new Room
         {
             AdultPrice = AdultPrice2,
             ChildrenPrice = ChildrenPrice2,
@@ -60,7 +65,12 @@ namespace Tests.Data
                 new Reservation
                 {
                     AccommodationDate = DateTime.Today,
-                    ReleaseDate = DateTime.Today.AddDays(3)
+                    ReleaseDate = DateTime.Today.AddDays(3),
+                    AllInclusive=true,
+                    Breakfast=true,
+                    Clients = new List<ClientData>(),
+                    Price = 5,
+                    User = Users.User4NotEmployee
                 }
             }
         };
