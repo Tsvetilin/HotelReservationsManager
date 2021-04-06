@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Services.Common;
+using Services.External;
 
 namespace Services
 {
@@ -78,7 +79,6 @@ namespace Services
             }
             return result;
         }
-
         public async Task DeleteRoom(string id)
         {
             var room = await context.Rooms.FindAsync(id);
@@ -95,6 +95,17 @@ namespace Services
             var roomToChange = await context.Rooms.FindAsync(id);
             if (roomToChange != null)
             {
+                if(roomToChange.Reservations!=null)
+                {
+                 foreach(var reservation in roomToChange.Reservations)
+                    {
+                        if(roomToChange.Capacity <room.Capacity)
+                        {
+                            //TODO: Send an email for cancelation
+                            context.Reservations.Remove(reservation);
+                        }
+                    }
+                }
                 context.Entry(roomToChange).CurrentValues.SetValues(room);
                 await context.SaveChangesAsync();
             }
@@ -104,7 +115,7 @@ namespace Services
             return await this.context.Rooms.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
-        public int CountAllRooms()
+        public  int CountAllRooms()
         {
             return context.Rooms.Count();
         }
