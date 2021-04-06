@@ -45,15 +45,15 @@ namespace Web.Controllers
             {
                 PagesCount = pages,
                 CurrentPage = id,
-                Rooms = searchResults.GetPageItems(id,pageSize),
+                Rooms = searchResults.GetPageItems(id, pageSize),
                 Controller = "Rooms",
                 Action = nameof(Index),
                 BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
                 AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
                 MaxCapacity = await roomService.GetMaxCapacity(),
-                AvailableOnly=availableOnly,
-                MinCapacity=minCapacity,
-                Types=type,
+                AvailableOnly = availableOnly,
+                MinCapacity = minCapacity,
+                Types = type,
             };
 
             return View(model);
@@ -110,15 +110,7 @@ namespace Web.Controllers
             var room = await roomService.GetRoom<RoomViewModel>(id);
             if (room != null)
             {
-                if (room.Reservations == null)
-                {
-                    await roomService.DeleteRoom(id);
-                }
-                else
-                {
-                    ModelState.AddModelError("", "There are still reservations made");
-                    return this.RedirectToAction("Index", "Rooms");
-                }
+                await roomService.DeleteRoom(id);
             }
             return this.RedirectToAction("Index", "Rooms");
         }
@@ -147,9 +139,9 @@ namespace Web.Controllers
 
             var uRoom = roomService.GetRoom<RoomInputModel>(id);
             if (ModelState.IsValid)
-            { 
+            {
 
-                if(!await roomService.IsRoomNumerFree(input.Number) || uRoom==null)
+                if (!await roomService.IsRoomNumerFree(input.Number) || uRoom == null)
                 {
                     return RedirectToAction(nameof(Index));
                 }

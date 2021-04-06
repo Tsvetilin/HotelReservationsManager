@@ -81,10 +81,17 @@ namespace Services
 
         public async Task DeleteRoom(string id)
         {
-            var room = await context.Rooms.FindAsync(id);
+            var room = await context.Rooms.Include(x=>x.Reservations).FirstOrDefaultAsync(x=>x.Id==id);
             if (room != null)
             {
+                //Feature: Send an email for room cancel forced
+                if (room.Reservations != null)
+                {
+                    context.Reservations.RemoveRange(room.Reservations);
+                    await context.SaveChangesAsync();
+                }
                 context.Rooms.Remove(room);
+                
                 await context.SaveChangesAsync();
             }
         }
