@@ -30,16 +30,16 @@
             @Html.DisplayFor(model => model.Type)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AdultPrice):
+            @Html.DisplayNameFor(model => model.AdultPrice): 
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AdultPrice)
+            @Html.DisplayFor(model => model.AdultPrice) $
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ChildrenPrice):
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ChildrenPrice)
+            @Html.DisplayFor(model => model.ChildrenPrice) $
         </dd>
         @if (SignInManager.Context.User.IsInRole("Employee") || SignInManager.Context.User.IsInRole("Admin"))
         {

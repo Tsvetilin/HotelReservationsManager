@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Services;
 using Services.Common;
 using Services.Data;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Common;
 using Web.Models.Reservations;
 using Web.Models.Rooms;
 
@@ -23,18 +25,21 @@ namespace Web.Controllers
         private readonly IRoomService roomService;
         private readonly ISettingService settingService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IMemoryCache memoryCache;
 
         public ReservationsController(IReservationService reservationService,
                                       IUserService userService,
                                       IRoomService roomService,
                                       ISettingService settingService,
-                                      UserManager<ApplicationUser> userManager)
+                                      UserManager<ApplicationUser> userManager,
+                                      IMemoryCache memoryCache)
         {
             this.reservationService = reservationService;
             this.userService = userService;
             this.roomService = roomService;
             this.settingService = settingService;
             this.userManager = userManager;
+            this.memoryCache = memoryCache;
         }
 
         public async Task<IActionResult> Index(int id = 1, int elementsOnPage = 10)
@@ -97,7 +102,7 @@ namespace Web.Controllers
 
             var roomIsEmpty = room.Reservations.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
-                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
+                (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
 
             if (!roomIsEmpty)
             {
@@ -170,7 +175,7 @@ namespace Web.Controllers
 
             var roomIsEmpty = !reservation.Reservations?.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
-                (x.ReleaseDate > x.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate)) ?? true;
+                (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate)) ?? true;
 
             if (!roomIsEmpty)
             {
@@ -224,16 +229,16 @@ namespace Web.Controllers
             inputModel.RoomId = room.Id;
             inputModel.Reservations = room.Reservations.AsQueryable().ProjectTo<ReservationPeriod>().ToList();
             inputModel.RoomCapacity = room.Capacity;
-            inputModel.AllInclusivePrice = double.Parse((await settingService.GetAsync(nameof(inputModel.AllInclusivePrice))).Value);
+            inputModel.AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService);
             inputModel.RoomAdultPrice = room.AdultPrice;
-            inputModel.BreakfastPrice = double.Parse((await settingService.GetAsync(nameof(inputModel.BreakfastPrice))).Value);
+            inputModel.BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService);
             inputModel.RoomChildrenPrice = room.ChildrenPrice;
             inputModel.RoomType = room.Type;
 
             return inputModel;
         }
 
-        //[Authorize("Admin, Employee")]
+        [Authorize("Admin, Employee")]
         public async Task<IActionResult> All(int id = 1, int elementsOnPage = 10)
         {
             var reservations = await reservationService.GetAll<ReservationViewModel>();

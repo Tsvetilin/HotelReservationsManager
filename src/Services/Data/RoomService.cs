@@ -108,5 +108,15 @@ namespace Services
         {
             return context.Rooms.Count();
         }
+
+        public async Task<double> GetMinPrice()
+        {
+            return await this.context.Rooms.OrderBy(x => x.AdultPrice).Select(X => X.AdultPrice).FirstOrDefaultAsync();
+        }
+
+        public async Task<double> GetMaxPrice()
+        {
+            return await this.context.Rooms.OrderByDescending(x => x.AdultPrice).Select(X => X.AdultPrice).FirstOrDefaultAsync();
+        }
     }
 }

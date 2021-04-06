@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Services;
 using Services.Common;
+using Services.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Web.Common;
 using Web.Models;
 using Web.Models.Rooms;
 using Web.Models.ViewModels;
@@ -13,11 +16,21 @@ namespace Web.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IMemoryCache memoryCache;
+        private readonly ISettingService settingService;
+        private readonly IReservationService reservationService;
+
         public IRoomService roomService { get; }
 
-        public HomeController(IRoomService roomService)
+        public HomeController(IRoomService roomService,
+                              IMemoryCache memoryCache,
+                              ISettingService settingService,
+                              IReservationService reservationService)
         {
             this.roomService = roomService;
+            this.memoryCache = memoryCache;
+            this.settingService = settingService;
+            this.reservationService = reservationService;
         }
 
         public async Task<IActionResult> Index(int id = 1, int pageSize = 10)
@@ -28,13 +41,18 @@ namespace Web.Controllers
                 id = 1;
             }
 
-            RoomIndexViewModel viewModel = new()
+            HomePageViewModel viewModel = new()
             {
                 PagesCount = pageCount,
                 CurrentPage = id,
                 Rooms = await roomService.GetAllFreeRoomsAtPresent<RoomViewModel>().GetPageItems(id, pageSize),
                 Controller = "Home",
                 Action = nameof(Index),
+                BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
+                AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
+                TotalReservationsMade = await reservationService.CountAllReservations(),
+                MinPrice = await roomService.GetMinPrice(),
+                MaxPrice = await roomService.GetMaxPrice(),
             };
 
             return View(viewModel);

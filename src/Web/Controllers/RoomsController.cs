@@ -9,15 +9,23 @@ using Web.Models.ViewModels;
 using Web.Models.Rooms;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Caching.Memory;
+using Services.Data;
+using Web.Common;
 
 namespace Web.Controllers
 {
     public class RoomsController : Controller
     {
         private readonly IRoomService roomService;
-        public RoomsController(IRoomService _roomService)
+        private readonly IMemoryCache memoryCache;
+        private readonly ISettingService settingService;
+
+        public RoomsController(IRoomService _roomService, IMemoryCache memoryCache, ISettingService settingService)
         {
             roomService = _roomService;
+            this.memoryCache = memoryCache;
+            this.settingService = settingService;
         }
         public async Task<IActionResult> Index(string search, int id = 1, int pageSize = 10)
         {
@@ -34,6 +42,8 @@ namespace Web.Controllers
                         Rooms = searchResults.ToList(),
                         Controller = "Rooms",
                         Action = nameof(Index),
+                        BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
+                        AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
                     });
                 }
                 ModelState.AddModelError("Found", "Room not found!");
@@ -43,6 +53,8 @@ namespace Web.Controllers
                 PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize),
                 Controller = "Rooms",
                 Action = nameof(Index),
+                BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
+                AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
             };
 
             if (id <= 0 || id > model.PagesCount)

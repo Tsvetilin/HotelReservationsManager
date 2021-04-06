@@ -1,5 +1,5 @@
 ﻿
-@model Web.Models.ViewModels.RoomIndexViewModel
+@model Web.Models.ViewModels.HomePageViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -8,11 +8,15 @@
 <h1 class="text-center">Currently free Rooms as of today</h1>
 
 <hr/>
-<div class="d-flex">
-    <p class="mx-3">You can search all rooms and make a reservation</p>
+<div class="d-flex align-items-center mt-3">
+    <p class="mx-3 mb-0 h3">You can search all rooms and make a reservation</p>
     <form asp-controller="Rooms" asp-action="Index" method="get">
-        <input type="submit" class="btn btn-primary"/>
+        <input type="submit" class="btn btn-primary" value="See All"/>
     </form>
+</div>
+<div class="my-4">
+    <p>Prices starting from <strong>@Model.MinPrice$</strong> up to <strong>@Model.MaxPrice$</strong> / night</p>
+    <p>Total reservations made all-time: <strong>@Model.TotalReservationsMade</strong></p>
 </div>
 <br />
 

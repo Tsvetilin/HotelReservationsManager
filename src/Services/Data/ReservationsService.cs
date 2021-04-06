@@ -22,6 +22,51 @@ namespace Services
             this.settingService = settingService;
         }
 
+        private async Task<bool> AreDatesAcceptable(string roomId, DateTime accomodationDate, DateTime releaseDate, string reservationId=null)
+        {
+            if (accomodationDate <= releaseDate || accomodationDate < DateTime.Today)
+            {
+                return false;
+            }
+            
+            var reservationPeriods = await dbContext.
+                                           Reservations.
+                                           Where(x => x.Room.Id == roomId).
+                                           Select(x => new Tuple<DateTime, DateTime>
+                                                        (x.AccommodationDate, x.ReleaseDate).
+                                                        ToValueTuple()).
+                                          ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(reservationId))
+            {
+                var reservation = await dbContext.Reservations.FirstOrDefaultAsync(x => x.Id == reservationId);
+                reservationPeriods.Remove((reservation.AccommodationDate,reservation.ReleaseDate));
+            }
+
+            return !reservationPeriods.Any(x =>
+                (x.Item1 > accomodationDate && x.Item1 < releaseDate) ||
+                (x.Item2 > accomodationDate && x.Item2 < releaseDate));
+        }
+
+        private async Task<double> CalculatePrice(Room room, IEnumerable<ClientData> clients, bool allInclusive, bool breakfast)
+        {
+            var price =
+                clients.Count(x => x.IsAdult) * room.AdultPrice +
+                clients.Count(x => !x.IsAdult) * room.ChildrenPrice +
+                room.AdultPrice;
+
+            if (allInclusive)
+            {
+                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
+            }
+            else if (breakfast)
+            {
+                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
+            }
+
+            return price;
+        }
+
         public async Task<Reservation> AddReservation(string roomId,
                                                       DateTime accomodationDate,
                                                       DateTime releaseDate,
@@ -31,20 +76,22 @@ namespace Services
                                                       ApplicationUser user)
         {
             var room = await dbContext.Rooms.FindAsync(roomId);
-
-            var price =
-                clients.Count(x => x.IsAdult) * room.AdultPrice +
-                clients.Count(x => !x.IsAdult) * room.ChildrenPrice + 
-                room.AdultPrice;
-
-            if (allInclusive)
+            if (room == null)
             {
-                price +=  double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
+                return null;
             }
-            else if (breakfast)
+
+            if (!await AreDatesAcceptable(roomId,accomodationDate ,releaseDate))
             {
-                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
+                return null;
             }
+
+            if(clients.Count()+1>room.Capacity)
+                    {
+                return null;
+            }
+
+            var price = await CalculatePrice(room, clients, allInclusive, breakfast);
 
             var reservation = new Reservation
             {
@@ -64,7 +111,7 @@ namespace Services
             return reservation;
         }
 
-        public async Task UpdateReservation(string id,
+        public async Task<bool> UpdateReservation(string id,
                                             DateTime accomodationDate,
                                             DateTime releaseDate,
                                             bool allInclusive,
@@ -72,30 +119,22 @@ namespace Services
                                             IEnumerable<ClientData> clients,
                                             ApplicationUser user)
         {
-            var reservation = await dbContext.Reservations.AsNoTracking().FirstOrDefaultAsync(x=>x.Id==id);
-            //TODO client.count + user <= capacity
-            //TODO accomodationDate > dateTime.now
-            //TODO room free period
-            //TODO releaseDate > accomodation date
-            //TODO accomodation date > today
-            //TODO room free period excluded previous reservation period
-            //TODO return if successfully updated
-            //TODO check if user is same
-            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x=>x.Reservations.Any(y=>y.Id==id));
+            var reservation = await dbContext.Reservations.AsNoTracking().Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
 
-            var price =
-                clients.Count(x => x.IsAdult) * room.AdultPrice +
-                clients.Count(x => !x.IsAdult) * room.ChildrenPrice +
-                room.AdultPrice;
+            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Reservations.Any(y => y.Id == id));
 
-            if (allInclusive)
+            var areDateAcceptable = await AreDatesAcceptable(room.Id, accomodationDate, releaseDate, id);
+            var isCapacityInRange = clients.Count() + 1 <= room.Capacity;
+            var isUserAuthorizedToUpdate = !(reservation.User.Id == user.Id ||
+                                             !dbContext.UserRoles.Any(x => x.UserId == user.Id &&
+                                              x.RoleId == dbContext.Roles.First(a => a.Name == "User").Id));
+
+            if (!isUserAuthorizedToUpdate || !isCapacityInRange || !areDateAcceptable)
             {
-                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
+                return false;
             }
-            else if (breakfast)
-            {
-                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
-            }
+
+            var price = await CalculatePrice(room, clients, allInclusive, breakfast);
 
             var newReservation = new Reservation
             {
@@ -112,9 +151,10 @@ namespace Services
 
             dbContext.Entry(reservation).CurrentValues.SetValues(newReservation);
             await this.dbContext.SaveChangesAsync();
+            return true;
         }
 
-        public async Task DeleteReservation(string id)
+        public async Task<bool> DeleteReservation(string id)
         {
             var reservation = await this.dbContext.Reservations.FindAsync(id);
             if (reservation != null)
@@ -122,7 +162,9 @@ namespace Services
                 this.dbContext.ClientData.RemoveRange(this.dbContext.ClientData.Where(x => x.Reservation.Id == reservation.Id));
                 this.dbContext.Reservations.Remove(reservation);
                 await this.dbContext.SaveChangesAsync();
+                return true;
             }
+            return false;
         }
 
         public async Task<T> GetReservation<T>(string id)
@@ -171,6 +213,11 @@ namespace Services
         public async Task<IEnumerable<T>> GetAll<T>()
         {
             return await this.dbContext.Reservations.OrderBy(x => x.ReleaseDate).ProjectTo<T>().ToListAsync();
+        }
+
+        public async Task<int> CountAllReservations()
+        {
+            return await this.dbContext.Reservations.CountAsync();
         }
     }
 }

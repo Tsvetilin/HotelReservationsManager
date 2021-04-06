@@ -43,6 +43,8 @@ namespace Web
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
+            services.AddMemoryCache();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
