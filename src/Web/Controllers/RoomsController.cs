@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Services;
 using Data.Models;
 using Web.Models.ViewModels;
 using Web.Models.Rooms;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Caching.Memory;
 using Services.Data;
 using Web.Common;
+using Data.Enums;
+using Services.Common;
 
 namespace Web.Controllers
 {
@@ -27,42 +27,34 @@ namespace Web.Controllers
             this.memoryCache = memoryCache;
             this.settingService = settingService;
         }
-        public async Task<IActionResult> Index(string search, int id = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int id = 1, int pageSize = 10, bool availableOnly = false, RoomType[] type = null, int minCapacity = 0)
         {
-            if (!string.IsNullOrEmpty(search))
+            var searchResults = await roomService.GetSearchResults<RoomViewModel>(availableOnly, type, minCapacity);
+            var resultsCount = searchResults.Count();
+            if (pageSize <= 0)
             {
-                var searchResults = await roomService.GetSearchResults<RoomViewModel>(search);
-
-                if (searchResults.Any())
-                {
-                    return View(new RoomIndexViewModel
-                    {
-                        PagesCount = 1,
-                        CurrentPage = 1,
-                        Rooms = searchResults.ToList(),
-                        Controller = "Rooms",
-                        Action = nameof(Index),
-                        BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
-                        AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
-                    });
-                }
-                ModelState.AddModelError("Found", "Room not found!");
+                pageSize = 10;
             }
+            var pages = (int)Math.Ceiling((double)resultsCount / pageSize);
+            if (id <= 0 || id > pages)
+            {
+                id = 1;
+            }
+
             var model = new RoomIndexViewModel
             {
-                PagesCount = (int)Math.Ceiling((double)roomService.CountAllRooms() / pageSize),
+                PagesCount = pages,
+                CurrentPage = id,
+                Rooms = searchResults.GetPageItems(id,pageSize),
                 Controller = "Rooms",
                 Action = nameof(Index),
                 BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService),
                 AllInclusivePrice = await memoryCache.GetAllInclusivePrice(settingService),
+                MaxCapacity = await roomService.GetMaxCapacity(),
+                AvailableOnly=availableOnly,
+                MinCapacity=minCapacity,
+                Types=type,
             };
-
-            if (id <= 0 || id > model.PagesCount)
-            {
-                id = 1;
-            }
-            model.CurrentPage = id;
-            model.Rooms = await roomService.GetPageItems<RoomViewModel>(model.CurrentPage, pageSize);
 
             return View(model);
         }
@@ -125,7 +117,6 @@ namespace Web.Controllers
                 else
                 {
                     ModelState.AddModelError("", "There are still reservations made");
-
                     return this.RedirectToAction("Index", "Rooms");
                 }
             }
@@ -156,28 +147,27 @@ namespace Web.Controllers
 
             var uRoom = roomService.GetRoom<RoomInputModel>(id);
             if (ModelState.IsValid)
-            {               
-                foreach (var _room in await roomService.GetAll<RoomInputModel>())
+            { 
+
+                if(!await roomService.IsRoomNumerFree(input.Number) || uRoom==null)
                 {
-                    if (_room.Number == input.Number||uRoom==null)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
+
                 var room = new Room
                 {
-                        Id = id,
-                        Capacity = input.Capacity,
-                        AdultPrice = input.AdultPrice,
-                        ChildrenPrice = input.ChildrenPrice,
-                        Type = input.Type,
-                        Number = input.Number,
-               };
+                    Id = id,
+                    Capacity = input.Capacity,
+                    AdultPrice = input.AdultPrice,
+                    ChildrenPrice = input.ChildrenPrice,
+                    Type = input.Type,
+                    Number = input.Number,
+                };
 
 
-               await roomService.UpdateRoom(id, room);
-               return RedirectToAction("Index", "Rooms");
-                
+                await roomService.UpdateRoom(id, room);
+                return RedirectToAction("Index", "Rooms");
+
             }
 
             return this.View(input);

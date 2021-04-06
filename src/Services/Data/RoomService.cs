@@ -39,20 +39,17 @@ namespace Services
 
         public async Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>()
         {
-            var prevRes = await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).ToListAsync();
-            var result = await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
+            return await context.Rooms.
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
                 OrderBy(x => x.Number).
                 ProjectTo<T>().
                 ToListAsync();
-            return result;
         }
 
         public async Task<int> CountFreeRoomsAtPresent()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
                 CountAsync();
         }
 
@@ -61,28 +58,29 @@ namespace Services
             return await context.Rooms.AsQueryable().ProjectTo<T>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage)
+        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null)
         {
-            return await GetAll<T>().GetPageItems(page, roomsOnPage);
+            IQueryable<Room> result = context.Rooms;
+
+            if (availableOnly)
+            {
+                result = result.Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today
+                                                                 && r.ReleaseDate > DateTime.Today));
+            }
+
+            if (types != null && (types?.Count() ?? 0) > 0)
+            {
+                result = result.Where(x => types.Contains(x.Type));
+            }
+
+            if (minCapacity != null && minCapacity > 0)
+            {
+                result = result.Where(x => x.Capacity > minCapacity);
+            }
+
+            return await result.OrderBy(x => x.Number).ProjectTo<T>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
-        {
-            var result = new List<T>();
-            var capacityResults = await GetAllByCapacity<T>(int.Parse(searchString));
-            //TODO
-            var typeResults = await GetAllByType<T>(((RoomType)Enum.Parse(typeof(RoomType), searchString)));
-
-            if (capacityResults != null)
-            {
-                result.AddRange(capacityResults);
-            }
-            if (typeResults != null)
-            {
-                result.AddRange(typeResults);
-            }
-            return result;
-        }
         public async Task DeleteRoom(string id)
         {
             var room = await context.Rooms.FindAsync(id);
@@ -93,7 +91,6 @@ namespace Services
             }
         }
 
-        // TODO: Cancel reservations if less Capacity than it was before & Send Email
         public async Task UpdateRoom(string id, Room room)
         {
             var roomToChange = await context.Rooms.FindAsync(id);
@@ -110,8 +107,6 @@ namespace Services
                         }
                     }
                 }
-
-                room.Id = id;
                 context.Entry(roomToChange).CurrentValues.SetValues(room);
                 await context.SaveChangesAsync();
             }
@@ -134,6 +129,16 @@ namespace Services
         public async Task<double> GetMaxPrice()
         {
             return await this.context.Rooms.OrderByDescending(x => x.AdultPrice).Select(X => X.AdultPrice).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> IsRoomNumerFree(int number)
+        {
+            return !await context.Rooms.AsNoTracking().AnyAsync(x => x.Number == number);
+        }
+
+        public async Task<int> GetMaxCapacity()
+        {
+            return await context.Rooms.AsNoTracking().OrderByDescending(x => x.Capacity).Select(x=>x.Capacity).FirstOrDefaultAsync();
         }
     }
 }
