@@ -24,7 +24,7 @@ namespace Services
 
         private async Task<bool> AreDatesAcceptable(string roomId, DateTime accomodationDate, DateTime releaseDate, string reservationId=null)
         {
-            if (accomodationDate <= releaseDate || accomodationDate < DateTime.Today)
+            if (accomodationDate >= releaseDate || accomodationDate < DateTime.Today)
             {
                 return false;
             }

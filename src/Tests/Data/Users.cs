@@ -6,36 +6,36 @@ namespace Tests.Data
 {
     public static class Users
     {
-        public static readonly ApplicationUser User1Employee = new ApplicationUser
+        public static readonly ApplicationUser User1Employee = new()
         {
         };
-        public static readonly ApplicationUser User2Employee = new ApplicationUser
+        public static readonly ApplicationUser User2Employee = new()
         {
         };
-        public static readonly ApplicationUser User3NotEmployee = new ApplicationUser
+        public static readonly ApplicationUser User3NotEmployee = new()
         {
         };
-        public static readonly ApplicationUser User4NotEmployee = new ApplicationUser
+        public static readonly ApplicationUser User4NotEmployee = new ()
         {
         };
-        public static readonly ClientData Client1User = new ClientData
+        public static readonly ClientData Client1User = new ()
         {
         };
-        public static readonly ClientData Client2User = new ClientData
+        public static readonly ClientData Client2User = new ()
         {
         };
 
-        public static readonly EmployeeData EmployeeUser1 = new EmployeeData
+        public static readonly EmployeeData EmployeeUser1 = new ()
         {
             UserId = User1Employee.Id,
         };
-        public static readonly EmployeeData EmployeeUser2 = new EmployeeData
+        public static readonly EmployeeData EmployeeUser2 = new ()
         {
             UserId = User2Employee.Id,
         };
 
         public const string searchParam = "Test";
-        public static readonly ApplicationUser UserForSearch = new ApplicationUser
+        public static readonly ApplicationUser UserForSearch = new()
         {
             Email = searchParam,
             FirstName=searchParam,
@@ -43,7 +43,7 @@ namespace Tests.Data
             PhoneNumber=searchParam,
             UserName=searchParam,
         };
-        public static readonly EmployeeData EmployeeForSearch = new EmployeeData
+        public static readonly EmployeeData EmployeeForSearch = new()
         {
             UserId=UserForSearch.Id,
             SecondName=searchParam,
@@ -51,7 +51,7 @@ namespace Tests.Data
         };
 
         public const string searchParam2 = "Test2";
-        public static readonly ApplicationUser UserForSearch2 = new ApplicationUser
+        public static readonly ApplicationUser UserForSearch2 = new()
         {
             Email = searchParam2,
             FirstName = searchParam2,
@@ -59,13 +59,13 @@ namespace Tests.Data
             PhoneNumber = searchParam2,
             UserName = searchParam2,
         };
-        public static readonly EmployeeData EmployeeForSearch2 = new EmployeeData
+        public static readonly EmployeeData EmployeeForSearch2 = new()
         {
             UserId = UserForSearch2.Id,
             SecondName = searchParam2,
             UCN = searchParam2,
         };
-        public static readonly ClientData ClientForSearch = new ClientData
+        public static readonly ClientData ClientForSearch = new()
         {
             Email = searchParam,
             FullName = searchParam,

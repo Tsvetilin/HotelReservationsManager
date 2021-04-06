@@ -17,10 +17,10 @@
 }
 <hr />
 
-<form method="get" class="d-flex justify-content-around align-items-center">
+<form method="get" class="d-flex justify-content-around align-items-center col-md-12 col-12 flex-column flex-md-row">
     <div class="form-group">
         <label class="control-label">Room types</label>
-        <select multiple name="type" asp-items="Model.GetTypesSelectList()" data-size="10" class="selectpicker overflow-hidden form-control"></select>
+        <select multiple name="type" asp-items="Model.GetTypesSelectList()" data-size="10" style="height:130px!important;" class=" overflow-hidden form-control"></select>
     </div>
     <div class="form-group">
         <label class="control-label">Minimum room capacity</label>
@@ -30,13 +30,12 @@
         <div class="checkbox">
             <label>
                 @{
-                    string check = "false";
+                    string check = "";
                     if (Model.AvailableOnly)
                     {
                         check = "checked";
                     }
-                    Console.WriteLine("Check " + check);
-                    <input name="availableOnly" type="checkbox" checked="@check" /> <span>Free at present</span>
+                    <input name="availableOnly" type="checkbox" value="true" @check/> <span>Free at present</span>
                 }
             </label>
         </div>
@@ -70,8 +69,8 @@
                         <h5 class="text-dark ">
                             Capacity: @room.Capacity
                         </h5>
-                        <p class="text-dark ">AdultPrice: @room.AdultPrice $</p>
-                        <p class="text-dark ">Children Price: @room.ChildrenPrice $</p>
+                        <p class="text-dark mb-0">AdultPrice: @room.AdultPrice$</p>
+                        <p class="text-dark ">Children Price: @room.ChildrenPrice$</p>
 
                     </div>
                     <div class="col-md-3 col-3 float-end align-self-center">
