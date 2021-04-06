@@ -132,9 +132,9 @@ namespace Tests.Service.Tests
             //Arrange
             List<Room> rooms = new()
             {
-                Rooms.Room1TakenAtPresent,
+                Rooms.Room1TakenAtPresent1ReservationUser4,
                 Rooms.Room2TakenAtPresent,
-                Rooms.Room1FreeAtPresent
+                Rooms.Room1FreeAtPresent1ReservationUser3
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
@@ -153,12 +153,17 @@ namespace Tests.Service.Tests
             //Arrange
             List<Room> rooms = new()
             {
-                Rooms.Room1TakenAtPresent,
+                Rooms.Room1TakenAtPresent1ReservationUser4,
                 Rooms.Room2TakenAtPresent,
-                Rooms.Room1FreeAtPresent
+                Rooms.Room1FreeAtPresent1ReservationUser3
+            };
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(users)
                                                                 .SeedAsync(rooms);
             var roomService = new RoomServices(context);
 
@@ -193,27 +198,28 @@ namespace Tests.Service.Tests
         {
             List<Room> rooms = new()
             {
-                Rooms.Room1,
-                Rooms.Room2
+                Rooms.Room1FreeAtPresent1ReservationUser3,
+                Rooms.Room1TakenAtPresent1ReservationUser4
             };
+
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(rooms);
             var roomService = new RoomServices(context);
 
             //Act
-            var result1 = await roomService.GetSearchResults<RoomViewModel>(RoomType.Apartment.ToString());
-            var result2 = await roomService.GetSearchResults<RoomViewModel>("4");
+            var result1 = await roomService.GetSearchResults<RoomViewModel>(true, new RoomType[] { RoomType.Penthouse }, 2);
+            var result2 = await roomService.GetSearchResults<RoomViewModel>(false, new RoomType[] { RoomType.Apartment }, 2);
 
             //Assert
             Assert.NotNull(result1);
             Assert.NotNull(result2);
-            Assert.AreEqual(Rooms.Room1.Id, result1.FirstOrDefault().Id);
-            Assert.AreEqual(Rooms.Room1.Number, result1.FirstOrDefault().Number);
-            Assert.AreEqual(Rooms.Room1.Type, result1.FirstOrDefault().Type);
-            Assert.AreEqual(Rooms.Room2.Type, result2.FirstOrDefault().Type);
-            Assert.AreEqual(Rooms.Room2.Type, result2.FirstOrDefault().Type);
-            Assert.AreEqual(Rooms.Room2.Type, result2.FirstOrDefault().Type);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Id, result1.FirstOrDefault().Id);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Number, result1.FirstOrDefault().Number);
+            Assert.AreEqual(Rooms.Room1FreeAtPresent1ReservationUser3.Type, result1.FirstOrDefault().Type);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Id, result2.FirstOrDefault().Id);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Number, result2.FirstOrDefault().Number);
+            Assert.AreEqual(Rooms.Room1TakenAtPresent1ReservationUser4.Type, result2.FirstOrDefault().Type);
         }
 
         [Test]
@@ -247,7 +253,7 @@ namespace Tests.Service.Tests
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(rooms);
             var roomService = new RoomServices(context);
-            
+
             //Act
             var result1 = await roomService.GetAllByType<RoomViewModel>(Rooms.Room2.Type);
             var result2 = await roomService.GetAllByType<RoomViewModel>(Rooms.Room1.Type);
@@ -255,6 +261,113 @@ namespace Tests.Service.Tests
             //Arrange
             Assert.AreEqual(1, result1.Count());
             Assert.AreEqual(1, result2.Count());
+        }
+
+        [Test]
+        public async Task CountAllRooms_ShouldCountAllRoomsInDb()
+        {
+            //Arange
+            List<Room> rooms = new()
+            {
+                Rooms.Room1,
+                Rooms.Room2
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms);
+            var roomService = new RoomServices(context);
+
+            //Act
+            var count = roomService.CountAllRooms();
+
+            //Arrange
+            Assert.AreEqual(rooms.Count(), count);
+        }
+
+        [Test]
+        public async Task GetMinPrice_ShouldReturnTheLowestAdultPrice()
+        {
+            //Arange
+            List<Room> rooms = new()
+            {
+                Rooms.Room1,
+                Rooms.Room2
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms);
+            var roomService = new RoomServices(context);
+
+            //Act
+            var minPrice = roomService.GetMinPrice();
+
+            //Arrange
+            Assert.AreEqual(rooms.First().AdultPrice, minPrice.Result);
+        }
+
+        [Test]
+        public async Task GetMaxPrice_ShouldReturnTheHighestAdultPrice()
+        {
+            //Arange
+            List<Room> rooms = new()
+            {
+                Rooms.Room1,
+                Rooms.Room2
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms);
+            var roomService = new RoomServices(context);
+
+            //Act
+            var maxPrice = roomService.GetMaxPrice();
+
+            //Arrange
+            Assert.AreEqual(rooms[1].AdultPrice, maxPrice.Result);
+        }
+
+        [Test]
+        public async Task IsRoomNumerFree_ShouldReturnIfTheRoomNumberIsFree()
+        {
+            //Arange
+            List<Room> rooms = new()
+            {
+                Rooms.Room1,
+                Rooms.Room2
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms);
+            var roomService = new RoomServices(context);
+
+            //Act
+            var result1 = roomService.IsRoomNumerFree(2);
+            var result2 = roomService.IsRoomNumerFree(3);
+
+            //Arrange
+            Assert.AreEqual(false, result1.Result);
+            Assert.AreEqual(true, result2.Result);
+        }
+
+        [Test]
+        public async Task GetMaxCapacity_ShouldReturnTheMaxCapacity()
+        {
+            //Arange
+            List<Room> rooms = new()
+            {
+                Rooms.Room1,
+                Rooms.Room2
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms);
+            var roomService = new RoomServices(context);
+
+            //Act
+            var maxCapacity = roomService.GetMaxCapacity();
+
+            //Arrange
+            Assert.AreEqual(Rooms.Room2.Capacity, maxCapacity.Result);
         }
     }
 }
