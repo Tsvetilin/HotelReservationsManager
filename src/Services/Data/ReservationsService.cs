@@ -35,7 +35,8 @@ namespace Services
 
             var price =
                 clients.Count(x => x.IsAdult) * room.AdultPrice +
-                clients.Count(x => !x.IsAdult) * room.ChildrenPrice;
+                clients.Count(x => !x.IsAdult) * room.ChildrenPrice + 
+                room.AdultPrice;
 
             if (allInclusive)
             {
@@ -65,7 +66,6 @@ namespace Services
         }
 
         public async Task UpdateReservation(string id,
-                                            string roomId,
                                             DateTime accomodationDate,
                                             DateTime releaseDate,
                                             bool allInclusive,
@@ -73,13 +73,21 @@ namespace Services
                                             IEnumerable<ClientData> clients,
                                             ApplicationUser user)
         {
-            var reservation = await dbContext.Reservations.FindAsync(id);
-
-            var room = await dbContext.Rooms.FindAsync(roomId);
+            var reservation = await dbContext.Reservations.AsNoTracking().FirstOrDefaultAsync(x=>x.Id==id);
+            //TODO client.count + user <= capacity
+            //TODO accomodationDate > dateTime.now
+            //TODO room free period
+            //TODO releaseDate > accomodation date
+            //TODO accomodation date > today
+            //TODO room free period excluded previous reservation period
+            //TODO return if successfully updated
+            //TODO check if user is same
+            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x=>x.Reservations.Any(y=>y.Id==id));
 
             var price =
                 clients.Count(x => x.IsAdult) * room.AdultPrice +
-                clients.Count(x => !x.IsAdult) * room.ChildrenPrice;
+                clients.Count(x => !x.IsAdult) * room.ChildrenPrice +
+                room.AdultPrice;
 
             if (allInclusive)
             {

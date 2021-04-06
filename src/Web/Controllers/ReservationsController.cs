@@ -194,7 +194,6 @@ namespace Web.Controllers
 
             await reservationService.UpdateReservation(
                 reservation.Id,
-                room.Id,
                 inputModel.AccommodationDate,
                 inputModel.ReleaseDate,
                 inputModel.AllInclusive,
