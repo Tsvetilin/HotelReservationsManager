@@ -17,7 +17,7 @@ namespace Tests.Service.Tests
 {
     class ReservationServiceTests
     {
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             MappingConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
@@ -88,7 +88,6 @@ namespace Tests.Service.Tests
                                             clients,
                                             Reservations.Reservation1User3Room1NoClient.User
                                          );
-
 
             // Assert
             Assert.AreEqual(reservationsData.Count(), context.Reservations.Count());

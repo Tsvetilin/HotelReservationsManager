@@ -18,7 +18,7 @@ namespace Tests.Service.Tests
     public class UserServiceTests
     {
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             MappingConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);

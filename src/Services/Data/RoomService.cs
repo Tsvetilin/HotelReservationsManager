@@ -12,7 +12,7 @@ using Services.External;
 
 namespace Services
 {
-     public class RoomServices : IRoomService
+    public class RoomServices : IRoomService
     {
         private readonly ApplicationDbContext context;
 
@@ -39,17 +39,20 @@ namespace Services
 
         public async Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>()
         {
-            return await context.Rooms.
-                Where(x => !x.Reservations.Any(r=>r.AccommodationDate<DateTime.Today && r.ReleaseDate>DateTime.Today)).
-                OrderBy(x=>x.Number).
+            var prevRes = await context.Rooms.
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).ToListAsync();
+            var result = await context.Rooms.
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                OrderBy(x => x.Number).
                 ProjectTo<T>().
                 ToListAsync();
+            return result;
         }
 
         public async Task<int> CountFreeRoomsAtPresent()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate < DateTime.Today && r.ReleaseDate > DateTime.Today)).
+                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
                 CountAsync();
         }
 
@@ -60,15 +63,16 @@ namespace Services
 
         public async Task<IEnumerable<T>> GetPageItems<T>(int page, int roomsOnPage)
         {
-            return await GetAll<T>().GetPageItems(page,roomsOnPage);
+            return await GetAll<T>().GetPageItems(page, roomsOnPage);
         }
 
         public async Task<IEnumerable<T>> GetSearchResults<T>(string searchString)
         {
             var result = new List<T>();
             var capacityResults = await GetAllByCapacity<T>(int.Parse(searchString));
+            //TODO
             var typeResults = await GetAllByType<T>(((RoomType)Enum.Parse(typeof(RoomType), searchString)));
-           
+
             if (capacityResults != null)
             {
                 result.AddRange(capacityResults);
@@ -82,7 +86,7 @@ namespace Services
         public async Task DeleteRoom(string id)
         {
             var room = await context.Rooms.FindAsync(id);
-            if(room !=null)
+            if (room != null)
             {
                 context.Rooms.Remove(room);
                 await context.SaveChangesAsync();
@@ -90,32 +94,34 @@ namespace Services
         }
 
         // TODO: Cancel reservations if less Capacity than it was before & Send Email
-        public async Task UpdateRoom(string id,Room room)
+        public async Task UpdateRoom(string id, Room room)
         {
             var roomToChange = await context.Rooms.FindAsync(id);
             if (roomToChange != null)
             {
-                if(roomToChange.Reservations!=null)
+                if (roomToChange.Reservations != null)
                 {
-                 foreach(var reservation in roomToChange.Reservations)
+                    foreach (var reservation in roomToChange.Reservations)
                     {
-                        if(roomToChange.Capacity <room.Capacity)
+                        if (roomToChange.Capacity < room.Capacity)
                         {
                             //TODO: Send an email for cancelation
                             context.Reservations.Remove(reservation);
                         }
                     }
                 }
+
+                room.Id = id;
                 context.Entry(roomToChange).CurrentValues.SetValues(room);
                 await context.SaveChangesAsync();
             }
         }
         public async Task<T> GetRoom<T>(string id)
         {
-            return await this.context.Rooms.Where(x=>x.Id==id).ProjectTo<T>().FirstOrDefaultAsync();
+            return await this.context.Rooms.Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
-        public  int CountAllRooms()
+        public int CountAllRooms()
         {
             return context.Rooms.Count();
         }
