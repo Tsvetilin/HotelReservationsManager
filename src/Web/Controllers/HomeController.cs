@@ -4,7 +4,6 @@ using Services;
 using Services.Common;
 using Services.Data;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Web.Common;
@@ -19,8 +18,7 @@ namespace Web.Controllers
         private readonly IMemoryCache memoryCache;
         private readonly ISettingService settingService;
         private readonly IReservationService reservationService;
-
-        public IRoomService roomService { get; }
+        private readonly IRoomService roomService;
 
         public HomeController(IRoomService roomService,
                               IMemoryCache memoryCache,

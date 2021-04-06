@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Services.Common;
-using Services.External;
 
 namespace Services
 {
@@ -102,7 +100,7 @@ namespace Services
                     {
                         if (roomToChange.Capacity < room.Capacity)
                         {
-                            //TODO: Send an email for cancelation
+                            //Feature: Send an email for change & not cancel till confirmation
                             context.Reservations.Remove(reservation);
                         }
                     }

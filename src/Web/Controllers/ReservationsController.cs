@@ -103,7 +103,7 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            var roomIsEmpty = room.Reservations.Any(x =>
+            var roomIsEmpty = !room.Reservations.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
                 (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
 

@@ -61,17 +61,17 @@ namespace Web.Models.Reservations
 
         public string GetPeriods()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("[");
+            StringBuilder sb = new();
+            sb.Append('[');
             if (Reservations?.Any() ?? false)
             {
                 foreach (var period in Reservations)
                 {
-                    sb.Append($@"{{start: new Date(""{period.AccommodationDate.ToString("yyyy-MM-dd")}""), end: new Date(""{period.ReleaseDate.ToString("yyyy-MM-dd")}"")}},");
+                    sb.Append($@"{{start: new Date(""{period.AccommodationDate:yyyy-MM-dd}""), end: new Date(""{period.ReleaseDate:yyyy-MM-dd}"")}},");
                 }
                 sb.Remove(sb.Length - 1, 1);
             }
-            sb.Append("]");
+            sb.Append(']');
             return sb.ToString();
         }
     }
