@@ -15,63 +15,84 @@
     <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get">
         <input class="btn btn-success" type="submit" value="Reserve" />
     </form>
-    <hr />
-    <dl class="dl-horizontal">
-        
+    <dl class="pb-3 dl-horizontal ">
+
         <dt>
-            @Html.DisplayNameFor(model => model.Capacity)
+            @Html.DisplayNameFor(model => model.Capacity):
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Capacity)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Type)
+            @Html.DisplayNameFor(model => model.Type):
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Type)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.AdultPrice)
+            @Html.DisplayNameFor(model => model.AdultPrice):
         </dt>
         <dd>
             @Html.DisplayFor(model => model.AdultPrice)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.ChildrenPrice)
+            @Html.DisplayNameFor(model => model.ChildrenPrice):
         </dt>
         <dd>
             @Html.DisplayFor(model => model.ChildrenPrice)
         </dd>
-
+        <dt>
+            @Html.DisplayNameFor(model => model.IsTaken):
+        </dt>
+        @if (Model.IsTaken)
+        {
+            <dd>
+                &#10004;
+            </dd>
+        }
+        else
+        {
+            <dd>
+                &Chi;
+            </dd>
+        }
         @if (SignInManager.Context.User.IsInRole("Admin") || SignInManager.Context.User.IsInRole("Admin"))
         {
+            
             <dt>
-                @Html.DisplayNameFor(model => model.Reservations)
+                @Html.DisplayNameFor(model => model.Reservations):
             </dt>
             <dd>
-                <ul>
+                <ul class="list-group pb-3 list-inline">
                     @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
                     {
-                        <li>
-                            <p class="text-dark "> @res.Price</p>
-                            <p class="text-dark ">@res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
-                            <p class="text-dark ">@res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
-                            <p class="text-dark "> @res.Breakfast</p>
-                            <p class="text-dark "> @res.AllInclusive</p>
-                            <p class="text-dark "> @(res.Clients.Count+1) clients</p>
-                        </li>
+                    <li class="list-group-item">
+                        <p class="text-dark ">Price: @res.Price</p>
+                        <p class="text-dark ">Accomodation Date: @res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
+                        <p class="text-dark ">Release Date: @res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
+                        @if (res.Breakfast)
+                        {
+                    <p class="text-dark ">Breakfast: &#10004;</p>
+                        }
+                        else
+                        {
+                    <p class="text-dark ">Breakfast: &Chi;</p>
+                        }
+                        @if (res.AllInclusive)
+                        {
+                    <p class="text-dark ">All-Inclusive: &#10004;</p>
+                        }
+                        else
+                        {
+                            <p class="text-dark ">Breakfast: &Chi;</p>
+                        }
+                        <p class="text-dark ">Clients: @(res.Clients.Count+1)</p>
+                    </li>
                     }
                 </ul>
             </dd>
         }
-        <dt>
-            @*TODOOOOO:  CURRENTLY TAKEN*@
-            @Html.DisplayNameFor(model => model.IsTaken)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IsTaken)
-        </dd>
+
     </dl>
 </div>
 <div>
