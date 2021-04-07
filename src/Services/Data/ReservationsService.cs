@@ -22,7 +22,10 @@ namespace Services
             this.settingService = settingService;
         }
 
-        private async Task<bool> AreDatesAcceptable(string roomId, DateTime accomodationDate, DateTime releaseDate, string reservationId = null)
+        private async Task<bool> AreDatesAcceptable(string roomId,
+                                                    DateTime accomodationDate,
+                                                    DateTime releaseDate,
+                                                    string reservationId = null)
         {
             if (accomodationDate >= releaseDate || accomodationDate < DateTime.Today)
             {
@@ -40,7 +43,8 @@ namespace Services
             if (!string.IsNullOrWhiteSpace(reservationId))
             {
                 var reservation = await dbContext.Reservations.FirstOrDefaultAsync(x => x.Id == reservationId);
-                reservationPeriods = reservationPeriods.Where(x=>x.Item1!=reservation.AccommodationDate && x.Item2!=reservation.ReleaseDate).ToList();
+                reservationPeriods = reservationPeriods.Where(x => x.Item1 != reservation.AccommodationDate &&
+                                                              x.Item2 != reservation.ReleaseDate).ToList();
             }
 
             return !reservationPeriods.Any(x =>
@@ -50,7 +54,10 @@ namespace Services
                 (x.Item1 < accomodationDate && x.Item2 > releaseDate));
         }
 
-        private async Task<double> CalculatePrice(Room room, IEnumerable<ClientData> clients, bool allInclusive, bool breakfast)
+        private async Task<double> CalculatePrice(Room room,
+                                                  IEnumerable<ClientData> clients,
+                                                  bool allInclusive,
+                                                  bool breakfast)
         {
             var price =
                 clients.Count(x => x.IsAdult) * room.AdultPrice +
@@ -59,11 +66,13 @@ namespace Services
 
             if (allInclusive)
             {
-                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
+                price += double.Parse((await settingService
+                                                .GetAsync($"{nameof(Reservation.AllInclusive)}Price")).Value);
             }
             else if (breakfast)
             {
-                price += double.Parse((await settingService.GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
+                price += double.Parse((await settingService
+                                               .GetAsync($"{nameof(Reservation.Breakfast)}Price")).Value);
             }
 
             return price;
@@ -121,9 +130,11 @@ namespace Services
                                             IEnumerable<ClientData> clients,
                                             ApplicationUser user)
         {
-            var reservation = await dbContext.Reservations.AsNoTracking().Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
+            var reservation = await dbContext.Reservations.AsNoTracking().Include(x => x.User)
+                                                                         .FirstOrDefaultAsync(x => x.Id == id);
 
-            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Reservations.Any(y => y.Id == id));
+            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Reservations.
+                                                                                Any(y => y.Id == id));
 
             var areDateAcceptable = await AreDatesAcceptable(room.Id, accomodationDate, releaseDate, id);
             var isCapacityInRange = clients.Count() + 1 <= room.Capacity;
@@ -153,19 +164,25 @@ namespace Services
 
             dbContext.Entry(reservation).CurrentValues.SetValues(newReservation);
             await this.dbContext.SaveChangesAsync();
+
             return true;
         }
 
         public async Task<bool> DeleteReservation(string id)
         {
             var reservation = await this.dbContext.Reservations.FindAsync(id);
+
             if (reservation != null)
             {
-                this.dbContext.ClientData.RemoveRange(this.dbContext.ClientData.Where(x => x.Reservation.Id == reservation.Id));
+                this.dbContext.ClientData.RemoveRange(this.dbContext.ClientData
+                                                     .Where(x => x.Reservation.Id == reservation.Id));
+
                 this.dbContext.Reservations.Remove(reservation);
                 await this.dbContext.SaveChangesAsync();
+
                 return true;
             }
+
             return false;
         }
 
@@ -176,7 +193,9 @@ namespace Services
 
         public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
         {
-            return await this.dbContext.Reservations.Where(x => x.User.Id == userId).OrderByDescending(x => x.AccommodationDate).ProjectTo<T>().ToListAsync();
+            return await this.dbContext.Reservations.Where(x => x.User.Id == userId)
+                                                    .OrderByDescending(x => x.AccommodationDate)
+                                                    .ProjectTo<T>().ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetForUserOnPage<T>(string userId, int page, int elementsOnPage)
@@ -184,24 +203,37 @@ namespace Services
             return await GetReservationsForUser<T>(userId).GetPageItems(page, elementsOnPage);
         }
 
-        public async Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId, IEnumerable<ClientData> clients)
+        public async Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId,
+                                                                               IEnumerable<ClientData> clients)
         {
-            var reservation = await dbContext.Reservations.FindAsync(reservationId);
-            var initialClients = await dbContext.ClientData.Where(x => x.Reservation.Id == reservationId).ToListAsync();
+            var reservation = await dbContext.Reservations.Include(x => x.Room)
+                                                          .FirstOrDefaultAsync(x => x.Id == reservationId);
+            var initialClients = await dbContext.ClientData.Where(x => x.Reservation.Id == reservationId)
+                                                           .ToListAsync();
 
-            if (initialClients.Count() > clients.Count())
+            //if (clients.Count() + 1 > reservation.Room.Capacity)
+            //{
+
+            //}
+
+            var deletedClients = initialClients.Where(x => !clients.Select(u => u.Id).Contains(x.Id)).ToList();
+
+            if (deletedClients?.Any() ?? false)
             {
-                var deletedClients = initialClients.Where(x => !clients.Select(u => u.Id).Contains(x.Id)).ToList();
                 dbContext.ClientData.RemoveRange(deletedClients);
             }
 
-            var newClients = clients.Where(x => !initialClients.Select(u => u.Id).Contains(x.Id) && x.Id != null).ToList();
+            var newClients = clients.Where(x => !initialClients.Select(u => u.Id)
+                                                               .Contains(x.Id) && x.Id != null)
+                                                               .ToList();
+
             if (newClients?.Any() ?? false)
             {
                 dbContext.ClientData.AddRange(newClients);
             }
 
             var clientsToUpdate = clients.Where(x => !newClients.Select(u => u.Id).Contains(x.Id) && x.Id != null);
+
             if (clientsToUpdate?.Any() ?? false)
             {
                 dbContext.ClientData.UpdateRange(clientsToUpdate);

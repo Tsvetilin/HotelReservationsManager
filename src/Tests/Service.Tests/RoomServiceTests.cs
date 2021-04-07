@@ -175,22 +175,31 @@ namespace Tests.Service.Tests
             Assert.AreEqual(1, result.Count());
         }
         [Test]
-        public async Task CountAllRooms_ShouldCountAllRooms()
+        public async Task CountFreeRoomsAtPresent_ShouldCountAllFreeRooms()
         {
             //Arrange
             List<Room> rooms = new()
             {
-                Rooms.Room1,
-                Rooms.Room2
+                Rooms.Room1TakenAtPresent1ReservationUser4,
+                Rooms.Room2TakenAtPresent,
+                Rooms.Room1FreeAtPresent1ReservationUser3
+            };
+
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(users)
                                                                 .SeedAsync(rooms);
             var roomService = new RoomServices(context);
+
             //Act
-            var count = await roomService.CountFreeRoomsAtPresent();
+            var result = await roomService.CountFreeRoomsAtPresent();
+
             //Assert
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(1, result);
         }
 
         [Test]

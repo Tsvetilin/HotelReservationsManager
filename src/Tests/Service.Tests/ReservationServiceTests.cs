@@ -8,7 +8,6 @@ using Services.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tests.Common;
 using Tests.Data;
@@ -29,16 +28,26 @@ namespace Tests.Service.Tests
         public async Task AddReservation_ShouldAddReservation()
         {
             // Arange
-            List<Reservation> reservationsData = new() { };
-            List<Setting> settings = new() { Settings.AllInclusive, Settings.Breakfast };
-            List<Room> rooms = new() { Rooms.Room1 };
-            List<ApplicationUser> users = new() { Users.User3NotEmployee };
+            List<Setting> settings = new()
+            {
+                Settings.AllInclusive,
+                Settings.Breakfast
+            };
+
+            List<Room> rooms = new()
+            {
+                Rooms.Room1
+            };
+
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(settings)
                                                                 .SeedAsync(users)
-                                                                .SeedAsync(rooms)
-                                                                .SeedAsync(reservationsData);
+                                                                .SeedAsync(rooms);
 
             SettingService settingService = new(context);
 
@@ -60,18 +69,58 @@ namespace Tests.Service.Tests
         }
 
         [Test]
-        public async Task AddReservation_ShouldNotAddReservation()
+        public async Task AddReservation_ShouldAddReservationWithBreakfast()
         {
             // Arange
-            List<Reservation> reservationsData = new() { Reservations.Reservation3User4Room2NoClient };
-            List<Setting> settings = new() { Settings.AllInclusive, Settings.Breakfast };
-            List<Room> rooms = new() { Rooms.Room2 };
-            List<ApplicationUser> users = new() { Users.User4NotEmployee };
+            List<Setting> settings = new()
+            {
+                Settings.AllInclusive,
+                Settings.Breakfast
+            };
+
+            List<Room> rooms = new()
+            {
+                Rooms.Room1
+            };
+
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(settings)
                                                                 .SeedAsync(users)
-                                                                .SeedAsync(rooms)
+                                                                .SeedAsync(rooms);
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var reservation = await service.AddReservation(Reservations.Reservation1User3Room1NoClient.Room.Id,
+                                         Reservations.Reservation1User3Room1NoClient.AccommodationDate,
+                                         Reservations.Reservation1User3Room1NoClient.ReleaseDate,
+                                         Reservations.UpdateAllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation1User3Room1NoClient.Clients,
+                                         Reservations.Reservation1User3Room1NoClient.User
+                                         );
+
+            // Assert
+            Assert.NotNull(reservation);
+        }
+
+        [Test]
+        public async Task AddReservation_ShouldNotAddReservation()
+        {
+            // Arange
+            List<Reservation> reservationsData = new()
+            {
+                Reservations.Reservation3User4Room2NoClient
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -85,11 +134,79 @@ namespace Tests.Service.Tests
                                          Reservations.AllInClusive1,
                                          Reservations.Breakfast1,
                                          Reservations.Reservation4User4Room2NoClient.Clients,
-                                         Reservations.Reservation4User4Room2NoClient.User
-                                         );
+                                         Reservations.Reservation4User4Room2NoClient.User);
 
             // Assert
             Assert.Null(reservation);
+        }
+
+        [Test]
+        public async Task AddReservation_ShouldNotAddReservationForUnexistingRoom()
+        {
+            // Arange
+            List<Reservation> reservationsData = new()
+            {
+                Reservations.Reservation3User4Room2NoClient
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(reservationsData);
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var reservation1 = await service.AddReservation("2",
+                                         Reservations.Reservation4User4Room2NoClient.AccommodationDate,
+                                         Reservations.Reservation4User4Room2NoClient.ReleaseDate,
+                                         Reservations.AllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation4User4Room2NoClient.Clients,
+                                         Reservations.Reservation4User4Room2NoClient.User);
+
+            var reservation2 = await service.AddReservation(Reservations.Reservation4User4Room2NoClient.Room.Id,
+                                         Reservations.Reservation4User4Room2NoClient.AccommodationDate,
+                                         Reservations.Reservation4User4Room2NoClient.ReleaseDate,
+                                         Reservations.AllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation4User4Room2NoClient.Clients,
+                                         Reservations.Reservation4User4Room2NoClient.User);
+
+            // Assert
+            Assert.Null(reservation1);
+            Assert.Null(reservation2);
+        }
+
+        [Test]
+        public async Task AddReservation_ShouldNotAddReservationWithInvalidDate()
+        {
+            // Arange
+            ApplicationDbContext context = InMemoryFactory.InitializeContext();
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var reservation1 = await service.AddReservation(Reservations.Reservation5User3Room1NoClient.Room.Id,
+                                         Reservations.Reservation5User3Room1NoClient.AccommodationDate,
+                                         Reservations.Reservation5User3Room1NoClient.ReleaseDate,
+                                         Reservations.AllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation5User3Room1NoClient.Clients,
+                                         Reservations.Reservation5User3Room1NoClient.User);
+
+            var reservation2 = await service.AddReservation(Reservations.Reservation6User3Room1NoClient.Room.Id,
+                                         Reservations.Reservation6User3Room1NoClient.AccommodationDate,
+                                         Reservations.Reservation6User3Room1NoClient.ReleaseDate,
+                                         Reservations.AllInClusive1,
+                                         Reservations.Breakfast1,
+                                         Reservations.Reservation6User3Room1NoClient.Clients,
+                                         Reservations.Reservation6User3Room1NoClient.User);
+            // Assert
+            Assert.Null(reservation1);
+            Assert.Null(reservation2);
         }
 
         [Test]
@@ -105,11 +222,6 @@ namespace Tests.Service.Tests
             {
                 Settings.AllInclusive,
                 Settings.Breakfast
-            };
-
-            List<Room> rooms = new()
-            {
-                Rooms.Room1
             };
 
             List<ApplicationUser> users = new()
@@ -137,13 +249,15 @@ namespace Tests.Service.Tests
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(clients)
-                                                                    .SeedAsync(applicationRoles)
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(identityUserRoles)
-                                                                    .SeedAsync(rooms)
-                                                                    .SeedAsync(reservationsData);
+                                                                .SeedAsync(settings)
+                                                                .SeedAsync(applicationRoles)
+                                                                .SeedAsync(users)
+                                                                .SeedAsync(identityUserRoles);
+
+            context.Reservations.RemoveRange(context.Reservations.ToList());
+            context.AddRange(reservationsData);
+            context.SaveChanges();
+
             SettingService settingService = new(context);
 
             var service = new ReservationsService(context, settingService);
@@ -159,7 +273,57 @@ namespace Tests.Service.Tests
                                          );
 
             // Assert
-            Assert.AreEqual(true, result);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task UpdateReservation_ShouldNotUpdateReservation()
+        {
+            // Arange
+            List<Reservation> reservationsData = new()
+            {
+                Reservations.Reservation1User3Room1NoClient
+            };
+
+            List<Setting> settings = new()
+            {
+                Settings.AllInclusive,
+                Settings.Breakfast
+            };
+
+            List<ApplicationUser> users = new()
+            {
+                Users.User3NotEmployee
+            };
+
+            List<ClientData> clients = new()
+            {
+                Users.Client1User
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(settings)
+                                                                .SeedAsync(users);
+
+            context.Reservations.RemoveRange(context.Reservations.ToList());
+            context.AddRange(reservationsData);
+            context.SaveChanges();
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var result = await service.UpdateReservation(Reservations.Reservation1User3Room1NoClient.Id,
+                                            DateTime.Today.AddDays(7),
+                                            DateTime.Today.AddDays(9),
+                                            Reservations.UpdateAllInClusive1,
+                                            Reservations.UpdateBreakfast1,
+                                            clients,
+                                            Reservations.Reservation1User3Room1NoClient.User);
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         [Test]
@@ -171,19 +335,7 @@ namespace Tests.Service.Tests
                 Reservations.Reservation1User3Room1NoClient
             };
 
-            List<Room> rooms = new()
-            {
-                Rooms.Room1
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -209,21 +361,7 @@ namespace Tests.Service.Tests
                 Reservations.Reservation2User4Room2NoClient
             };
 
-            List<Room> rooms = new()
-            {
-                Rooms.Room1,
-                Rooms.Room2
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee,
-                Users.User4NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -231,12 +369,15 @@ namespace Tests.Service.Tests
             var service = new ReservationsService(context, settingService);
 
             // Act
-            var reservation = await service.GetReservation<ReservationViewModel>(Reservations.Reservation2User4Room2NoClient.Id);
+            var reservation = await service.GetReservation<ReservationViewModel>(
+                                                           Reservations.Reservation2User4Room2NoClient.Id);
 
             // Assert
             Assert.AreEqual(Reservations.Reservation2User4Room2NoClient.Id, reservation.Id);
             Assert.AreEqual(Reservations.Reservation2User4Room2NoClient.ReleaseDate, reservation.ReleaseDate);
             Assert.AreEqual(Reservations.Reservation2User4Room2NoClient.Price, reservation.Price);
+            Assert.AreEqual(Reservations.Reservation2User4Room2NoClient.AllInclusive, reservation.AllInclusive);
+            Assert.AreEqual(Reservations.Reservation2User4Room2NoClient.Breakfast, reservation.Breakfast);
         }
 
         [Test]
@@ -250,37 +391,16 @@ namespace Tests.Service.Tests
                 Reservations.Reservation3User4Room2NoClient
             };
 
-            List<Setting> settings = new()
-            {
-                Settings.AllInclusive,
-                Settings.Breakfast
-            };
-
-            List<Room> rooms = new()
-            {
-                Rooms.Room1,
-                Rooms.Room2
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee,
-                Users.User4NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
-                                                                    .SeedAsync(reservationsData)
-                                                                    ;
+                                                                    .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
 
             var service = new ReservationsService(context, settingService);
 
             // Act
-            var userReservations = await service.GetReservationsForUser<ReservationViewModel>(Users.User4NotEmployee.Id);
+            var userReservations = await service.GetReservationsForUser<ReservationViewModel>(
+                                                                        Users.User4NotEmployee.Id);
 
             // Assert
             Assert.AreEqual(2, userReservations.Count());
@@ -297,28 +417,7 @@ namespace Tests.Service.Tests
                 Reservations.Reservation3User4Room2NoClient
             };
 
-            List<Setting> settings = new()
-            {
-                Settings.AllInclusive,
-                Settings.Breakfast
-            };
-
-            List<Room> rooms = new()
-            {
-                Rooms.Room1,
-                Rooms.Room2
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee,
-                Users.User4NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -326,7 +425,8 @@ namespace Tests.Service.Tests
             var service = new ReservationsService(context, settingService);
 
             // Act
-            var userReservations = await service.GetForUserOnPage<ReservationViewModel>(Users.User4NotEmployee.Id, 1, 2);
+            var userReservations = await service.GetForUserOnPage<ReservationViewModel>(
+                                                                  Users.User4NotEmployee.Id, 1, 2);
 
             // Assert
             Assert.AreEqual(2, userReservations.Count());
@@ -343,28 +443,7 @@ namespace Tests.Service.Tests
                 Reservations.Reservation3User4Room2NoClient
             };
 
-            List<Setting> settings = new()
-            {
-                Settings.AllInclusive,
-                Settings.Breakfast
-            };
-
-            List<Room> rooms = new()
-            {
-                Rooms.Room1,
-                Rooms.Room2
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee,
-                Users.User4NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -375,7 +454,7 @@ namespace Tests.Service.Tests
             var allReservations = await service.GetAll<ReservationViewModel>();
 
             // Assert
-            Assert.AreEqual(3, allReservations.Count());
+            Assert.AreEqual(context.Reservations.Count(), allReservations.Count());
         }
 
         [Test]
@@ -389,28 +468,7 @@ namespace Tests.Service.Tests
                 Reservations.Reservation3User4Room2NoClient
             };
 
-            List<Setting> settings = new()
-            {
-                Settings.AllInclusive,
-                Settings.Breakfast
-            };
-
-            List<Room> rooms = new()
-            {
-                Rooms.Room1,
-                Rooms.Room2
-            };
-
-            List<ApplicationUser> users = new()
-            {
-                Users.User3NotEmployee,
-                Users.User4NotEmployee
-            };
-
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                    .SeedAsync(settings)
-                                                                    .SeedAsync(users)
-                                                                    .SeedAsync(rooms)
                                                                     .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
@@ -421,7 +479,38 @@ namespace Tests.Service.Tests
             var allReservationsCount = await service.CountAllReservations();
 
             // Assert
-            Assert.AreEqual(3, allReservationsCount);
+            Assert.AreEqual(context.Reservations.Count(), allReservationsCount);
+        }
+
+
+        [Test]
+        public async Task UpdateClientsForReservation_ShouldUpdateClientsForReservation()
+        {
+            // Arange
+            List<Reservation> reservationsData = new()
+            {
+                Reservations.Reservation7User3Room1NoClient
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                    .SeedAsync(reservationsData);
+
+            SettingService settingService = new(context);
+
+            var service = new ReservationsService(context, settingService);
+
+            // Act
+            var allClients = await service.UpdateClientsForReservation(
+                                                Reservations.Reservation7User3Room1NoClient.Id,
+                                                new List<ClientData>
+                                                {
+                                                    Users.Client2User, 
+                                                    Users.Client3User,
+                                                    Users.Client4User 
+                                                });
+
+            // Assert
+            Assert.AreEqual(3, allClients.Count());
         }
     }
 }

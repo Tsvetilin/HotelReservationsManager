@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Tests.Data
 {
     public static class Reservations
-    {          
+    {
         public static readonly Reservation Reservation1User3Room1NoClient = new Reservation
         {
             AccommodationDate = DateTime.Today.AddDays(2),
@@ -45,9 +45,54 @@ namespace Tests.Data
             ReleaseDate = DateTime.Today.AddDays(14),
             AllInclusive = AllInClusive1,
             Breakfast = Breakfast1,
-            Clients = new List<ClientData>(),
+            Clients = new List<ClientData> 
+            {
+                new ClientData(),
+                new ClientData(),
+                new ClientData(),
+                new ClientData(),
+                new ClientData(),
+            },
             Room = Rooms.Room2,
             User = Users.User4NotEmployee
+        };
+
+        public static readonly Reservation Reservation5User3Room1NoClient = new Reservation
+        {
+            AccommodationDate = DateTime.Today.AddDays(8),
+            ReleaseDate = DateTime.Today.AddDays(5),
+            AllInclusive = AllInClusive1,
+            Breakfast = Breakfast1,
+            Clients = new List<ClientData>(),
+            Room = Rooms.Room1,
+            User = Users.User3NotEmployee
+        };
+
+        public static readonly Reservation Reservation6User3Room1NoClient = new Reservation
+        {
+            AccommodationDate = DateTime.Today.AddDays(-2),
+            ReleaseDate = DateTime.Today.AddDays(5),
+            AllInclusive = AllInClusive1,
+            Breakfast = Breakfast1,
+            Clients = new List<ClientData>(),
+            Room = Rooms.Room1,
+            User = Users.User3NotEmployee
+        };
+
+        public static readonly Reservation Reservation7User3Room1NoClient = new Reservation
+        {
+            AccommodationDate = DateTime.Today.AddDays(-2),
+            ReleaseDate = DateTime.Today.AddDays(5),
+            AllInclusive = AllInClusive1,
+            Breakfast = Breakfast1,
+            Clients = new List<ClientData> 
+            {
+                Users.Client1User,
+                Users.Client2User,
+                Users.Client3User
+            },
+            Room = Rooms.Room2,
+            User = Users.User3NotEmployee
         };
 
         public const bool AllInClusive1 = true;

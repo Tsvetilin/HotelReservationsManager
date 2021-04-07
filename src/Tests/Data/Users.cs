@@ -1,5 +1,6 @@
 ﻿using Data.Models;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace Tests.Data
@@ -24,6 +25,18 @@ namespace Tests.Data
         public static readonly ClientData Client2User = new ()
         {
         };
+        public static readonly ClientData Client3User = new()
+        {
+        };
+        public static readonly ClientData Client4User = new()
+        {
+        };
+        public static readonly ClientData Client5User = new()
+        {
+        };
+        public static readonly ClientData Client6User = new()
+        {
+        };
 
         public static readonly EmployeeData EmployeeUser1 = new ()
         {
@@ -45,9 +58,10 @@ namespace Tests.Data
         };
         public static readonly EmployeeData EmployeeForSearch = new()
         {
-            UserId=UserForSearch.Id,
-            SecondName=searchParam,
-            UCN=searchParam,
+            UserId = UserForSearch.Id,
+            SecondName = searchParam,
+            UCN = searchParam,
+            DateOfAppointment = DateTime.Today
         };
 
         public const string searchParam2 = "Test2";

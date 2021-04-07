@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Service layer logic
+/// </summary>
 namespace Services
 {
     public class UserService : IUserService
@@ -57,12 +60,12 @@ namespace Services
         public async Task<IEnumerable<string>> GetAllBySecondName(string searchString)
         {
             return await context.EmployeeData.Where(x => x.SecondName.ToUpper().Contains(searchString.ToUpper())).
-                                                    Select(x=>x.UserId).ToListAsync();
+                                                    Select(x => x.UserId).ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetEmployeePageItems<T>(int page, int usersOnPage)
         {
-            return await GetAllEmployees<T>().GetPageItems(page,usersOnPage);
+            return await GetAllEmployees<T>().GetPageItems(page, usersOnPage);
         }
 
         public async Task<IEnumerable<T>> GetUserPageItems<T>(int page, int usersOnPage)
@@ -81,10 +84,12 @@ namespace Services
             {
                 result.AddRange(emailResults);
             }
+
             if (familyNameResults != null)
             {
                 result.AddRange(familyNameResults);
             }
+
             return result.Distinct().ToList();
         }
 
@@ -92,7 +97,7 @@ namespace Services
         {
             List<string> result = await GetSearchResults(searchString);
 
-            return await context.EmployeeData.Where(x=>result.Contains(x.UserId)).ProjectTo<T>().ToListAsync();
+            return await context.EmployeeData.Where(x => result.Contains(x.UserId)).ProjectTo<T>().ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetUsersSearchResults<T>(string searchString)
@@ -104,6 +109,7 @@ namespace Services
         public async Task UpdateAsync(EmployeeData user)
         {
             var userInContext = await context.EmployeeData.FindAsync(user.UserId);
+            
             if (userInContext != null)
             {
                 context.Entry(userInContext).CurrentValues.SetValues(user);
@@ -118,6 +124,7 @@ namespace Services
         public async Task DeleteAsync(string id)
         {
             var userInContext = await context.EmployeeData.FindAsync(id);
+            
             if (userInContext != null)
             {
                 userInContext.DateOfResignation = DateTime.UtcNow;
@@ -161,7 +168,7 @@ namespace Services
         {
             var client = new ClientData
             {
-                Id=id,
+                Id = id,
                 Email = email,
                 FullName = name,
                 IsAdult = adult,
@@ -177,7 +184,8 @@ namespace Services
         public async Task DeleteClient(string id)
         {
             var client = await context.ClientData.FindAsync(id);
-            if(client!=null)
+            
+            if (client != null)
             {
                 context.ClientData.Remove(client);
                 await context.SaveChangesAsync();

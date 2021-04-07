@@ -90,8 +90,8 @@ namespace Services
                     context.Reservations.RemoveRange(room.Reservations);
                     await context.SaveChangesAsync();
                 }
+
                 context.Rooms.Remove(room);
-                
                 await context.SaveChangesAsync();
             }
         }

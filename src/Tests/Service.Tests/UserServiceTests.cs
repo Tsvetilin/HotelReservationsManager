@@ -28,7 +28,10 @@ namespace Tests.Service.Tests
         public async Task GetEmployeeAsync_ShouldFindEmployee()
         {
             // Arange
-            List<EmployeeData> employeeData = new() { Users.EmployeeUser1 };
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(employeeData);
@@ -40,13 +43,20 @@ namespace Tests.Service.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(employeeData.First().UserId, result.UserId);
+            Assert.AreEqual(employeeData.First().SecondName, result.SecondName);
+            Assert.AreEqual(employeeData.First().IsActive, result.IsActive);
+            Assert.AreEqual(employeeData.First().DateOfAppointment, result.DateOfAppointment);
         }
 
         [Test]
         public async Task GetUserAsync_ShouldFindUser()
         {
             // Arange
-            List<ApplicationUser> userData = new() { Users.User1Employee };
+            List<ApplicationUser> userData = new()
+            {
+                Users.User1Employee
+            };
+
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(userData);
             var service = new UserService(context);
@@ -57,14 +67,25 @@ namespace Tests.Service.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(userData.First().Id, result.Id);
+            Assert.AreEqual(userData.First().FirstName, result.FirstName);
+            Assert.AreEqual(userData.First().LastName, result.LastName);
+            Assert.AreEqual(userData.First().IsAdult, result.IsAdult);
         }
 
         [Test]
         public async Task AddAsync_ShouldAddEmployee()
         {
             // Arange
-            List<ApplicationUser> userData = new() { Users.User1Employee, Users.User2Employee };
-            List<EmployeeData> employeeData = new() { Users.EmployeeUser1 };
+            List<ApplicationUser> userData = new()
+            {
+                Users.User1Employee,
+                Users.User2Employee
+            };
+
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(userData)
@@ -83,7 +104,11 @@ namespace Tests.Service.Tests
         public async Task GetAllEmployeesAsync_ShouldReturnAllEmployees()
         {
             // Arange
-            List<EmployeeData> employeeData = new() { Users.EmployeeUser1, Users.EmployeeUser2 };
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1,
+                Users.EmployeeUser2
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(employeeData);
@@ -100,7 +125,11 @@ namespace Tests.Service.Tests
         public async Task GetAllUsersAsync_ShouldReturnAllUsers()
         {
             // Arange
-            List<ApplicationUser> usersData = new() { Users.User3NotEmployee, Users.User4NotEmployee };
+            List<ApplicationUser> usersData = new()
+            {
+                Users.User3NotEmployee,
+                Users.User4NotEmployee
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(usersData);
@@ -117,8 +146,15 @@ namespace Tests.Service.Tests
         public async Task GetEmployeesSearchResults_ShouldFindExistingSearchedResult()
         {
             // Arange
-            List<ApplicationUser> userData = new() { Users.UserForSearch };
-            List<EmployeeData> employeeData = new() { Users.EmployeeForSearch };
+            List<ApplicationUser> userData = new()
+            {
+                Users.UserForSearch
+            };
+
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeForSearch
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(userData)
@@ -137,7 +173,10 @@ namespace Tests.Service.Tests
         public async Task GetUsersSearchResults_ShouldFindExistingSearchedResult()
         {
             // Arange
-            List<ApplicationUser> userData = new() { Users.UserForSearch };
+            List<ApplicationUser> userData = new()
+            {
+                Users.UserForSearch
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(userData);
@@ -155,7 +194,11 @@ namespace Tests.Service.Tests
         public async Task CountAllUsers_ShouldCountAllUsers()
         {
             // Arange
-            List<ApplicationUser> usersData = new() { Users.User3NotEmployee, Users.User4NotEmployee };
+            List<ApplicationUser> usersData = new()
+            {
+                Users.User3NotEmployee,
+                Users.User4NotEmployee
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(usersData);
@@ -172,7 +215,11 @@ namespace Tests.Service.Tests
         public async Task CountAllEmployees_ShouldCountAllemployees()
         {
             // Arange
-            List<EmployeeData> employeeData = new() { Users.EmployeeUser1, Users.EmployeeUser2 };
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1,
+                Users.EmployeeUser2
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(employeeData);
@@ -190,7 +237,10 @@ namespace Tests.Service.Tests
         public async Task IsAlreadyAdded_ShouldFindAddeUser()
         {
             // Arange
-            List<ApplicationUser> usersData = new() { Users.UserForSearch };
+            List<ApplicationUser> usersData = new()
+            {
+                Users.UserForSearch
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(usersData);
@@ -204,10 +254,13 @@ namespace Tests.Service.Tests
         }
 
         [Test]
-        public async Task UpdateAsync_ShouldUpdateEmployeeData()
+        public async Task GetAllEmployees_ShouldReturnAllEmployees()
         {
             // Arange
-            List<EmployeeData> employeeData = new() { Users.EmployeeForSearch };
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(employeeData);
@@ -218,14 +271,17 @@ namespace Tests.Service.Tests
 
             // Assert
             Assert.AreEqual(employeeData.Count(), result.Count());
-            Assert.AreEqual(employeeData.Count(), context.EmployeeData.Count());
+            Assert.AreEqual(employeeData.First().UCN, context.EmployeeData.First().UCN);
         }
 
         [Test]
         public async Task UpdateAsync_ShouldAddEmployeeData()
         {
             // Arange
-            List<EmployeeData> employeeData = new() { Users.EmployeeUser1 };
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1
+            };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(employeeData);
@@ -237,6 +293,29 @@ namespace Tests.Service.Tests
             // Assert
             Assert.AreEqual(employeeData.Count() + 1, context.EmployeeData.Count());
         }
+
+        [Test]
+        public async Task UpdateAsync_ShouldUpdateEmployeeData()
+        {
+            // Arange
+            List<EmployeeData> employeeData = new()
+            {
+                Users.EmployeeUser1
+            };
+
+            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(employeeData);
+            var service = new UserService(context);
+
+            // Act
+            await service.UpdateAsync(Users.EmployeeUser1);
+
+            // Assert
+            Assert.AreEqual(employeeData.Count(), context.EmployeeData.Count());
+            Assert.AreEqual(employeeData.First().UserId, context.EmployeeData.First().UserId);
+        }
+
+
 
         [Test]
         public async Task GetEmployeePageItems_ShouldReturnAllEmployeesOnPage()
@@ -305,11 +384,12 @@ namespace Tests.Service.Tests
                                                                 .SeedAsync(clientsData)
                                                                 .SeedAsync(usersData);
             var service = new UserService(context);
+            var initialCount = context.ClientData.Count();
             // Act
             await service.DeleteClient(clientsData.First().Id);
 
             // Assert
-            Assert.AreEqual(context.ClientData.Count(), 1);
+            Assert.AreEqual(initialCount - 1, context.ClientData.Count());
         }
 
         [Test]
@@ -322,18 +402,20 @@ namespace Tests.Service.Tests
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
                                                                 .SeedAsync(clientsData);
             var service = new UserService(context);
+            var initialCount = context.ClientData.Count();
+
             // Act
             await service.CreateClient(Users.searchParam, Users.searchParam, true);
 
             // Assert
-            Assert.AreEqual(context.ClientData.Count(), 3);
+            Assert.AreEqual(initialCount + 1, context.ClientData.Count());
         }
 
         [Test]
         public async Task UpdateClient_ShouldUpdateClient()
         {
             // Arange
-            List<ClientData> clientsData = new() { Users.ClientForSearch};
+            List<ClientData> clientsData = new() { Users.ClientForSearch };
 
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
@@ -346,6 +428,8 @@ namespace Tests.Service.Tests
 
             // Assert
             Assert.AreEqual(Users.searchParam2, updatedClient.Email);
+            Assert.AreEqual(Users.searchParam2, updatedClient.FullName);
+
         }
     }
 }
