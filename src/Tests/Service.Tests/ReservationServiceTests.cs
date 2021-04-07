@@ -120,7 +120,13 @@ namespace Tests.Service.Tests
                 Reservations.Reservation3User4Room2NoClient
             };
 
+            List<Room> rooms = new()
+            {
+                Rooms.Room2
+            };
+
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
+                                                                .SeedAsync(rooms)
                                                                 .SeedAsync(reservationsData);
 
             SettingService settingService = new(context);
