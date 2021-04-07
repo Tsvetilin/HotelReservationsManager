@@ -59,6 +59,7 @@ namespace Web.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             return this.View();
@@ -75,17 +76,17 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(RoomInputModel createModel)
         {
             if (ModelState.IsValid)
             {
-                foreach (var _room in await roomService.GetAll<RoomInputModel>())
+                if(!await roomService.IsRoomNumerFree(createModel.Number))
                 {
-                    if (_room.Number == createModel.Number)
-                    {
-                        return RedirectToAction("Index", "Rooms");
-                    }
+                    ModelState.AddModelError(nameof(createModel.Number), "Room with this number alreay exists");
+                    return this.View(createModel);
                 }
+
                 var room = new Room
                 {
                     Capacity = createModel.Capacity,
@@ -100,7 +101,7 @@ namespace Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return this.View();
+            return this.View(createModel);
         }
 
         [Authorize]

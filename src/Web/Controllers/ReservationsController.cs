@@ -142,7 +142,7 @@ namespace Web.Controllers
             var user = await userManager.GetUserAsync(User);
 
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-            if (reservation == null || user.Id != reservation.UserId)
+            if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")))
             {
                 return this.NotFound();
             }
@@ -154,7 +154,7 @@ namespace Web.Controllers
             {
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
-          
+
             return this.View(reservation);
         }
 
@@ -163,9 +163,9 @@ namespace Web.Controllers
         {
             var user = await userManager.GetUserAsync(User);
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-            if (reservation == null || user.Id != reservation.UserId)
+            if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")))
             {
-                return this.NotFound();
+                return this.Unauthorized();
             }
 
             var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
@@ -176,6 +176,7 @@ namespace Web.Controllers
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
 
+            //TODO: Complete logic from service & change in VIEWs
             var roomIsEmpty = !reservation.Reservations?.Any(x =>
                 (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
                 (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate)) ?? true;
@@ -200,7 +201,7 @@ namespace Web.Controllers
 
             var clients = await reservationService.UpdateClientsForReservation(reservation.Id, cls);
 
-            await reservationService.UpdateReservation(
+            var success = await reservationService.UpdateReservation(
                 reservation.Id,
                 inputModel.AccommodationDate,
                 inputModel.ReleaseDate,
@@ -208,6 +209,12 @@ namespace Web.Controllers
                 inputModel.Breakfast,
                 clients,
                 user);
+
+            if (!success)
+            {
+                ModelState.AddModelError("", "Error updating room");
+                return this.View(inputModel);
+            }
 
             return this.RedirectToAction(nameof(Details), new { id = reservation.Id });
         }
@@ -217,9 +224,9 @@ namespace Web.Controllers
         {
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
 
-            if (reservation == null || reservation.UserId!= userManager.GetUserId(User))
+            if (reservation == null || !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")))
             {
-                return RedirectToAction(nameof(Index));
+                this.Unauthorized();
             }
 
             await reservationService.DeleteReservation(id);
