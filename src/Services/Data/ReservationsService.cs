@@ -22,6 +22,14 @@ namespace Services
             this.settingService = settingService;
         }
 
+        /// <summary>
+        /// Checks if the dates for a reservation are valid and if the room is free in that period
+        /// </summary>
+        /// <param name="roomId">Room's id</param>
+        /// <param name="accomodationDate">Reservation's accomodation date</param>
+        /// <param name="releaseDate">Reservation's release date</param>
+        /// <param name="reservationId">Reservations to update id or null if making new reservation</param>
+        /// <returns>Task with room's dates for reservatioin validity result</returns>
         private async Task<bool> AreDatesAcceptable(string roomId,
                                                     DateTime accomodationDate,
                                                     DateTime releaseDate,
@@ -54,6 +62,14 @@ namespace Services
                 (x.Item1 < accomodationDate && x.Item2 > releaseDate));
         }
 
+        /// <summary>
+        /// Calculates the reservation total price
+        /// </summary>
+        /// <param name="room">The reservation room</param>
+        /// <param name="clients">The room clients</param>
+        /// <param name="allInclusive">Reservation's order all inclusive</param>
+        /// <param name="breakfast">Reservation's order breakfast</param>
+        /// <returns>Task with the calculation result</returns>
         private async Task<double> CalculatePrice(Room room,
                                                   IEnumerable<ClientData> clients,
                                                   bool allInclusive,
@@ -78,6 +94,17 @@ namespace Services
             return price;
         }
 
+        /// <summary>
+        /// Add reservation to database
+        /// </summary>
+        /// <param name="roomId">The room id</param>
+        /// <param name="accomodationDate">The reservation accomodation date</param>
+        /// <param name="releaseDate">The reservation release date </param>
+        /// <param name="allInclusive">Reservation's order all inclusive</param>
+        /// <param name="breakfast">Reservation's order breakfast</param>
+        /// <param name="clients">The room's clients</param>
+        /// <param name="user">The room renter</param>
+        /// <returns>Task with the new reservation result</returns>
         public async Task<Reservation> AddReservation(string roomId,
                                                       DateTime accomodationDate,
                                                       DateTime releaseDate,
@@ -122,6 +149,18 @@ namespace Services
             return reservation;
         }
 
+        /// <summary>
+        /// Update reservation data
+        /// </summary>
+        /// <param name="id">The reservation id</param>
+        /// <param name="roomId">The room id</param>
+        /// <param name="accomodationDate">The reservation accomodation date</param>
+        /// <param name="releaseDate">The reservation release date </param>
+        /// <param name="allInclusive">Reservation's order all inclusive</param>
+        /// <param name="breakfast">Reservation's order breakfast</param>
+        /// <param name="clients">The room's clients</param>
+        /// <param name="user">The room renter</param>
+        /// <returns>Task representing the success of the update operation</returns>
         public async Task<bool> UpdateReservation(string id,
                                             DateTime accomodationDate,
                                             DateTime releaseDate,
@@ -168,6 +207,11 @@ namespace Services
             return true;
         }
 
+        /// <summary>
+        /// Removes reservation from the database
+        /// </summary>
+        /// <param name="id">The reservation to delete id</param>
+        /// <returns>Task with the reservation deletion result</returns>
         public async Task<bool> DeleteReservation(string id)
         {
             var reservation = await this.dbContext.Reservations.FindAsync(id);
@@ -186,11 +230,25 @@ namespace Services
             return false;
         }
 
+        /// <summary>
+        /// Finds reservation with the searched id
+        /// </summary>
+        /// <typeparam name="T">Data class to map reservation data to</typeparam>
+        /// <param name="id">Reservation id to search for</param>
+        /// <returns>Task with the reservation data parsed to <typeparamref name="T"/>
+        /// object or null if not found</returns>
         public async Task<T> GetReservation<T>(string id)
         {
             return await this.dbContext.Reservations.Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Finds the user's reservation
+        /// </summary>
+        /// <typeparam name="T">Data class to map reservation data to</typeparam>
+        /// <param name="userId">The user who made the reservation id</param>
+        /// <returns>Task with the reservations data parsed to <typeparamref name="T"/>
+        /// object or null if not found</returns>
         public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
         {
             return await this.dbContext.Reservations.Where(x => x.User.Id == userId)
@@ -198,11 +256,26 @@ namespace Services
                                                     .ProjectTo<T>().ToListAsync();
         }
 
+        /// <summary>
+        /// Finds the user's reservations according to specified pagination rules
+        /// </summary>
+        /// <typeparam name="T">Data class to map reservation data to</typeparam>
+        /// <param name="userId">The user who made the reservation id</param>
+        /// <param name="page">The number of current page</param>
+        /// <param name="elementsOnPage">The number of reservations on the page</param>
+        /// <returns>Task with the reservations data parsed to <typeparamref name="T"/>
+        /// object or null if not found</returns>
         public async Task<IEnumerable<T>> GetForUserOnPage<T>(string userId, int page, int elementsOnPage)
         {
             return await GetReservationsForUser<T>(userId).GetPageItems(page, elementsOnPage);
         }
 
+        /// <summary>
+        /// Verifies and updates clients data for existing reservation
+        /// </summary>
+        /// <param name="reservationId">Reservation id</param>
+        /// <param name="clients">Updated clients list</param>
+        /// <returns>Task with the clients data list result</returns>
         public async Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId,
                                                                                IEnumerable<ClientData> clients)
         {
@@ -244,11 +317,22 @@ namespace Services
             return clients;
         }
 
+        /// <summary>
+        /// Finds all rooms in the database
+        /// </summary>
+        /// <typeparam name="T">Data class to map room data to</typeparam>
+        /// <returns>Task with all reservations data parsed to <typeparamref name="T"/>
+        /// object or null if not found</returns>
         public async Task<IEnumerable<T>> GetAll<T>()
         {
             return await this.dbContext.Reservations.OrderBy(x => x.ReleaseDate).ProjectTo<T>().ToListAsync();
         }
 
+
+        /// <summary>
+        /// Finds the count of all reservations in the database
+        /// </summary>
+        /// <returns>Task with the all reservations count result</returns>
         public async Task<int> CountAllReservations()
         {
             return await this.dbContext.Reservations.CountAsync();

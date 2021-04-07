@@ -187,7 +187,7 @@ namespace Services
         }
 
         /// <summary>
-        /// Updates existing employee's data and pushes to database
+        /// Updates existing employee's data in database or hires a user as employee
         /// </summary>
         /// <param name="user">Existing employee object</param>
         public async Task UpdateAsync(EmployeeData user)
@@ -272,7 +272,7 @@ namespace Services
         }
 
         /// <summary>
-        /// Adds new client to database
+        /// Udates client's data
         /// </summary>
         /// <param name="id">Existing client's id</param>
         /// <param name="email">Existing client's email</param>
