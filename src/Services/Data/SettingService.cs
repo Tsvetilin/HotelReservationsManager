@@ -13,6 +13,13 @@ namespace Services.Data
             this.dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Adds settings to database
+        /// </summary>
+        /// <param name="key">The setting's key</param>
+        /// <param name="value">The setting's value</param>
+        /// <param name="type">The setting's type</param>
+        /// <returns>Task representing the operation</returns>
         public async Task AddAsync(string key, string value, string type)
         {
             await dbContext.Settings.AddAsync(
@@ -26,6 +33,11 @@ namespace Services.Data
             await dbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Finds the setting by searched key
+        /// </summary>
+        /// <param name="key">The setting's key</param>
+        /// <returns>Task with value-type tuple of the searched setting</returns>
         public async Task<(string Value, string Type)> GetAsync(string key)
         {
             var res = await dbContext.Settings.FindAsync(key);
@@ -33,6 +45,13 @@ namespace Services.Data
             return res == null ? (null, null) : (res.Value, res.Type);
         }
 
+        /// <summary>
+        /// Updates setting data
+        /// </summary>
+        /// <param name="key">The setting's key</param>
+        /// <param name="value">The setting's value</param>
+        /// <param name="type">The setting's type</param>
+        /// <returns>Task representing the operation</returns>
         public async Task UpdateAsync(string key, string value, string type)
         {
             var res = await dbContext.Settings.FindAsync(key);
