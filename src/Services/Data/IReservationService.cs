@@ -28,5 +28,9 @@ namespace Services
         public Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId, IEnumerable<ClientData> clients);
         public Task<IEnumerable<T>> GetAll<T>();
         public Task<int> CountAllReservations();
+        public Task<bool> AreDatesAcceptable(string roomId,
+                                                   DateTime accomodationDate,
+                                                   DateTime releaseDate,
+                                                   string reservationId = null);
     }
 }

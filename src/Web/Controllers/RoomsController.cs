@@ -81,7 +81,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(!await roomService.IsRoomNumerFree(createModel.Number))
+                if (!await roomService.IsRoomNumerFree(createModel.Number))
                 {
                     ModelState.AddModelError(nameof(createModel.Number), "Room with this number alreay exists");
                     return this.View(createModel);
@@ -139,14 +139,18 @@ namespace Web.Controllers
         {
 
             var uRoom = roomService.GetRoom<RoomInputModel>(id);
+            if (uRoom == null)
+            {
+                return this.NotFound();
+            }
+
+            if (!await roomService.IsRoomNumerFree(input.Number, id))
+            {
+                ModelState.AddModelError(nameof(input.Number), "Number whit same Id already exists");
+            }
+
             if (ModelState.IsValid)
             {
-
-                if (!await roomService.IsRoomNumerFree(input.Number) || uRoom == null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
                 var room = new Room
                 {
                     Id = id,
@@ -157,10 +161,8 @@ namespace Web.Controllers
                     Number = input.Number,
                 };
 
-
                 await roomService.UpdateRoom(id, room);
                 return RedirectToAction("Index", "Rooms");
-
             }
 
             return this.View(input);

@@ -21,7 +21,7 @@ namespace Services
         public int CountAllRooms();
         public Task<double> GetMinPrice();
         public Task<double> GetMaxPrice();
-        public Task<bool> IsRoomNumerFree(int number);
+        public Task<bool> IsRoomNumerFree(int number, string roomId=null);
         public Task<int> GetMaxCapacity();
     }
   

@@ -103,9 +103,7 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            var roomIsEmpty = !room.Reservations.Any(x =>
-                (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
-                (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate));
+            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate);
 
             if (!roomIsEmpty)
             {
@@ -165,7 +163,7 @@ namespace Web.Controllers
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
             if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")))
             {
-                return this.Unauthorized();
+                return this.NotFound();
             }
 
             var room = await roomService.GetRoom<RoomViewModel>(reservation.RoomId);
@@ -176,10 +174,7 @@ namespace Web.Controllers
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
 
-            //TODO: Complete logic from service & change in VIEWs
-            var roomIsEmpty = !reservation.Reservations?.Any(x =>
-                (x.AccommodationDate > inputModel.AccommodationDate && x.AccommodationDate < inputModel.ReleaseDate) ||
-                (x.ReleaseDate > inputModel.AccommodationDate && x.ReleaseDate < inputModel.ReleaseDate)) ?? true;
+            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate);
 
             if (!roomIsEmpty)
             {
@@ -226,7 +221,7 @@ namespace Web.Controllers
 
             if (reservation == null || !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")))
             {
-                this.Unauthorized();
+                this.NotFound();
             }
 
             await reservationService.DeleteReservation(id);

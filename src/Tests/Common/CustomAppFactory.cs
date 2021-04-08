@@ -8,22 +8,23 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Services;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using Web;
+using Web.Models.Reservations;
 using static Tests.Common.TestAuthHandler;
 
 namespace Tests.Common
 {
     public class CustomAppFactory : WebApplicationFactory<Startup>
     {
-
         protected override IWebHostBuilder CreateWebHostBuilder()
         {
             var builder = WebHost.CreateDefaultBuilder(Array.Empty<string>());
             builder.UseStartup<Startup>();
-            builder.UseSetting("Environment", "Test");
+            // builder.UseSetting("Environment", "Test");
             return builder;
         }
 
@@ -32,13 +33,24 @@ namespace Tests.Common
             base.ConfigureWebHost(builder);
             builder.ConfigureServices(services =>
             {
-                var s = services.SingleOrDefault(
+                var db = services.SingleOrDefault(
                      d => d.ServiceType ==
                 typeof(ApplicationDbContext));
 
-                services.Remove(s);
-                services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(TestDatabaseConnection.TestingConnectionString));
+                var dbo = services.SingleOrDefault(
+                     d => d.ServiceType ==
+                typeof(DbContextOptions<ApplicationDbContext>));
+
+                services.Remove(db);
+                services.Remove(dbo);
+
+                services.AddDbContext<ApplicationDbContext>((options, context) =>
+                {
+                    //Safe Connection string, but memory intense ->TestDatabaseConnectionProvider.GetConnectionStringDisposable()
+                    //Unsage Connection string -> TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable
+                    context.UseSqlServer(TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable);
+                });
+
                 var a = services.SingleOrDefault(
                      d => d.ServiceType ==
                 typeof(AuthenticationBuilder));
@@ -84,6 +96,24 @@ namespace Tests.Common
                     options.Filters.Add(typeof(FakeUserFilter));
                 });
 
+                var mockResService = new Mock<IReservationService>();
+                mockResService.Setup(a => a.GetReservationsForUser<ReservationViewModel>(It.IsAny<string>())).ReturnsAsync(new ReservationViewModel[] {
+                new ReservationViewModel
+                {
+                    Id="ExampleReservation1",
+                    AccommodationDate=DateTime.Today.AddDays(2),
+                    ReleaseDate=DateTime.Today.AddDays(5),
+                    AllInclusive=true,
+                    Breakfast=false,
+                    Price=205,
+                }
+                });
+
+                var rs = services.SingleOrDefault(
+                    d => d.ServiceType ==
+               typeof(IReservationService));
+                services.Remove(rs);
+                services.AddTransient(x => mockResService.Object);
             });
         }
     }

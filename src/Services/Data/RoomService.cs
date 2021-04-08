@@ -134,7 +134,7 @@ namespace Services
         /// <returns>Task representing the operation</returns>
         public async Task DeleteRoom(string id)
         {
-            var room = await context.Rooms.Include(x=>x.Reservations).FirstOrDefaultAsync(x=>x.Id==id);
+            var room = await context.Rooms.Include(x => x.Reservations).FirstOrDefaultAsync(x => x.Id == id);
             if (room != null)
             {
                 //Feature: Send an email for room cancel forced
@@ -218,10 +218,11 @@ namespace Services
         /// Finds if a room is free
         /// </summary>
         /// <param name="number">The searched room number</param>
-        /// <returns>Task with the room availability result</returns>
-        public async Task<bool> IsRoomNumerFree(int number)
+        /// <param name="roomId">The room numer to update, to exclude its Number from the search</param>
+        /// <returns>Task with the room numer availability result</returns>
+        public async Task<bool> IsRoomNumerFree(int number, string roomId = null)
         {
-            return !await context.Rooms.AsNoTracking().AnyAsync(x => x.Number == number);
+            return !await context.Rooms.AsNoTracking().Where(x => x.Id != roomId).AnyAsync(x => x.Number == number);
         }
 
         /// <summary>
@@ -230,7 +231,7 @@ namespace Services
         /// <returns>Task with the maximum room capacity result</returns>
         public async Task<int> GetMaxCapacity()
         {
-            return await context.Rooms.AsNoTracking().OrderByDescending(x => x.Capacity).Select(x=>x.Capacity).FirstOrDefaultAsync();
+            return await context.Rooms.AsNoTracking().OrderByDescending(x => x.Capacity).Select(x => x.Capacity).FirstOrDefaultAsync();
         }
     }
 }

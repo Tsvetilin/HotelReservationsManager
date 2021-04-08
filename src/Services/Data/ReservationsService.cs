@@ -30,7 +30,7 @@ namespace Services
         /// <param name="releaseDate">Reservation's release date</param>
         /// <param name="reservationId">Reservations to update id or null if making new reservation</param>
         /// <returns>Task with room's dates for reservatioin validity result</returns>
-        private async Task<bool> AreDatesAcceptable(string roomId,
+        public async Task<bool> AreDatesAcceptable(string roomId,
                                                     DateTime accomodationDate,
                                                     DateTime releaseDate,
                                                     string reservationId = null)

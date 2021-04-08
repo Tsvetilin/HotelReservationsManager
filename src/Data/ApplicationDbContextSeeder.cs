@@ -16,6 +16,8 @@ namespace Data
                 new RolesSeeder(),
                 new UsersSeeder(),
                 new SettingsSeeder(),
+                new RoomsSeeder(),
+                new ReservationsSeeder(),
             };
 
             foreach (var seeder in seeders)

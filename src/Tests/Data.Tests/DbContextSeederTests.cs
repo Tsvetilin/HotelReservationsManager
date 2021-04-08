@@ -14,7 +14,7 @@ namespace Tests.Data.Tests
         public async Task SeederTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>().
-                UseSqlServer(TestDatabaseConnection.GetConnectionString()).Options;
+                UseSqlServer(TestDatabaseConnectionProvider.GetConnectionStringDisposable()).Options;
 
             var context = new ApplicationDbContext(options);
             context.Database.Migrate();
@@ -26,9 +26,6 @@ namespace Tests.Data.Tests
             var exception = await Record.ExceptionAsync(() => seeder.SeedAsync(context,logMock.Object));
 
             Assert.Null(exception);
-
-            
-            context.Database.EnsureDeleted();
         }
 
     }

@@ -1,26 +1,23 @@
-﻿using Data;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Services.Mapping;
 using System.Net;
 using System.Threading.Tasks;
 using Tests.Common;
-using Web;
+using Web.Models;
 using Xunit;
-using static Tests.Common.TestAuthHandler;
+using Xunit.Extensions.Ordering;
 
+[assembly: CollectionBehavior(DisableTestParallelization = true, MaxParallelThreads = 1)]
 namespace Tests.Web.Tests
 {
-    public class ReservarionsControllerTests : IClassFixture<CustomAppFactory>
+    [CollectionDefinition("ReservarionsControllerTests", DisableParallelization = true)]
+    public class ReservarionsControllerTests : IClassFixture<CustomAppFactory>, IClassFixture<DisposableClassFixture>
     {
         private readonly CustomAppFactory _factory;
 
         public ReservarionsControllerTests(CustomAppFactory factory)
         {
             _factory = factory;
+            MappingConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
         }
 
         [Theory]
