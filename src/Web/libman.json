@@ -18,6 +18,20 @@
       "files": [
         "jquery.min.js"
       ]
+    },
+    {
+      "destination": "wwwroot/lib/jquery-validation/",
+      "library": "jquery-validate@1.19.2",
+      "files": [
+        "jquery.validate.min.js"
+      ]
+    },
+    {
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/",
+      "library": "jquery-validation-unobtrusive@3.2.12",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
     }
   ]
 }

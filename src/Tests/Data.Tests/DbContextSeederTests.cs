@@ -1,12 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Threading.Tasks;
+using Tests.Common;
+using Xunit;
 
 namespace Tests.Data.Tests
 {
-    class DbContextSeederTests
+    public class DbContextSeederTests
     {
+        [Fact]
+        public async Task SeederTest()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>().
+                UseSqlServer(TestDatabaseConnection.GetConnectionString()).Options;
+
+            var context = new ApplicationDbContext(options);
+            context.Database.Migrate();
+
+            var seeder = new ApplicationDbContextSeeder();
+
+            var logMock = new Mock<ILogger>();
+
+            var exception = await Record.ExceptionAsync(() => seeder.SeedAsync(context,logMock.Object));
+
+            Assert.Null(exception);
+
+            
+            context.Database.EnsureDeleted();
+        }
+
     }
 }

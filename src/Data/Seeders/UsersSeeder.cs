@@ -20,6 +20,7 @@ namespace Data.Seeders
             var email = "admin@hms.com";
             var user = new ApplicationUser
             {
+                Id=name,
                 Email = email,
                 NormalizedEmail = email.ToUpper(),
                 UserName = name,

@@ -53,15 +53,14 @@ namespace Tests.Web.Tests
         public async Task Get_EndpointsReturnRedirectUnauthorizedAndCorrectContentType(string url)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { 
+            AllowAutoRedirect=false});
 
             // Act
             var response = await client.GetAsync(url);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("text/html; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         }
 
         [Theory]
@@ -80,53 +79,6 @@ namespace Tests.Web.Tests
             Assert.Equal("text/html; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
         }
+
     }
-
-
-
-
-    /*
-    public class CustomWebApplicationFactory<TStartup>
-    : WebApplicationFactory<TStartup> where TStartup : class
-    {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            builder.ConfigureServices(services =>
-            {
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                        typeof(DbContextOptions<ApplicationDbContext>));
-
-                services.Remove(descriptor);
-
-                services.AddDbContext<ApplicationDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
-                });
-
-                var sp = services.BuildServiceProvider();
-
-                using (var scope = sp.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-                    var logger = scopedServices
-                        .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
-
-                    db.Database.EnsureCreated();
-
-                    try
-                    {
-                        Utilities.InitializeDbForTests(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                            "database with test messages. Error: {Message}", ex.Message);
-                    }
-                }
-            });
-        }
-    }
-    */
 }
