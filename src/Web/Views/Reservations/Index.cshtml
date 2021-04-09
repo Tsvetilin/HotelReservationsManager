@@ -10,8 +10,8 @@
     ViewData["Title"] = "My reservations";
 }
 
-<div class="d-inline-flex w-100">
-    <h1>My reservations</h1>
+<div class="d-inline-flex w-100 justify-content-center">
+    <h1 class="text-center">My reservations</h1>
 </div>
 
 <hr />
@@ -22,54 +22,77 @@
     </form>
 }
 
+@if (Model.Reservations.Any(x => x.ReleaseDate < DateTime.Today))
+{
+    <div class="form-group my-2">
+        <div class="checkbox">
+            <label>
+                <input id="past-dates" onchange="ChangeVisibil()" type="checkbox" value="true" /> Show reservation with a past date
+            </label>
+        </div>
+    </div>}
 <br />
+
 @if (Model.Reservations?.Any() ?? false)
 {
     <ul class="list-inline text-dark">
 
         @foreach (var reservation in Model.Reservations)
         {
-            <li class="pb-3">
-                <div class="d-flex border border-info rounded blue-card justify-content-between list-inline text-dark flex-wrap flex-column flex-md-row w-100">
-                    <div class="col-md-1 col-0"></div>
-                    <div class="my-5 col-md-8 col-12">
-                        <h3 class="text-dark font-weight-bold">Room №@reservation.RoomNumber</h3>
-                        <h5 class="text-dark ">@reservation.RoomType.ToString()</h5>
-                        <div>
-                            <p class="text-dark ">Total price: @reservation.Price $</p>
-                            @if (reservation.AllInclusive)
-                            {
-                                <p class="text-dark "> All-inclusive: &#10004;</p>
-                            }
-                            else
-                            {
+            var isPast = reservation.ReleaseDate < DateTime.Today;
+            var past = "p-no";
+            if (isPast)
+            {
+                past = "p-yes";
+            }
 
-                                <p class="text-dark ">All-inclusive: &#10008;</p>
-                                if (reservation.Breakfast)
+            <li class="pb-3 @past">
+                <a asp-action="Details" asp-controller="Reservations" asp-route-id="@reservation.Id" class="text-decoration-none">
+                    <div class="d-flex border border-info rounded blue-card justify-content-between list-inline text-dark flex-wrap flex-column flex-md-row w-100">
+
+                        <div class="col-md-1 col-0"></div>
+                        <div class="my-5 col-md-8 col-12">
+                            <h3 class="text-dark font-weight-bold">Room №@reservation.RoomNumber</h3>
+                            <h5 class="text-dark ">@reservation.RoomType.ToString()</h5>
+                            <div>
+                                <p class="text-dark ">Total price: @reservation.Price $</p>
+                                @if (reservation.AllInclusive)
                                 {
-                                    <p class="text-dark "> Breakfast: &#10004;</p>
+                                    <p class="text-dark "> All-inclusive: &#10004;</p>
                                 }
                                 else
                                 {
-                                    <p class="text-dark "> Breakfast: &#10008;</p>
+
+                                    <p class="text-dark ">All-inclusive: &#10008;</p>
+                                    if (reservation.Breakfast)
+                                    {
+                                        <p class="text-dark "> Breakfast: &#10004;</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-dark "> Breakfast: &#10008;</p>
+                                    }
                                 }
+                            </div>
+                            <p class="text-dark ">Reservation dates: @reservation.AccommodationDate.ToString("dd/MM/yyyy") - @reservation.ReleaseDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div class="col-md-3 col-12 justify-content-around align-self-center d-flex flex-row flex-md-column">
+                            <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get" class="my-2">
+                                <input class="btn btn-info" type="submit" value="Info" />
+                            </form>
+                            @if (!isPast)
+                            {
+                                <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get" class="my-2">
+                                    <input class="btn btn-primary" type="submit" value="Change" />
+                                </form>
+                                <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id" class="my-2"
+                                      method="post">
+                                    <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
+                                </form>
                             }
                         </div>
-                        <p class="text-dark ">Reservarion dates: @reservation.AccommodationDate.ToString("dd/MM/yyyy") - @reservation.ReleaseDate.ToString("dd/MM/yyyy")</p>
                     </div>
-                    <div class="col-md-3 col-3 float-end align-self-center">
-                        <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get" class="my-2">
-                            <input class="btn btn-info" type="submit" value="Info" />
-                        </form>
-                        <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get" class="my-2">
-                            <input class="btn btn-primary" type="submit" value="Change" />
-                        </form>
-                        <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id" class="my-2"
-                              method="post">
-                            <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
-                        </form>
-                    </div>
-                </div>
+                </a>
             </li>
         }
     </ul>
@@ -80,3 +103,20 @@ else
     <h3>No reservations made yet</h3>
 }
 
+@section Scripts{
+    <script>
+        var pasts = document.getElementsByClassName("p-yes");
+
+        function ChangeVisibil() {
+            var styl = "display:block!important"
+
+            if (!document.getElementById("past-dates").checked) {
+                styl = "display:none!important";
+            }
+
+            for (let res of pasts) {
+                res.style = styl;
+            }
+        }
+    </script>
+}

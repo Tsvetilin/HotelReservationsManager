@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 
 namespace Web.Areas.Identity.Pages.Account
 {
@@ -85,6 +86,13 @@ namespace Web.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [DisplayName(@"I consent to the <a href=""home/privacy"">Privacy policy</a> of the website")]
+            [Compare("AcceptConsent",ErrorMessage ="Accepting the privacy policy is required!")]
+            public bool Consent { get; set; }
+
+            public bool AcceptConsent => true;
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)

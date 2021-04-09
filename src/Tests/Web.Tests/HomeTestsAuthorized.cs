@@ -6,6 +6,7 @@ using System.Net;
 /// <summary>
 /// Tests of the View layer project
 /// </summary>
+[assembly: CollectionBehavior(DisableTestParallelization = true, MaxParallelThreads = 1)]
 namespace Tests.Web.Tests
 {
     [CollectionDefinition("HomeTestsAuthorized", DisableParallelization = true)]
@@ -30,7 +31,14 @@ namespace Tests.Web.Tests
         [InlineData("/rooms/create")]
         [InlineData("/rooms/")]
         [InlineData("/rooms/update/ExampleRoom1")]
+        [InlineData("/rooms/details/ExampleRoom1")]
         [InlineData("/reservations")]
+        [InlineData("/reservations/create/ExampleRoom1")]
+        [InlineData("/reservations/details/ExampleReservation1")]
+        [InlineData("/reservations/update/ExampleReservation1")]
+        [InlineData("/reservations/all")]
+        [InlineData("/reservations/all/-2&pageSize=-20")]
+        [InlineData("/reservations/all/500&pageSize=1")]
         [InlineData("/users/add")]
         [InlineData("/users/all")]
         [InlineData("/identity/account/manage")]
@@ -41,11 +49,10 @@ namespace Tests.Web.Tests
         [InlineData("/identity/account/lockout")]
         [InlineData("/identity/account/manage/deletepersonaldata")]
         [InlineData("/users/promote/Admin")]
-        [InlineData("/reservations/create/ExampleRoom1")]
         [InlineData("/users/index?search=Admin")]
         [InlineData("/users/index")]
         [InlineData("/users/all?search=Admin")]
-        [InlineData("/reservations/details/ExampleReservation1")]
+        [InlineData("/settings")]
         public async void Get_ShouldReturnPage(string url)
         {
             var res = await client.GetAsync(url);
@@ -79,9 +86,8 @@ namespace Tests.Web.Tests
         [InlineData("/users/promote/NotExistingUser")]
         [InlineData("/users/update")]
         [InlineData("/users/promote")]
-        
+        [InlineData("/rooms/update/notexisting1")]
         [InlineData("/rooms/delete/notexisitng")]
-
         public async void Post_ShouldReturnNotFound(string url)
         {
             var res = await client.PostAsync(url, null);
@@ -92,7 +98,6 @@ namespace Tests.Web.Tests
 
         [Theory]
         [InlineData("/users/all")]
-        [InlineData("/rooms/update/notexisting1")]
         public async void Post_ShouldReturnOk(string url)
         {
             var res = await client.PostAsync(url, null);

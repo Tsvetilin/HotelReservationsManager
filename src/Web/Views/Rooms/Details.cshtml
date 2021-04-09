@@ -12,74 +12,88 @@
 
 <hr />
 <div>
-    <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get">
-        <input class="btn btn-success" type="submit" value="Reserve" />
-    </form>
-    <dl class="pb-3 dl-horizontal ">
+    <div class="col-md-3 col-12 justify-content-around align-self-center d-flex">
+        <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get" class="my-2">
+            <input class="btn btn-success" type="submit" value="Reserve" />
+        </form>
+        @if (SignInManager.Context.User.IsInRole("Admin"))
+        {
+            <form asp-controller="Rooms" asp-action="Update" asp-route-id="@Model.Id" method="get" class="my-2">
+                <input class="btn btn-primary" type="submit" value="Change" />
+            </form>
+            <form asp-controller="Rooms" asp-action="Delete" asp-route-id="@Model.Id" class="my-2"
+                  method="post">
+                <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete?')" value="Delete" />
+            </form>
+        }
+    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Capacity):
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Type):
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.AdultPrice): 
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AdultPrice) $
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ChildrenPrice):
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ChildrenPrice) $
-        </dd>
+
+    <div class="my-5 dl-horizontal ">
+        <div class="d-flex">
+            <div class="col-md-4 col-12 align-items-center d-flex justify-content-center">
+                <img src="@Model.ImageUrl" alt="Room image" class="d-block w-100" />
+            </div>
+            <div>
+                <p>
+                    <strong>@Html.DisplayNameFor(model => model.Type):</strong> @Html.DisplayFor(model => model.Type)
+                </p>
+                <p>
+                    <strong>@Html.DisplayNameFor(model => model.Capacity):</strong> @Html.DisplayFor(model => model.Capacity)
+                </p>
+                <p>
+                    <strong> @Html.DisplayNameFor(model => model.AdultPrice): </strong>@Html.DisplayFor(model => model.AdultPrice)$
+                </p>
+                <p>
+                    <strong>@Html.DisplayNameFor(model => model.ChildrenPrice): </strong>@Html.DisplayFor(model => model.ChildrenPrice)$
+                </p>
+            </div>
+        </div>
+
         @if (SignInManager.Context.User.IsInRole("Employee") || SignInManager.Context.User.IsInRole("Admin"))
         {
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Reservations):
-            </dt>
-            <dd>
-                <ul class="list-group pb-3 list-inline">
-                    @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
-                    {
-                    <li class="list-group-item blue-card">
-                        <p class="h5">Reservation #@res.Id</p>
-                        <p class="text-dark mb-0">Price: @res.Price$</p>
-                        <p class="text-dark mb-0">Period: @res.AccommodationDate.ToString("dd/MM/yyyy") - @res.ReleaseDate.ToString("dd/MM/yyyy")</p>
-                        @if (res.AllInclusive)
+            <div class="my-5">
+                <p>
+                    <strong> @Html.DisplayNameFor(model => model.Reservations):</strong>
+                </p>
+                @if (Model.Reservations.Any())
+                {
+                    <ul class="list-group pb-3 list-inline">
+                        @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
                         {
-                            <p class="text-dark mb-0">All-Inclusive: &#10004;</p>
+                            <li class="list-group-item blue-card">
+                                <a asp-action="Details" asp-controller="Reservations" asp-route-id="@res.Id" class="text-decoration-none">
+                                    <p class="h5">Reservation #@res.Id</p>
+                                    <p class="text-dark mb-0">Price: @res.Price$</p>
+                                    <p class="text-dark mb-0">Period: @res.AccommodationDate.ToString("dd/MM/yyyy") - @res.ReleaseDate.ToString("dd/MM/yyyy")</p>
+                                    @if (res.AllInclusive)
+                                    {
+                                        <p class="text-dark mb-0">All-Inclusive: &#10004;</p>
+                                    }
+                                    else if (res.Breakfast)
+                                    {
+                                        <p class="text-dark mb-0">Breakfast: &#10004;</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-dark mb-0">Breakfast: &#10008;</p>
+                                    }
+                                    <p class="text-dark mb-0">Clients: @(res.Clients.Count + 1)</p>
+                                </a>
+                            </li>
                         }
-                        else if (res.Breakfast)
-                        {
-                            <p class="text-dark mb-0">Breakfast: &#10004;</p>
-                        }
-                        else
-                        {
-                            <p class="text-dark mb-0">Breakfast: &#10008;</p>
-                        }
-                        <p class="text-dark mb-0">Clients: @(res.Clients.Count+1)</p>
-                    </li>
-                    }
-                </ul>
-            </dd>
+                    </ul>
+                }
+                else
+                {
+                    <p>No reservaions made yet.</p>
+                }
+            </div>
         }
 
-    </dl>
+    </div>
 </div>
 <div>
-    @if (SignInManager.Context.User.IsInRole("Employee") || SignInManager.Context.User.IsInRole("Admin"))
-    {
-        <a asp-action="Update" asp-route-id="@Model.Id">Edit</a> <span>|</span>
-    }
     <a asp-action="Index">Back to List</a>
 </div>

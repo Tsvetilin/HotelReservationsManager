@@ -15,7 +15,7 @@
         <p>Adult price: @Model.RoomAdultPrice</p>
         <p>Children price: @Model.RoomChildrenPrice</p>
     </div>
-    </div>
+</div>
 <hr />
 <div class="row">
     <div class="col-md-12">
@@ -61,32 +61,57 @@
                 @for (int i = 0; i < Model.RoomCapacity - 1; i++)
                 {
                     var id = i.ToString();
-                    <div class="d-flex justify-content-around border-dark">
-                        <div class="form-group col-md-3 col-12">
-                            <label asp-for="Clients[i].FullName" class="control-label"></label>
-                            <input asp-for="Clients[i].FullName" class="form-control client-@id" />
-                            <span asp-validation-for="Clients[i].FullName" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3 col-12">
-                            <label asp-for="Clients[i].Email" class="control-label"></label>
-                            <input asp-for="Clients[i].Email" class="form-control client-@id" />
-                            <span asp-validation-for="Clients[i].Email" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3 col-12">
-                            <div class="checkbox">
-                                <label>
-                                    <input asp-for="Clients[i].IsAdult" id="client-@id" /> @Html.DisplayNameFor(model => model.Clients[i].IsAdult)
-                                </label>
+                    if (i < Model.Clients.Count)
+                    {
+                        <div class="d-flex justify-content-around border-dark">
+                            <div class="form-group col-md-3 col-12">
+                                <label asp-for="Clients[i].FullName" class="control-label"></label>
+                                <input asp-for="Clients[i].FullName" class="form-control client-@id" />
+                                <span asp-validation-for="Clients[i].FullName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3 col-12">
+                                <label asp-for="Clients[i].Email" class="control-label"></label>
+                                <input asp-for="Clients[i].Email" class="form-control client-@id" />
+                                <span asp-validation-for="Clients[i].Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3 col-12">
+                                <div class="checkbox">
+                                    <label>
+                                        <input asp-for="Clients[i].IsAdult" id="client-@id" /> @Html.DisplayNameFor(model => model.Clients[i].IsAdult)
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex justify-content-around border-dark">
+                            <div class="form-group col-md-3 col-12">
+                                <label asp-for="Clients[0].FullName" class="control-label"></label>
+                                <input name="Clients[@id].FullName" class="form-control client-@id" />
+                                <span asp-validation-for="Clients[0].FullName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3 col-12">
+                                <label asp-for="Clients[0].Email" class="control-label"></label>
+                                <input name="Clients[@id].Email" class="form-control client-@id" />
+                                <span asp-validation-for="Clients[0].Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3 col-12">
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="Clients[@id].IsAdult" id="client-@id" type="checkbox" value="true"/> @Html.DisplayNameFor(model => model.Clients[0].IsAdult)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             </div>
             <div class="text-dark">
                 Total price: <span id="price">@Model.Price</span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Update reservation" class="btn btn-primary" />
+                <input type="submit" value="Update reservation" id="submit-but" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -109,7 +134,7 @@
         document.body.addEventListener('keydown', this.handleInteraction);
         document.body.addEventListener('click', this.handleInteraction);
         document.body.addEventListener('scroll', this.handleInteraction);
-
+        this.handleInteraction();
 
         function handleInteraction() {
             totalPrice = 0;
@@ -124,8 +149,12 @@
             var pr = totalPrice;
             if (isValidDate) {
                 var days = Math.round((new Date(document.getElementById("rel-date").value) - new Date(document.getElementById("acc-date").value)) / (1000 * 60 * 60 * 24));
-                console.log("days: ",days);
+                console.log("days: ", days);
                 pr = pr * days;
+                document.getElementById("submit-but").disabled = false;
+            }
+            else {
+                document.getElementById("submit-but").disabled = true;
             }
             document.getElementById("price").innerHTML = pr;
         }

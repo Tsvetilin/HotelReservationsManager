@@ -11,16 +11,16 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Number" class="control-label"></label>
-                <input asp-for="Number" class="form-control" min="0"/>
+                <input asp-for="Number" class="form-control" min="0" />
                 <span asp-validation-for="Number" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Capacity" class="control-label"></label>
-                <input asp-for="Capacity" class="form-control" min="0"/>
+                <input asp-for="Capacity" class="form-control" min="0" />
                 <span asp-validation-for="Capacity" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,11 +35,15 @@
             </div>
             <div class="form-group">
                 <label asp-for="ChildrenPrice" class="control-label"></label>
-                <input asp-for="ChildrenPrice" class="form-control" min="0"/>
+                <input asp-for="ChildrenPrice" class="form-control" min="0" />
                 <span asp-validation-for="ChildrenPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <label asp-for="@Model.PhotoUpload"></label>
+                <input asp-for="@Model.PhotoUpload" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>

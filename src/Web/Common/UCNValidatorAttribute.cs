@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Web.Common
 {
+    /// <summary>
+    /// Custom UCN Validator Attribut for Bulgarian Personal Ids
+    /// </summary>
     public class UCNValidatorAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)

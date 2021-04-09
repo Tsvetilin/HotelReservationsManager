@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Services;
 using Services.Common;
 using Services.Data;
 using Services.Mapping;
@@ -73,7 +72,7 @@ namespace Web.Controllers
         {
             var user = await userManager.GetUserAsync(User);
             var viewModel = await this.reservationService.GetReservation<ReservationViewModel>(id);
-            if (viewModel == null || user.Id != viewModel.UserId)
+            if (viewModel == null || !(user.Id == viewModel.UserId || User.IsInRole("Admin") || User.IsInRole("Employee")))
             {
                 return this.NotFound();
             }
@@ -161,7 +160,7 @@ namespace Web.Controllers
         {
             var user = await userManager.GetUserAsync(User);
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-            if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")))
+            if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate < DateTime.Today)
             {
                 return this.NotFound();
             }
@@ -174,7 +173,7 @@ namespace Web.Controllers
                 reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
             }
 
-            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate);
+            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate,id);
 
             if (!roomIsEmpty)
             {
@@ -183,6 +182,7 @@ namespace Web.Controllers
 
             if (!this.ModelState.IsValid)
             {
+                inputModel = await FillRoomData(inputModel, room);
                 return this.View(inputModel);
             }
 
@@ -192,7 +192,7 @@ namespace Web.Controllers
                 Email = x.Email,
                 FullName = x.FullName,
                 Id = x.Id,
-            });
+            }).ToList();
 
             var clients = await reservationService.UpdateClientsForReservation(reservation.Id, cls);
 
@@ -207,7 +207,9 @@ namespace Web.Controllers
 
             if (!success)
             {
-                ModelState.AddModelError("", "Error updating room");
+                ModelState.AddModelError("", "Error updating reservation");
+                inputModel = await FillRoomData(inputModel, room);
+
                 return this.View(inputModel);
             }
 
@@ -219,7 +221,7 @@ namespace Web.Controllers
         {
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
 
-            if (reservation == null || !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")))
+            if (reservation == null || !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate<DateTime.Today)
             {
                 this.NotFound();
             }
@@ -239,11 +241,12 @@ namespace Web.Controllers
             inputModel.BreakfastPrice = await memoryCache.GetBreakfastPrice(settingService);
             inputModel.RoomChildrenPrice = room.ChildrenPrice;
             inputModel.RoomType = room.Type;
+            inputModel.RoomImageUrl = room.ImageUrl;
 
             return inputModel;
         }
 
-        [Authorize("Admin, Employee")]
+        [Authorize(Roles ="Admin, Employee")]
         public async Task<IActionResult> All(int id = 1, int pageSize = 10)
         {
             var reservations = await reservationService.GetAll<ReservationViewModel>();

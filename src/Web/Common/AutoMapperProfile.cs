@@ -6,8 +6,14 @@ using Web.Models.Reservations;
 using Web.Models.Rooms;
 using Web.Models.ViewModels;
 
-namespace Web.Models
+/// <summary>
+/// View layer common helpers
+/// </summary>
+namespace Web.Common
 {
+    /// <summary>
+    /// AutoMapper profile for registering maps
+    /// </summary>
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()

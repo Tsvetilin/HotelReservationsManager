@@ -23,7 +23,7 @@ namespace Services.Data
         public int CountAllRooms();
         public Task<double> GetMinPrice();
         public Task<double> GetMaxPrice();
-        public Task<bool> IsRoomNumerFree(int number, string roomId = null);
+        public Task<bool> IsRoomNumberFree(int number, string roomId = null);
         public Task<int> GetMaxCapacity();
     }
 

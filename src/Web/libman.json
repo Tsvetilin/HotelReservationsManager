@@ -20,14 +20,14 @@
       ]
     },
     {
-      "destination": "wwwroot/lib/jquery-validation/",
+      "destination": "wwwroot/lib/jquery-validation/dist",
       "library": "jquery-validate@1.19.2",
       "files": [
         "jquery.validate.min.js"
       ]
     },
     {
-      "destination": "wwwroot/lib/jquery-validation-unobtrusive/",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/dist",
       "library": "jquery-validation-unobtrusive@3.2.12",
       "files": [
         "jquery.validate.unobtrusive.min.js"

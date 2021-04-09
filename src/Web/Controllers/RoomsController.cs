@@ -12,6 +12,9 @@ using Services.Data;
 using Web.Common;
 using Data.Enums;
 using Services.Common;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Services.External;
 
 namespace Web.Controllers
 {
@@ -20,12 +23,17 @@ namespace Web.Controllers
         private readonly IRoomService roomService;
         private readonly IMemoryCache memoryCache;
         private readonly ISettingService settingService;
+        private readonly IImageManager imageManager;
 
-        public RoomsController(IRoomService _roomService, IMemoryCache memoryCache, ISettingService settingService)
+        public RoomsController(IRoomService _roomService,
+                               IMemoryCache memoryCache,
+                               ISettingService settingService,
+                               IImageManager imageManager)
         {
             roomService = _roomService;
             this.memoryCache = memoryCache;
             this.settingService = settingService;
+            this.imageManager = imageManager;
         }
         public async Task<IActionResult> Index(int id = 1, int pageSize = 10, bool availableOnly = false, RoomType[] type = null, int minCapacity = 0)
         {
@@ -80,27 +88,49 @@ namespace Web.Controllers
         public async Task<IActionResult> Create(RoomInputModel createModel)
         {
 
-            if (!await roomService.IsRoomNumerFree(createModel.Number))
+            if (!await roomService.IsRoomNumberFree(createModel.Number))
             {
                 ModelState.AddModelError(nameof(createModel.Number), "Room with this number alreay exists");
             }
-            if (!ModelState.IsValid)
+
+            if (createModel.UseSamePhoto)
             {
-                return this.View(createModel);
+                ModelState.AddModelError("Error", "Error parsing your request");
+            }
+            else if (createModel.PhotoUpload != null)
+            {
+                var timestamp = $"{DateTime.Today.Day}-{DateTime.Today.Month}-{DateTime.Today.Year}";
+                var fileName = $"_{timestamp}_HMS_RoomPhoto";
+
+                IFormFile file = createModel.PhotoUpload;
+
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                var photoUrl = await imageManager.UploadImageAsync(stream, fileName);
+
+                if (string.IsNullOrWhiteSpace(photoUrl) ||  photoUrl.StartsWith("Error"))
+                {
+                    ModelState.AddModelError(nameof(createModel.PhotoUpload), $"An error occured: {photoUrl}.");
+                    return this.View(createModel);
+                }
+
+                var room = new Room
+                {
+                    Capacity = createModel.Capacity,
+                    AdultPrice = createModel.AdultPrice,
+                    ChildrenPrice = createModel.ChildrenPrice,
+                    Type = createModel.Type,
+                    Number = createModel.Number,
+                    ImageUrl = photoUrl,
+                };
+
+                await roomService.AddRoom(room);
+
+                return RedirectToAction(nameof(Index));
             }
 
-            var room = new Room
-            {
-                Capacity = createModel.Capacity,
-                AdultPrice = createModel.AdultPrice,
-                ChildrenPrice = createModel.ChildrenPrice,
-                Type = createModel.Type,
-                Number = createModel.Number,
-            };
-
-            await roomService.AddRoom(room);
-
-            return RedirectToAction(nameof(Index));
+            ModelState.AddModelError(nameof(createModel.PhotoUpload), "Image is required. Upload one.");
+            return this.View(createModel);
         }
 
         [Authorize]
@@ -138,34 +168,63 @@ namespace Web.Controllers
         public async Task<IActionResult> Update(string id, RoomInputModel input)
         {
 
-            var uRoom = roomService.GetRoom<RoomInputModel>(id);
+            var uRoom = await roomService.GetRoom<RoomInputModel>(id);
             if (uRoom == null)
             {
                 return this.NotFound();
             }
 
-            if (!await roomService.IsRoomNumerFree(input.Number, id))
+            if (!await roomService.IsRoomNumberFree(input.Number, id))
             {
-                ModelState.AddModelError(nameof(input.Number), "Number whit same Id already exists");
+                ModelState.AddModelError(nameof(input.Number), "Number with same Id already exists");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var room = new Room
+                return this.View(input);
+            }
+
+            string photoUrl = string.Empty;
+           
+            if (input.UseSamePhoto)
+            {
+                photoUrl = (await roomService.GetRoom<RoomViewModel>(id)).ImageUrl;
+            }
+            else if (input.PhotoUpload != null)
+            {
+                var timestamp = $"{DateTime.Today.Day}-{DateTime.Today.Month}-{DateTime.Today.Year}";
+                var fileName = $"_{timestamp}_HMS_RoomPhoto";
+
+                IFormFile file = input.PhotoUpload;
+
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                photoUrl = await imageManager.UploadImageAsync(stream, fileName);
+
+                if (string.IsNullOrWhiteSpace(photoUrl)|| photoUrl.StartsWith("Error"))
                 {
-                    Id = id,
-                    Capacity = input.Capacity,
-                    AdultPrice = input.AdultPrice,
-                    ChildrenPrice = input.ChildrenPrice,
-                    Type = input.Type,
-                    Number = input.Number,
-                };
-
-                await roomService.UpdateRoom(id, room);
-                return RedirectToAction("Index", "Rooms");
+                    ModelState.AddModelError(nameof(input.PhotoUpload), $"An error occured: {photoUrl}.");
+                    return this.View(input);
+                }
+            }
+            else
+            {
+                return this.View(input);
             }
 
-            return this.View(input);
+            var room = new Room
+            {
+                Capacity = input.Capacity,
+                AdultPrice = input.AdultPrice,
+                ChildrenPrice = input.ChildrenPrice,
+                Type = input.Type,
+                Number = input.Number,
+                ImageUrl = photoUrl,
+            };
+
+            await roomService.AddRoom(room);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -306,7 +306,12 @@ namespace Tests.Service.Tests
 
             List<ClientData> clients = new()
             {
-                Users.Client1User
+                new ClientData
+                {
+                    Id=null,
+                    Email="email",
+                    FullName="name"
+                }
             };
 
             ApplicationDbContext context = await InMemoryFactory.InitializeContext()
@@ -328,7 +333,7 @@ namespace Tests.Service.Tests
                                             Reservations.UpdateAllInClusive1,
                                             Reservations.UpdateBreakfast1,
                                             clients,
-                                            Reservations.Reservation1User3Room1NoClient.User);
+                                            Users.User1Employee);
 
             // Assert
             Assert.IsFalse(result);

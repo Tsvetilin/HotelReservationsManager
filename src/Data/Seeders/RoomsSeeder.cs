@@ -22,20 +22,22 @@ namespace Data.Seeders
                 new Room
                 {
                     Id="ExampleRoom1",
-                    AdultPrice=20,
-                    ChildrenPrice=10,
-                    Capacity=3,
+                    AdultPrice=50,
+                    ChildrenPrice=30,
+                    Capacity=5,
                     Number=105,
                     Type=Enums.RoomType.Apartment,
+                    ImageUrl="https://cf.bstatic.com/images/hotel/max1024x768/197/197179243.jpg",
                 },
                 new Room
                 {
                     Id="ExampleRoom2",
                     AdultPrice=30,
-                    ChildrenPrice=20,
-                    Capacity=4,
+                    ChildrenPrice=10,
+                    Capacity=3,
                     Number=205,
-                    Type=Enums.RoomType.DoubleBed
+                    Type=Enums.RoomType.DoubleBed,
+                    ImageUrl="https://pix10.agoda.net/hotelImages/5668227/0/7542736b26b0676a0e9e3c4aab831241.jpg?s=1024x768",
                 }
            });
 

@@ -218,7 +218,7 @@ namespace Services.Data
         /// <param name="number">The searched room number</param>
         /// <param name="roomId">The room numer to update, to exclude its Number from the search</param>
         /// <returns>Task with the room numer availability result</returns>
-        public async Task<bool> IsRoomNumerFree(int number, string roomId = null)
+        public async Task<bool> IsRoomNumberFree(int number, string roomId = null)
         {
             return !await context.Rooms.AsNoTracking().Where(x => x.Id != roomId).AnyAsync(x => x.Number == number);
         }

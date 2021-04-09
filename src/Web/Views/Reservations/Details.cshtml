@@ -19,7 +19,12 @@
 </div>
 <div class="d-flex flex-wrap flex-column flex-md-row w-100">
     <div class="col-md-6 col-12 my-3">
-        <h3 class="text-dark font-weight-bold">Room №@Model.RoomNumber</h3>
+        <div class="text-dark font-weight-bold">
+            <h3 class="text-center">Room №@Model.RoomNumber </h3>
+        </div>
+        <div class="align-items-center d-flex justify-content-center my-3">
+            <img src="@Model.RoomImageUrl" alt="Room image" class="d-block w-75" />
+        </div>
         <h5 class="text-dark ">@Model.RoomType.ToString()</h5>
         <div>
             <p class="text-dark ">Total price: @Model.Price $</p>
@@ -45,7 +50,7 @@
     </div>
     <div class="col-md-6 col-12">
         <h5>Clients</h5>
-        <div class="border border-info my-3">
+        <div class="border border-info my-3 blue-card">
             <div class="m-2">
                 <p class="text-dark m-0"> @Model.UserFullName</p>
                 <p class="text-dark m-0">@Model.UserEmail</p>

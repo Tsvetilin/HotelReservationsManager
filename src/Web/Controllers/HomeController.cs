@@ -11,6 +11,9 @@ using Web.Models;
 using Web.Models.Rooms;
 using Web.Models.ViewModels;
 
+/// <summary>
+/// ASP.NET 5 Controllers space
+/// </summary>
 namespace Web.Controllers
 {
     public class HomeController : Controller

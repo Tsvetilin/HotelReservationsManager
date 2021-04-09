@@ -21,6 +21,7 @@ namespace Data.Models
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
         public int Number { get; set; }
+        public string ImageUrl { get; set; }
 
         public virtual IEnumerable<Reservation> Reservations { get; set; }
     }

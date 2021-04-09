@@ -2,6 +2,7 @@ using Data;
 using Data.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,9 @@ using Services.Data;
 using Services.External;
 using Services.Mapping;
 
+/// <summary>
+/// Presentation layer entry point space
+/// </summary>
 namespace Web
 {
     public class Startup
@@ -45,18 +49,28 @@ namespace Web
             // Add caching
             services.AddMemoryCache();
 
+            // Add cookie policy
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.Lax;
+            });
+
             // Register views and pages
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             // Register services
-            services.AddTransient<IEmailSender>(x=>new EmailSender(
-                                                                    Configuration.GetSection("SendGrid")["ApiKey"],
-                                                                    Configuration.GetSection("SendGrid")["SenderEmail"], 
-                                                                    Configuration.GetSection("SendGrid")["SenderName"]));
+            services.AddTransient<IEmailSender>(x=>new EmailSender(Configuration.GetSection("SendGrid")["ApiKey"],
+                                                                   Configuration.GetSection("SendGrid")["SenderEmail"], 
+                                                                   Configuration.GetSection("SendGrid")["SenderName"]));
 
-            services.AddTransient<ISettingService, SettingService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IImageManager>(x => new ImageManager(Configuration.GetSection("Cloudinary")["CloudName"],
+                                                                       Configuration.GetSection("Cloudinary")["ApiKey"],
+                                                                       Configuration.GetSection("Cloudinary")["ApiSecret"]));
+
+            services.AddTransient<ISettingService, SettingService>();  
+            services.AddTransient<IUserService, UserService>();      
             services.AddTransient<IReservationService, ReservationsService>();
             services.AddTransient<IRoomService, RoomServices>();
         }
@@ -94,6 +108,7 @@ namespace Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
 
             app.UseRouting();
 

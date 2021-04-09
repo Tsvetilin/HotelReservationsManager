@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace Web.Common
 {
+    /// <summary>
+    /// Memory cache extension methods helper for commonly used 
+    /// </summary>
     public static class MemoryCacheHelper
     {
         public async static Task<double> GetBreakfastPrice(this IMemoryCache memoryCache, ISettingService settingService)
@@ -24,6 +27,12 @@ namespace Web.Common
                 memoryCache.Set(key, price);
             }
             return price;
+        }
+
+        public static void ClearPriceCache(this IMemoryCache memoryCache)
+        {
+            memoryCache.Remove("AllInclusivePrice");
+            memoryCache.Remove("BreakfastPrice");
         }
     }
 }

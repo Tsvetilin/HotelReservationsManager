@@ -348,8 +348,8 @@ namespace Tests.Service.Tests
             var roomService = new RoomServices(context);
 
             //Act
-            var result1 = roomService.IsRoomNumerFree(2);
-            var result2 = roomService.IsRoomNumerFree(3);
+            var result1 = roomService.IsRoomNumberFree(2);
+            var result2 = roomService.IsRoomNumberFree(3);
 
             //Arrange
             Assert.AreEqual(false, result1.Result);

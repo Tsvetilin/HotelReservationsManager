@@ -82,4 +82,5 @@ body {
     .blue-card:hover {
         background-color: #C7ECFF!important;
         cursor:pointer;
+        text-decoration:none!important;
     }

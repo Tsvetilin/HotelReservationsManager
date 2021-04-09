@@ -1,0 +1,41 @@
+﻿@model Web.Models.Settings.SettingsIndexModel
+
+@{
+    ViewData["Title"] = "Hotel Settings";
+}
+
+<div class="d-inline-flex w-100 justify-content-center">
+    <h1 class="text-center">Hotel Settings</h1>
+</div>
+<hr />
+@if ((bool?)TempData["Success"] == true)
+{
+    <div class="alert alert-success" role="alert">
+       Successfully updated hotel settings!
+    </div>
+}
+<div class="row">
+    <div class="col-md-4 mx-auto">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BreakfastPrice" class="control-label"></label>
+                <input asp-for="BreakfastPrice" class="form-control" min="0" />
+                <span asp-validation-for="BreakfastPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AllInclusivePrice" class="control-label"></label>
+                <input asp-for="AllInclusivePrice" class="form-control" min="0" />
+                <span asp-validation-for="AllInclusivePrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update values" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

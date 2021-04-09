@@ -177,9 +177,9 @@ namespace Services.Data
 
             var areDateAcceptable = await AreDatesAcceptable(room.Id, accomodationDate, releaseDate, id);
             var isCapacityInRange = clients.Count() + 1 <= room.Capacity;
-            var isUserAuthorizedToUpdate = !(reservation.User.Id == user.Id &&
-                                             !dbContext.UserRoles.Any(x => x.UserId == user.Id &&
-                                              x.RoleId == dbContext.Roles.First(a => a.Name == "User").Id));
+            var isUserAuthorizedToUpdate = reservation.User.Id == user.Id ||
+                                             dbContext.UserRoles.Any(x => x.UserId == user.Id &&
+                                              x.RoleId != dbContext.Roles.First(a => a.Name == "User").Id);
 
             if (!isUserAuthorizedToUpdate || !isCapacityInRange || !areDateAcceptable)
             {
@@ -284,10 +284,7 @@ namespace Services.Data
             var initialClients = await dbContext.ClientData.Where(x => x.Reservation.Id == reservationId)
                                                            .ToListAsync();
 
-            //if (clients.Count() + 1 > reservation.Room.Capacity)
-            //{
-
-            //}
+            //if (clients.Count() + 1 > reservation.Room.Capacity) - Unnecessary
 
             var deletedClients = initialClients.Where(x => !clients.Select(u => u.Id).Contains(x.Id)).ToList();
 
@@ -297,11 +294,20 @@ namespace Services.Data
             }
 
             var newClients = clients.Where(x => !initialClients.Select(u => u.Id)
-                                                               .Contains(x.Id) && x.Id != null)
+                                                               .Contains(x.Id))
                                                                .ToList();
 
             if (newClients?.Any() ?? false)
             {
+                foreach (var cl in newClients)
+                {
+                    cl.Reservation = reservation;
+                    if(string.IsNullOrWhiteSpace(cl.Id))
+                    {
+                        cl.Id = Guid.NewGuid().ToString();
+                    }
+                }
+
                 dbContext.ClientData.AddRange(newClients);
             }
 
@@ -309,6 +315,10 @@ namespace Services.Data
 
             if (clientsToUpdate?.Any() ?? false)
             {
+                foreach (var cl in newClients)
+                {
+                    cl.Reservation = reservation;
+                }
                 dbContext.ClientData.UpdateRange(clientsToUpdate);
             }
 

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
 
 namespace Web.Models.Clients
 {
@@ -10,6 +10,7 @@ namespace Web.Models.Clients
 
         public string Email { get; set; }
 
+        [DisplayName("Is Adult")]
         public bool IsAdult { get; set; }
     }
 }

@@ -8,11 +8,17 @@
 <h2>Make a Reservation for room:</h2>
 <hr />
 <h4>Room data:</h4>
-<p>RoomType: @Model.RoomType.ToString()</p>
-<p>Capacity: @Model.RoomCapacity</p>
-<p>AdultPrice:@Model.RoomAdultPrice</p>
-<p>ChildrenPrice @Model.RoomChildrenPrice</p>
-
+<div class="d-flex">
+    <div class="col-md-2 col-12 align-items-center d-flex justify-content-center">
+        <img src="@Model.RoomImageUrl" alt="Room image" class="d-block w-100" />
+    </div>
+    <div>
+        <p>RoomType: @Model.RoomType.ToString()</p>
+        <p>Capacity: @Model.RoomCapacity</p>
+        <p>AdultPrice: @Model.RoomAdultPrice$</p>
+        <p>ChildrenPrice: @Model.RoomChildrenPrice$</p>
+    </div>
+</div>
 <hr />
 <div class="row">
     <div class="col-md-12">
@@ -55,7 +61,6 @@
             <div class="col-md-12">
                 <h5>Clients data:</h5>
                 <small>Leave a row blank if necessary</small>
-                @*FIX*@
                 @for (int i = 0; i < Model.RoomCapacity - 1; i++)
                 {
                     var id = i.ToString();
@@ -79,7 +84,6 @@
                         </div>
                     </div>
                 }
-                @*FIX*@
             </div>
             <div class="text-dark">
                 Total price: <span id="price">0</span>

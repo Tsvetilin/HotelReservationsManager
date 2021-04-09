@@ -12,8 +12,8 @@ namespace Web.Models.Reservations
 {
     public class ReservationInputModel
     {
-        // Should add breakfast and all inclusive prices as well as dynamic price calculation
         public string Id { get; set; }
+
         public IList<ClientInputModel> Clients { get; set; }
 
         [Required]
@@ -30,7 +30,6 @@ namespace Web.Models.Reservations
 
         public bool AllInclusive { get; set; }
 
-        //should be passed down
         [BindNever]
         public double BreakfastPrice { get; set; }
 
@@ -57,6 +56,9 @@ namespace Web.Models.Reservations
 
         [BindNever]
         public double RoomChildrenPrice { get; set; }
+
+        public string RoomImageUrl { get; set; }
+
         public string UserId { get; set; }
 
         public string GetPeriods()
