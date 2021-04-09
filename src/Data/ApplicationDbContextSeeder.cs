@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Data
 {
+    /// <summary>
+    /// Default application database seeder
+    /// </summary>
     public class ApplicationDbContextSeeder
     {
         public async Task SeedAsync(ApplicationDbContext dbContext, ILogger logger)

@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
+/// <summary>
+/// Model layer related to context data models definition
+/// </summary>
 namespace Data.Models
 {
+    /// <summary>
+    /// Default application roles scheme
+    /// </summary>
     public class ApplicationRole : IdentityRole<string>
     {
         public ApplicationRole()

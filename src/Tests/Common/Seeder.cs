@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// Database seeder extensions
+    /// </summary>
     public static class Seeder
     {
         public static async Task<ApplicationDbContext> SeedAsync<T>(this ApplicationDbContext context, IEnumerable<T> data)

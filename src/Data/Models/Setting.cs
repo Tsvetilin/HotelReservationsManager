@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Default settings scheme
+    /// </summary>
     public class Setting
     {
         [Key]

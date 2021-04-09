@@ -2,8 +2,14 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Test project space related to dummy data definition for usage in tests
+/// </summary>
 namespace Tests.Data
 {
+    /// <summary>
+    /// Reservations test data
+    /// </summary>
     public static class Reservations
     {
         public static readonly Reservation Reservation1User3Room1NoClient = new Reservation

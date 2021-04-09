@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Data.Seeders
 {
+    /// <summary>
+    /// Users table seeder
+    /// </summary>
     public class UsersSeeder : ISeeder
     {
         public async Task SeedAsync(ApplicationDbContext dbContext, ILogger logger)

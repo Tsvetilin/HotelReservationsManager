@@ -2,8 +2,10 @@
 using Xunit;
 using System.Net.Http;
 using System.Net;
-using Xunit.Extensions.Ordering;
 
+/// <summary>
+/// Tests of the View layer project
+/// </summary>
 namespace Tests.Web.Tests
 {
     [CollectionDefinition("HomeTestsAuthorized", DisableParallelization = true)]
@@ -26,15 +28,24 @@ namespace Tests.Web.Tests
 
         [Theory]
         [InlineData("/rooms/create")]
+        [InlineData("/rooms/")]
+        [InlineData("/rooms/update/ExampleRoom1")]
         [InlineData("/reservations")]
         [InlineData("/users/add")]
         [InlineData("/users/all")]
         [InlineData("/identity/account/manage")]
         [InlineData("/identity/account/login")]
-        [InlineData("/identity/account/forgotpassword")]
         [InlineData("/identity/account/manage/personaldata")]
         [InlineData("/identity/account/manage/setpassword")]
-
+        [InlineData("/identity/account/ForgotPasswordConfirmation")]
+        [InlineData("/identity/account/lockout")]
+        [InlineData("/identity/account/manage/deletepersonaldata")]
+        [InlineData("/users/promote/Admin")]
+        [InlineData("/reservations/create/ExampleRoom1")]
+        [InlineData("/users/index?search=Admin")]
+        [InlineData("/users/index")]
+        [InlineData("/users/all?search=Admin")]
+        [InlineData("/reservations/details/ExampleReservation1")]
         public async void Get_ShouldReturnPage(string url)
         {
             var res = await client.GetAsync(url);
@@ -43,16 +54,14 @@ namespace Tests.Web.Tests
         }
 
         [Theory]
-        //[InlineData("/rooms/details")]
+        [InlineData("/rooms/details/notexistingroom")]
         [InlineData("/rooms/update")]
-        // [InlineData("/reservations")]
         [InlineData("/reservations/create")]
         [InlineData("/reservations/details")]
         [InlineData("/reservations/update")]
-        //[InlineData("/users/add")]
-        // [InlineData("/users/all")]
-        //  [InlineData("/users/update")]
-        //  [InlineData("/users/promote")]
+        [InlineData("/users/update/notexistinguser")]
+        [InlineData("/rooms/update/notexisting1")]
+        [InlineData("/users/promote/notexistinguser")]
 
         public async void Get_ShouldReturnNotFound(string url)
         {
@@ -62,15 +71,16 @@ namespace Tests.Web.Tests
         }
 
         [Theory]
-        //  [InlineData("/rooms/details")]
-        //  [InlineData("/rooms/update")]
+        [InlineData("/rooms/details")]
         [InlineData("/reservations/create")]
         [InlineData("/reservations/details")]
         [InlineData("/reservations/update")]
-        // [InlineData("/users/add")]
-        // [InlineData("/users/all")]
-        // [InlineData("/users/update")]
-        // [InlineData("/users/promote")]
+        [InlineData("/users/update/NotExistingUser")]
+        [InlineData("/users/promote/NotExistingUser")]
+        [InlineData("/users/update")]
+        [InlineData("/users/promote")]
+        
+        [InlineData("/rooms/delete/notexisitng")]
 
         public async void Post_ShouldReturnNotFound(string url)
         {
@@ -81,16 +91,23 @@ namespace Tests.Web.Tests
 
 
         [Theory]
-        [InlineData("/rooms/update")]
         [InlineData("/users/all")]
-        [InlineData("/users/update")]
-        [InlineData("/users/promote")]
-
+        [InlineData("/rooms/update/notexisting1")]
         public async void Post_ShouldReturnOk(string url)
         {
             var res = await client.PostAsync(url, null);
 
             Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+        
+        [Theory]
+        [InlineData("/rooms/delete/ExampleRoom2")]
+        public async void Post_ShouldReturnRedirect(string url)
+        {
+            var res = await client.PostAsync(url, null);
+
+            Assert.Equal(HttpStatusCode.Redirect, res.StatusCode);
         }
     }
 }

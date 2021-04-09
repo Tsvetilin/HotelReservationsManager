@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Tests.Common;
 using Xunit;
 
+/// <summary>
+/// Tests of the Model layer project
+/// </summary>
 namespace Tests.Data.Tests
 {
     public class DbContextSeederTests
@@ -26,6 +29,8 @@ namespace Tests.Data.Tests
             var exception = await Record.ExceptionAsync(() => seeder.SeedAsync(context,logMock.Object));
 
             Assert.Null(exception);
+
+            context.Database.EnsureDeleted();
         }
 
     }

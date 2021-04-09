@@ -4,6 +4,9 @@ using System;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// In-memory database factory with unique name
+    /// </summary>
     public class InMemoryFactory
     {
         public static ApplicationDbContext InitializeContext()

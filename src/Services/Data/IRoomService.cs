@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Data.Enums;
 
-namespace Services
+namespace Services.Data
 {
     public interface IRoomService
     {
@@ -14,15 +14,17 @@ namespace Services
         public Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>();
         public Task<int> CountFreeRoomsAtPresent();
         public Task<IEnumerable<T>> GetAll<T>();
-        public Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null);
+        public Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false,
+                                                        RoomType[] types = null,
+                                                        int? minCapacity = null);
         public Task DeleteRoom(string id);
-        public Task UpdateRoom(string id,Room room);
+        public Task UpdateRoom(string id, Room room);
         public Task<T> GetRoom<T>(string id);
         public int CountAllRooms();
         public Task<double> GetMinPrice();
         public Task<double> GetMaxPrice();
-        public Task<bool> IsRoomNumerFree(int number, string roomId=null);
+        public Task<bool> IsRoomNumerFree(int number, string roomId = null);
         public Task<int> GetMaxCapacity();
     }
-  
+
 }

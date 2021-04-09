@@ -93,8 +93,8 @@
 
 
 @section Scripts{
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         var childPrice = @Model.RoomChildrenPrice;
         var adultPrice = @Model.RoomAdultPrice;
@@ -128,7 +128,7 @@
             }
             document.getElementById("price").innerHTML = pr;
         }
-        
+
         function CheckClients() {
             var total = @Model.RoomAdultPrice;
             @{
@@ -186,7 +186,9 @@
                 periods.forEach(period => {
                     console.log(period.start, period.end, new Date(accDate.value), new Date(relDate.value));
                     if ((period.start > new Date(accDate.value) && period.start < new Date(relDate.value)) ||
-                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value))){
+                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value)) ||
+                        (period.end > new Date(relDate.value) && period.start < new Date(accDate.value) )||
+                        (period.end < new Date(relDate.value) && period.start > new Date(accDate.value))){
                         isTaken = true;
                     }
                 });

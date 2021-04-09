@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Data.Seeders
 {
+    /// <summary>
+    /// Settings table seeder
+    /// </summary>
     public class SettingsSeeder : ISeeder
     {
         public async Task SeedAsync(ApplicationDbContext dbContext, ILogger logger)

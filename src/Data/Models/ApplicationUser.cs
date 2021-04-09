@@ -3,6 +3,9 @@ using System;
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Default application user
+    /// </summary>
     public class ApplicationUser : IdentityUser<string>
     {
         public ApplicationUser()

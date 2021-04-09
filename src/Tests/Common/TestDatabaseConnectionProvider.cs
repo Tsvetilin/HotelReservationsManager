@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// Unique dummy test databases connection strings manager
+    /// </summary>
     public sealed class TestDatabaseConnectionProvider
     {
         public const string TestingConnectionStringTemplate = "Server=(localdb)\\mssqllocaldb;Database=HotelManagerTestingDb_{0};Trusted_Connection=True;MultipleActiveResultSets=true";

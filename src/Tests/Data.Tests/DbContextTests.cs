@@ -18,6 +18,9 @@ namespace Tests.Data.Tests
             var exception = Record.Exception(() => context.Database.Migrate());
 
             Assert.Null(exception);
+
+            context.Database.EnsureDeleted();
+
         }
     }
 }

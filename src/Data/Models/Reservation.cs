@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Reservations scheme
+    /// </summary>
     public class Reservation
     {
         public Reservation()
@@ -19,6 +22,7 @@ namespace Data.Models
         public bool Breakfast { get; set; }
         public bool AllInclusive { get; set; }
         public double Price { get; set; }
+
         public virtual Room Room { get; set; }
     }
 }

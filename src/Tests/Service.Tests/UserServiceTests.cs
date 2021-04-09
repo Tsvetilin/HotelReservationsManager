@@ -1,10 +1,8 @@
 ﻿using Data;
 using Data.Models;
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using Services;
+using Services.Data;
 using Services.Mapping;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

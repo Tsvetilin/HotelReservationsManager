@@ -2,6 +2,9 @@
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Clients data scheme
+    /// </summary>
     public class ClientData
     {
         public ClientData()

@@ -4,8 +4,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Model layer related to automated data population on database creation
+/// </summary>
 namespace Data.Seeders
 {
+    /// <summary>
+    /// Reservations table seeder
+    /// </summary>
     public class ReservationsSeeder : ISeeder
     {
         public async Task SeedAsync(ApplicationDbContext dbContext, ILogger logger)

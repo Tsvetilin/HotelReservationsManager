@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Tests.Common;
 using Web.Models;
 using Xunit;
-using Xunit.Extensions.Ordering;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true, MaxParallelThreads = 1)]
 namespace Tests.Web.Tests

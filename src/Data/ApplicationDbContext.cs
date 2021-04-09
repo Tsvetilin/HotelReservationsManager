@@ -2,8 +2,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// Model layer project
+/// </summary>
 namespace Data
 {
+    /// <summary>
+    /// Default application database context
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public ApplicationDbContext()

@@ -1,14 +1,13 @@
-﻿
-
-using Data.Enums;
+﻿using Data.Enums;
 using Data.Models;
 using System;
 using System.Collections.Generic;
-using Web.Models.Reservations;
-using Web.Models.Rooms;
 
 namespace Tests.Data
 {
+    /// <summary>
+    /// Rooms test data
+    /// </summary>
     public static class Rooms
     {
         public static readonly Room Room1 = new Room

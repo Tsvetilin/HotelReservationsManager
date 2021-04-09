@@ -8,10 +8,10 @@
     ViewData["Title"] = "Room Details";
 }
 
-<h2>Room Details</h2>
+<h2>Room №@Model.Number Details</h2>
 
+<hr />
 <div>
-    <h4>Room №@Model.Number</h4>
     <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get">
         <input class="btn btn-success" type="submit" value="Reserve" />
     </form>
@@ -51,28 +51,24 @@
                 <ul class="list-group pb-3 list-inline">
                     @foreach (var res in Model.Reservations.OrderBy(x => x.ReleaseDate))
                     {
-                        <li class="list-group-item">
-                            <p class="text-dark ">Price: @res.Price</p>
-                            <p class="text-dark ">Accomodation Date: @res.AccommodationDate.ToString("dd/MM/yyyyг.")</p>
-                            <p class="text-dark ">Release Date: @res.ReleaseDate.ToString("dd/MM/yyyyг.")</p>
-                            @if (res.Breakfast)
-                            {
-                                <p class="text-dark ">Breakfast: &#10004;</p>
-                            }
-                            else
-                            {
-                                <p class="text-dark ">Breakfast: &#10008;</p>
-                            }
-                            @if (res.AllInclusive)
-                            {
-                                <p class="text-dark ">All-Inclusive: &#10004;</p>
-                            }
-                            else
-                            {
-                                <p class="text-dark ">Breakfast: &#10008;</p>
-                            }
-                            <p class="text-dark ">Clients: @(res.Clients.Count+1)</p>
-                        </li>
+                    <li class="list-group-item blue-card">
+                        <p class="h5">Reservation #@res.Id</p>
+                        <p class="text-dark mb-0">Price: @res.Price$</p>
+                        <p class="text-dark mb-0">Period: @res.AccommodationDate.ToString("dd/MM/yyyy") - @res.ReleaseDate.ToString("dd/MM/yyyy")</p>
+                        @if (res.AllInclusive)
+                        {
+                            <p class="text-dark mb-0">All-Inclusive: &#10004;</p>
+                        }
+                        else if (res.Breakfast)
+                        {
+                            <p class="text-dark mb-0">Breakfast: &#10004;</p>
+                        }
+                        else
+                        {
+                            <p class="text-dark mb-0">Breakfast: &#10008;</p>
+                        }
+                        <p class="text-dark mb-0">Clients: @(res.Clients.Count+1)</p>
+                    </li>
                     }
                 </ul>
             </dd>

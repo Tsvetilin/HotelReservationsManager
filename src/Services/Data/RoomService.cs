@@ -8,10 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-/// <summary>
-/// Service layer logic
-/// </summary>
-namespace Services
+
+namespace Services.Data
 {
     public class RoomServices : IRoomService
     {

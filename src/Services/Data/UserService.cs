@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// Service layer logic
 /// </summary>
-namespace Services
+namespace Services.Data
 {
     public class UserService : IUserService
     {

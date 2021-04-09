@@ -1,4 +1,7 @@
-﻿namespace Data.Enums
+﻿/// <summary>
+/// Model layer related to common enumerations definitions
+/// </summary>
+namespace Data.Enums
 {
     public enum RoomType
     {

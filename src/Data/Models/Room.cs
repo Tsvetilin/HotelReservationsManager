@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Data.Enums;
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Rooms data scheme
+    /// </summary>
     public class Room
     {
         public Room()
@@ -19,6 +21,7 @@ namespace Data.Models
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
         public int Number { get; set; }
+
         public virtual IEnumerable<Reservation> Reservations { get; set; }
     }
 }

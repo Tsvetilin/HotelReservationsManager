@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Services;
+using Services.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +23,7 @@ namespace Web.Controllers
             this.userService = userService;
             this.userManager = userManager;
         }
-        public async Task<IActionResult> Index(int id = 1, string search = "", int pageSize=10)
+        public async Task<IActionResult> Index(int id = 1, string search = "", int pageSize = 10)
         {
             if (!string.IsNullOrEmpty(search))
             {
@@ -100,7 +100,7 @@ namespace Web.Controllers
             };
 
             var res = await userManager.CreateAsync(appUser, input.Password);
-            if (res.Errors?.Any()??false)
+            if (res.Errors?.Any() ?? false)
             {
                 ModelState.AddModelError("General", string.Join("; ", res.Errors.Select(x => x.Description)));
                 return this.View(input);
@@ -108,7 +108,7 @@ namespace Web.Controllers
             res = await userManager.AddToRoleAsync(appUser, "Employee");
             if (res.Errors?.Any() ?? false)
             {
-                ModelState.AddModelError(nameof(input.Password), string.Join("; ", res.Errors.Select(x=>x.Description)));
+                ModelState.AddModelError(nameof(input.Password), string.Join("; ", res.Errors.Select(x => x.Description)));
                 return this.View(input);
             }
 
@@ -139,12 +139,19 @@ namespace Web.Controllers
                 return this.View(userData);
             }
 
-            return RedirectToAction("Index", "Users");
+            return this.NotFound();
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(EmployeeInputModel input, string id)
         {
+            var userData = await userService.GetUserAsync<EmployeeInputModel>(id);
+
+            if (userData == null)
+            {
+                return this.NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return this.View(input);
@@ -168,10 +175,10 @@ namespace Web.Controllers
                 User = user,
                 UserId = id
 
-        };
-            
+            };
+
             user.EmployeeData = employee;
-           
+
             await userService.UpdateAsync(employee);
             await userManager.UpdateAsync(user);
 
@@ -194,7 +201,7 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        public async Task<IActionResult> All(int id = 1, string search = "",int pageSize=10)
+        public async Task<IActionResult> All(int id = 1, string search = "", int pageSize = 10)
         {
             if (!string.IsNullOrEmpty(search))
             {
@@ -235,18 +242,25 @@ namespace Web.Controllers
         public async Task<IActionResult> Promote(string id)
         {
             var user = await userService.GetUserAsync<EmployeeInputModel>(id);
-            
+
             if (user != null)
             {
                 return this.View(user);
             }
 
-            return RedirectToAction("Index", "Users");
+            return this.NotFound();
         }
 
         [HttpPost]
         public async Task<IActionResult> Promote(EmployeeInputModel input, string id)
         {
+            var userData = await userService.GetUserAsync<EmployeeInputModel>(id);
+
+            if (userData == null)
+            {
+                return this.NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return this.View(input);
@@ -263,7 +277,7 @@ namespace Web.Controllers
                 IsActive = true,
                 DateOfAppointment = DateTime.UtcNow,
                 User = appUser,
-                DateOfResignation=null,
+                DateOfResignation = null,
             };
 
             await userService.UpdateAsync(employee);

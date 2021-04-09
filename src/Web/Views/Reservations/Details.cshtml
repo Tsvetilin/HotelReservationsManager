@@ -55,13 +55,13 @@
         {
             @if (!string.IsNullOrWhiteSpace(Model.Clients[i].FullName))
             {
-                <div class="border border-info my-3">
+                <div class="border border-info my-3 blue-card">
                     <div class="m-2">
-                        <p class="text-dark m-0"> @Model.Clients[i].FullName</p>
-                        <p class="text-dark m-0">@Model.Clients[i].Email</p>
+                        <p class="text-dark m-0">Name: @Model.Clients[i].FullName</p>
+                        <p class="text-dark m-0">Email: @Model.Clients[i].Email</p>
                         @if (!Model.Clients[i].IsAdult)
                         {
-                            <p class="text-dark  m-0">Child &#10004;</p>
+                            <p class="text-dark  m-0">&nbsp; Child &#10004;</p>
                         }
                     </div>
                 </div>

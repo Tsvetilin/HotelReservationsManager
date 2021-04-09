@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Services;
+using Services.Data;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -16,18 +16,17 @@ using Web;
 using Web.Models.Reservations;
 using static Tests.Common.TestAuthHandler;
 
+/// <summary>
+/// Tests project space related to commonly used helpers & factories
+/// </summary>
 namespace Tests.Common
 {
+    /// <summary>
+    /// Custom application factory that bypasses the Authentication and Authorization 
+    /// and creates dummy SQLServer database for the tests that is later automatically deleted
+    /// </summary>
     public class CustomAppFactory : WebApplicationFactory<Startup>
     {
-        protected override IWebHostBuilder CreateWebHostBuilder()
-        {
-            var builder = WebHost.CreateDefaultBuilder(Array.Empty<string>());
-            builder.UseStartup<Startup>();
-            // builder.UseSetting("Environment", "Test");
-            return builder;
-        }
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             base.ConfigureWebHost(builder);
@@ -47,7 +46,7 @@ namespace Tests.Common
                 services.AddDbContext<ApplicationDbContext>((options, context) =>
                 {
                     //Safe Connection string, but memory intense ->TestDatabaseConnectionProvider.GetConnectionStringDisposable()
-                    //Unsage Connection string -> TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable
+                    //Unsafe Connection string -> TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable
                     context.UseSqlServer(TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable);
                 });
 
@@ -95,25 +94,6 @@ namespace Tests.Common
                 {
                     options.Filters.Add(typeof(FakeUserFilter));
                 });
-
-                var mockResService = new Mock<IReservationService>();
-                mockResService.Setup(a => a.GetReservationsForUser<ReservationViewModel>(It.IsAny<string>())).ReturnsAsync(new ReservationViewModel[] {
-                new ReservationViewModel
-                {
-                    Id="ExampleReservation1",
-                    AccommodationDate=DateTime.Today.AddDays(2),
-                    ReleaseDate=DateTime.Today.AddDays(5),
-                    AllInclusive=true,
-                    Breakfast=false,
-                    Price=205,
-                }
-                });
-
-                var rs = services.SingleOrDefault(
-                    d => d.ServiceType ==
-               typeof(IReservationService));
-                services.Remove(rs);
-                services.AddTransient(x => mockResService.Object);
             });
         }
     }

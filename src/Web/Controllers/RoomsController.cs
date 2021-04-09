@@ -72,36 +72,35 @@ namespace Web.Controllers
             {
                 return this.View(room);
             }
-            return this.RedirectToAction("Index", "Rooms");
+            return this.NotFound();
         }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create(RoomInputModel createModel)
         {
-            if (ModelState.IsValid)
+
+            if (!await roomService.IsRoomNumerFree(createModel.Number))
             {
-                if (!await roomService.IsRoomNumerFree(createModel.Number))
-                {
-                    ModelState.AddModelError(nameof(createModel.Number), "Room with this number alreay exists");
-                    return this.View(createModel);
-                }
-
-                var room = new Room
-                {
-                    Capacity = createModel.Capacity,
-                    AdultPrice = createModel.AdultPrice,
-                    ChildrenPrice = createModel.ChildrenPrice,
-                    Type = createModel.Type,
-                    Number = createModel.Number,
-                };
-
-                await roomService.AddRoom(room);
-
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(nameof(createModel.Number), "Room with this number alreay exists");
+            }
+            if (!ModelState.IsValid)
+            {
+                return this.View(createModel);
             }
 
-            return this.View(createModel);
+            var room = new Room
+            {
+                Capacity = createModel.Capacity,
+                AdultPrice = createModel.AdultPrice,
+                ChildrenPrice = createModel.ChildrenPrice,
+                Type = createModel.Type,
+                Number = createModel.Number,
+            };
+
+            await roomService.AddRoom(room);
+
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize]
@@ -112,8 +111,9 @@ namespace Web.Controllers
             if (room != null)
             {
                 await roomService.DeleteRoom(id);
+                return this.RedirectToAction("Index", "Rooms");
             }
-            return this.RedirectToAction("Index", "Rooms");
+            return this.NotFound();
         }
 
         [Authorize]

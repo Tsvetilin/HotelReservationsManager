@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// Authentication handler to replace the app authentication scheme with Test one
+    /// </summary>
     public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -34,20 +37,6 @@ namespace Tests.Common
             return Task.FromResult(result);
         }
 
-        public class FakeUserFilter : IAsyncActionFilter
-        {
-            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-            {
-                context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "Admin"),
-                    new Claim(ClaimTypes.Name, "Admin"),
-                    new Claim(ClaimTypes.Email, "admin@hms.com"),
-                    new Claim(ClaimTypes.Role, "Admin"),
-                }));
-
-                await next();
-            }
-        }
+        
     }
 }

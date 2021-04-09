@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Tests.Data
 {
+    /// <summary>
+    /// Users test data
+    /// </summary>
     public static class Users
     {
         public static readonly ApplicationUser User1Employee = new()

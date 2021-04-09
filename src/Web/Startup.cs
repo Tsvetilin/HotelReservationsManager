@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Services;
 using Services.Data;
 using Services.External;
 using Services.Mapping;
@@ -25,9 +24,9 @@ namespace Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add database context and identity provider
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -43,12 +42,18 @@ namespace Web
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
+            // Add caching
             services.AddMemoryCache();
 
+            // Register views and pages
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.AddTransient<IEmailSender, EmailSender>();
+            // Register services
+            services.AddTransient<IEmailSender>(x=>new EmailSender(
+                                                                    Configuration.GetSection("SendGrid")["ApiKey"],
+                                                                    Configuration.GetSection("SendGrid")["SenderEmail"], 
+                                                                    Configuration.GetSection("SendGrid")["SenderName"]));
 
             services.AddTransient<ISettingService, SettingService>();
             services.AddTransient<IUserService, UserService>();
@@ -56,11 +61,13 @@ namespace Web
             services.AddTransient<IRoomService, RoomServices>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Configure AutoMapper
             MappingConfig.RegisterMappings(this.GetType().Assembly);
 
+            // Migrate and seed database if required
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -82,18 +89,19 @@ namespace Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            // Add authentication
             app.UseAuthentication();
             app.UseAuthorization();
 
-
+            // Register routes
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -103,6 +111,7 @@ namespace Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
                 endpoints.MapRazorPages();
             });
         }

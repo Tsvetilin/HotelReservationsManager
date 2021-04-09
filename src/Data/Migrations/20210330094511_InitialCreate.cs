@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+/// <summary>
+/// Model layer related to database context migrations
+/// </summary>
 namespace Data.Migrations
 {
     public partial class InitialCreate : Migration

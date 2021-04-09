@@ -2,7 +2,6 @@
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using NUnit.Framework;
-using Services;
 using Services.Data;
 using Services.Mapping;
 using System;
@@ -14,6 +13,9 @@ using Tests.Data;
 using Web.Models;
 using Web.Models.Reservations;
 
+/// <summary>
+/// Tests of the Controller layer project
+/// </summary>
 namespace Tests.Service.Tests
 {
     class ReservationServiceTests

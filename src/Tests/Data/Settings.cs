@@ -1,12 +1,10 @@
 ﻿using Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Data
 {
+    /// <summary>
+    /// Settings test data
+    /// </summary>
     public class Settings
     {
         public static readonly Setting AllInclusive = new()

@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Services
+/// <summary>
+/// Controller layer related to application data logic
+/// </summary>
+namespace Services.Data
 {
     public interface IReservationService
     {
