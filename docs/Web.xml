@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Web</name>
+    </assembly>
+    <members>
+        <member name="T:Web.Common.AutoMapperProfile">
+            <summary>
+            AutoMapper profile for registering maps
+            </summary>
+        </member>
+        <member name="T:Web.Common.MemoryCacheHelper">
+            <summary>
+            Memory cache extension methods helper for commonly used 
+            </summary>
+        </member>
+        <member name="T:Web.Common.UCNValidatorAttribute">
+            <summary>
+            Custom UCN Validator Attribut for Bulgarian Personal Ids
+            </summary>
+        </member>
+    </members>
+</doc>

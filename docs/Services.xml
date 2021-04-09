@@ -1,0 +1,460 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Services</name>
+    </assembly>
+    <members>
+        <member name="M:Services.Common.Pagination.GetPageItems``1(System.Collections.Generic.IEnumerable{``0},System.Int32,System.Int32)">
+            <summary>
+            Get elements for page according to pagination rules specified
+            </summary>
+            <typeparam name="T">The type of the objects in the collection</typeparam>
+            <param name="items">The collection to extract page items from</param>
+            <param name="page">The number of current page</param>
+            <param name="elementsOnPage">The count of items on every page</param>
+            <returns>Collection of elements of type <typeparamref name="T"/> for page <paramref name="page"/></returns>
+        </member>
+        <member name="M:Services.Common.Pagination.GetPageItems``1(System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{``0}},System.Int32,System.Int32)">
+            <summary>
+            Get elements for page according to pagination rules specified
+            </summary>
+            <typeparam name="T">The type of the objects in the collection</typeparam>
+            <param name="itemsTask">The task containing the result collection to extract page items from</param>
+            <param name="page">The number of current page</param>
+            <param name="elementsOnPage">The count of items on every page</param>
+            <returns>Collection of elements of type <typeparamref name="T"/> for page <paramref name="page"/></returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.AreDatesAcceptable(System.String,System.DateTime,System.DateTime,System.String)">
+            <summary>
+            Checks if the dates for a reservation are valid and if the room is free in that period
+            </summary>
+            <param name="roomId">Room's id</param>
+            <param name="accomodationDate">Reservation's accomodation date</param>
+            <param name="releaseDate">Reservation's release date</param>
+            <param name="reservationId">Reservations to update id or null if making new reservation</param>
+            <returns>Task with room's dates for reservatioin validity result</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.CalculatePrice(Data.Models.Room,System.Collections.Generic.IEnumerable{Data.Models.ClientData},System.Boolean,System.Boolean)">
+            <summary>
+            Calculates the reservation total price
+            </summary>
+            <param name="room">The reservation room</param>
+            <param name="clients">The room clients</param>
+            <param name="allInclusive">Reservation's order all inclusive</param>
+            <param name="breakfast">Reservation's order breakfast</param>
+            <returns>Task with the calculation result</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.AddReservation(System.String,System.DateTime,System.DateTime,System.Boolean,System.Boolean,System.Collections.Generic.IEnumerable{Data.Models.ClientData},Data.Models.ApplicationUser)">
+            <summary>
+            Add reservation to database
+            </summary>
+            <param name="roomId">The room id</param>
+            <param name="accomodationDate">The reservation accomodation date</param>
+            <param name="releaseDate">The reservation release date </param>
+            <param name="allInclusive">Reservation's order all inclusive</param>
+            <param name="breakfast">Reservation's order breakfast</param>
+            <param name="clients">The room's clients</param>
+            <param name="user">The room renter</param>
+            <returns>Task with the new reservation result</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.UpdateReservation(System.String,System.DateTime,System.DateTime,System.Boolean,System.Boolean,System.Collections.Generic.IEnumerable{Data.Models.ClientData},Data.Models.ApplicationUser)">
+            <summary>
+            Update reservation data
+            </summary>
+            <param name="id">The reservation id</param>
+            <param name="roomId">The room id</param>
+            <param name="accomodationDate">The reservation accomodation date</param>
+            <param name="releaseDate">The reservation release date </param>
+            <param name="allInclusive">Reservation's order all inclusive</param>
+            <param name="breakfast">Reservation's order breakfast</param>
+            <param name="clients">The room's clients</param>
+            <param name="user">The room renter</param>
+            <returns>Task representing the success of the update operation</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.DeleteReservation(System.String)">
+            <summary>
+            Removes reservation from the database
+            </summary>
+            <param name="id">The reservation to delete id</param>
+            <returns>Task with the reservation deletion result</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.GetReservation``1(System.String)">
+            <summary>
+            Finds reservation with the searched id
+            </summary>
+            <typeparam name="T">Data class to map reservation data to</typeparam>
+            <param name="id">Reservation id to search for</param>
+            <returns>Task with the reservation data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.GetReservationsForUser``1(System.String)">
+            <summary>
+            Finds the user's reservation
+            </summary>
+            <typeparam name="T">Data class to map reservation data to</typeparam>
+            <param name="userId">The user who made the reservation id</param>
+            <returns>Task with the reservations data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.GetForUserOnPage``1(System.String,System.Int32,System.Int32)">
+            <summary>
+            Finds the user's reservations according to specified pagination rules
+            </summary>
+            <typeparam name="T">Data class to map reservation data to</typeparam>
+            <param name="userId">The user who made the reservation id</param>
+            <param name="page">The number of current page</param>
+            <param name="elementsOnPage">The number of reservations on the page</param>
+            <returns>Task with the reservations data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.UpdateClientsForReservation(System.String,System.Collections.Generic.IEnumerable{Data.Models.ClientData})">
+            <summary>
+            Verifies and updates clients data for existing reservation
+            </summary>
+            <param name="reservationId">Reservation id</param>
+            <param name="clients">Updated clients list</param>
+            <returns>Task with the clients data list result</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.GetAll``1">
+            <summary>
+            Finds all rooms in the database
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <returns>Task with all reservations data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.ReservationsService.CountAllReservations">
+            <summary>
+            Finds the count of all reservations in the database
+            </summary>
+            <returns>Task with the all reservations count result</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.AddRoom(Data.Models.Room)">
+            <summary>
+            Adds room to the database
+            </summary>
+            <param name="room">New room object</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetAllByCapacity``1(System.Int32)">
+            <summary>
+            Finds all rooms that have the searched capacity
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <param name="capacity">The searched room capacity</param>
+            <returns>Task with the rooms data that satisfy the criteria parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetAllByType``1(Data.Enums.RoomType)">
+            <summary>
+            Finds all rooms that have the searched type
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <param name="type">The searched room type</param>
+            <returns>Task with the rooms data that satisfy the criteria parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetAllFreeRoomsAtPresent``1">
+            <summary>
+            Finds all rooms that are available at present
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <returns>Task with the rooms data that satisfy the criteria parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.CountFreeRoomsAtPresent">
+            <summary>
+            Finds all rooms that are available at present
+            </summary>
+            <returns>Task with the count of the rooms data that satisfy the criteria parsed to 
+            <typeparamref name="T"/> object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetAll``1">
+            <summary>
+            Finds all rooms in the database
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <returns>Task with all rooms data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Services.Data.RoomServices.GetSearchResults``1(System.Boolean,Data.Enums.RoomType[],System.Nullable{System.Int32})" -->
+        <member name="M:Services.Data.RoomServices.DeleteRoom(System.String)">
+            <summary>
+            Removes room from the database
+            </summary>
+            <param name="id">The room to delete id</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.UpdateRoom(System.String,Data.Models.Room)">
+            <summary>
+            Updates the data of existing room
+            </summary>
+            <param name="id">Existing room id</param>
+            <param name="room">Room data to change with</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetRoom``1(System.String)">
+            <summary>
+            Finds the searched room
+            </summary>
+            <typeparam name="T">Data class to map room data to</typeparam>
+            <param name="id">Searched room id</param>
+            <returns>Task with the room data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.CountAllRooms">
+            <returns>The count of all rooms in the database</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetMinPrice">
+            <summary>
+            Finds the lowest adult price of the rooms in the database
+            </summary>
+            <returns>Task with the minimum price result</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetMaxPrice">
+            <summary>
+            Finds the highest adult price of the rooms in the database
+            </summary>
+            <returns>Task with the maximum price result</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.IsRoomNumberFree(System.Int32,System.String)">
+            <summary>
+            Finds if a room is free
+            </summary>
+            <param name="number">The searched room number</param>
+            <param name="roomId">The room numer to update, to exclude its Number from the search</param>
+            <returns>Task with the room numer availability result</returns>
+        </member>
+        <member name="M:Services.Data.RoomServices.GetMaxCapacity">
+            <summary>
+            Finds the highest capacity of the rooms in the database
+            </summary>
+            <returns>Task with the maximum room capacity result</returns>
+        </member>
+        <member name="M:Services.Data.SettingService.AddAsync(System.String,System.String,System.String)">
+            <summary>
+            Adds settings to database
+            </summary>
+            <param name="key">The setting's key</param>
+            <param name="value">The setting's value</param>
+            <param name="type">The setting's type</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.SettingService.GetAsync(System.String)">
+            <summary>
+            Finds the setting by searched key
+            </summary>
+            <param name="key">The setting's key</param>
+            <returns>Task with value-type tuple of the searched setting</returns>
+        </member>
+        <member name="M:Services.Data.SettingService.UpdateAsync(System.String,System.String,System.String)">
+            <summary>
+            Updates setting data
+            </summary>
+            <param name="key">The setting's key</param>
+            <param name="value">The setting's value</param>
+            <param name="type">The setting's type</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.UserService.AddAsync(Data.Models.EmployeeData)">
+            <summary>
+            Adds employee to the database
+            </summary>
+            <param name="user">New employee object</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetEmployeeAsync``1(System.String)">
+            <summary>
+            Finds employee with the searched id
+            </summary>
+            <typeparam name="T">Data class to map employee data to</typeparam>
+            <param name="id">Employee id to search for</param>
+            <returns>Task with the employee data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetUserAsync``1(System.String)">
+            <summary>
+            Finds user with the searched id
+            </summary>
+            <typeparam name="T">Data class to map user data to</typeparam>
+            <param name="id">User id to search for</param>
+            <returns>Task with the user data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetAllEmployees``1">
+            <summary>
+            Finds all employees
+            </summary>
+            <typeparam name="T">Data class to map employees data to</typeparam>
+            <returns>Task with the employees data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetAllUsers``1">
+            <summary>
+            Finds all users
+            </summary>
+            <typeparam name="T">Data class to map users data to</typeparam>
+            <returns>Task with the users data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Services.Data.UserService.GetAllBySearch(System.String)" -->
+        <member name="M:Services.Data.UserService.GetAllBySecondName(System.String)">
+            <summary>
+            Finds all employees by a selected second name
+            </summary>
+            <param name="searchString">Employee second name to search for</param>
+            <returns>Task with the ids of the found employees parsed to string object or 
+            null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetEmployeePageItems``1(System.Int32,System.Int32)">
+            <summary>
+            Finds employees according to specified pagination rules
+            </summary>
+            <typeparam name="T">Data class to map employees data to</typeparam>
+            <param name="page">The number of current page</param>
+            <param name="usersOnPage">The number of users on the page</param>
+            <returns>Task with employee data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetUserPageItems``1(System.Int32,System.Int32)">
+            <summary>
+            Finds users according to specified pagination rules
+            </summary>
+            <typeparam name="T">Data class to map users data to</typeparam>
+            <param name="page">The number of current page</param>
+            <param name="usersOnPage">The number of users on the page</param>
+            <returns>Task with users data parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetSearchResults(System.String)">
+            <summary>
+            Finds all users that satisfy the criteria
+            </summary>
+            <param name="searchString">User first name, second name, last name, username or email to search for</param>
+            <returns>Task with users ids that satisfy the criteria</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetEmployeesSearchResults``1(System.String)">
+            <summary>
+            Finds all employees that satisfy the criteria
+            </summary>
+            <typeparam name="T">Data class to map employees data to</typeparam>
+            <param name="searchString">User first name, second name, last name, username or email to search for</param>
+            <returns>Task with employees data that satisfy the criteria parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.GetUsersSearchResults``1(System.String)">
+            <summary>
+            Finds all users that satisfy the criteria
+            </summary>
+            <typeparam name="T">Data class to map employees data to</typeparam>
+            <param name="searchString">User first name, second name, last name, username or email to search for</param>
+            <returns>Task with users data that satisfy the criteria parsed to <typeparamref name="T"/>
+            object or null if not found</returns>
+        </member>
+        <member name="M:Services.Data.UserService.UpdateAsync(Data.Models.EmployeeData)">
+            <summary>
+            Updates existing employee's data in database or hires a user as employee
+            </summary>
+            <param name="user">Existing employee object</param>
+        </member>
+        <member name="M:Services.Data.UserService.DeleteAsync(System.String)">
+            <summary>
+            Hires employee and makes him inactive
+            </summary>
+            <param name="id">Existing employee id</param>
+        </member>
+        <member name="M:Services.Data.UserService.CountAllEmployees">
+            <returns>
+            The count of all employees in the database
+            </returns>
+        </member>
+        <member name="M:Services.Data.UserService.CountAllUsers">
+            <returns>
+            The count of all users in the database
+            </returns>
+        </member>
+        <member name="M:Services.Data.UserService.IsAlreadyAdded(System.String)">
+            <summary>
+            Checks if user is already added to the database
+            </summary>
+            <param name="email">The email of the searched user</param>
+            <returns>True, if the name of the user exists, or false if not</returns>
+        </member>
+        <member name="M:Services.Data.UserService.CreateClient(System.String,System.String,System.Boolean)">
+            <summary>
+            Adds new client to database
+            </summary>
+            <param name="email">New client's email</param>
+            <param name="name">New client's full name</param>
+            <param name="adult">If the new client is adult or not</param>
+            <returns>Task with the new client data</returns>
+        </member>
+        <member name="M:Services.Data.UserService.UpdateClient(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Udates client's data
+            </summary>
+            <param name="id">Existing client's id</param>
+            <param name="email">Existing client's email</param>
+            <param name="name">Existing client's full name</param>
+            <param name="adult">If the Existing client is adult or not</param>
+            <returns>Task with the updated client data</returns>
+        </member>
+        <member name="M:Services.Data.UserService.DeleteClient(System.String)">
+            <summary>
+            Removes client from database
+            </summary>
+            <param name="id">The searched client's id</param>
+            <returns>Task representing the operation</returns>
+        </member>
+        <member name="T:Services.External.EmailSender">
+            <summary>
+            SendGrid email sender implementation
+            </summary>
+        </member>
+        <member name="M:Services.External.EmailSender.SendEmailAsync(System.String,System.String,System.String)">
+            <summary>
+            Sends email to a selected receiver with subject and message
+            </summary>
+            <param name="email">Email of the reciever</param>
+            <param name="subject">Subject of the email</param>
+            <param name="htmlMessage">Message to send</param>
+        </member>
+        <member name="M:Services.External.ImageManager.UploadImageAsync(System.IO.MemoryStream,System.String)">
+            <summary>
+            Uploads new image with selected parameters
+            </summary>
+            <param name="fileName">Name of the file to upload</param>
+            <param name="imageMemoryStream">Memory stream containing the image data</param>
+            <returns>Image uri or null if not successful or Error message starting with "Error"</returns>
+        </member>
+        <member name="T:Services.Mapping.MappingConfig">
+            <summary>
+            Default AutoMapper configuration provider
+            </summary>
+        </member>
+        <member name="M:Services.Mapping.MappingConfig.RegisterMappings(System.Reflection.Assembly[])">
+            <summary>
+            Register AutoMapper predefined maps from assemblies
+            </summary>
+            <param name="assemblies">Assemblies to search for mappings profiles from </param>
+        </member>
+        <member name="M:Services.Mapping.QueryableMappingExtensions.ProjectTo``1(System.Linq.IQueryable,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Map source data to specified type using AutoMapper
+            </summary>
+            <typeparam name="TDestination">The type to map to</typeparam>
+            <param name="source">The querryable data set to map from</param>
+            <param name="membersToExpand">Members to expand</param>
+            <returns>Mapped collection of type <typeparamref name="TDestination"/></returns>
+        </member>
+        <member name="M:Services.Mapping.QueryableMappingExtensions.ProjectTo``1(System.Linq.IQueryable,System.Object)">
+            <summary>
+            Map source data to specified type using AutoMapper
+            </summary>
+            <typeparam name="TDestination">The type to map to</typeparam>
+            <param name="source">The querryable data set to map from</param>
+            <param name="parameters">Mapping parameters</param>
+            <returns>Mapped collection of type <typeparamref name="TDestination"/></returns>
+        </member>
+    </members>
+</doc>

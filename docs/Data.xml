@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Data</name>
+    </assembly>
+    <members>
+        <member name="T:Data.ApplicationDbContext">
+            <summary>
+            Default application database context
+            </summary>
+        </member>
+        <member name="T:Data.ApplicationDbContextSeeder">
+            <summary>
+            Default application database seeder
+            </summary>
+        </member>
+        <member name="T:Data.Models.ApplicationRole">
+            <summary>
+            Default application roles scheme
+            </summary>
+        </member>
+        <member name="T:Data.Models.ApplicationUser">
+            <summary>
+            Default application user
+            </summary>
+        </member>
+        <member name="T:Data.Models.ClientData">
+            <summary>
+            Clients data scheme
+            </summary>
+        </member>
+        <member name="T:Data.Models.EmployeeData">
+            <summary>
+            Employees data scheme
+            </summary>
+        </member>
+        <member name="T:Data.Models.Reservation">
+            <summary>
+            Reservations scheme
+            </summary>
+        </member>
+        <member name="T:Data.Models.Room">
+            <summary>
+            Rooms data scheme
+            </summary>
+        </member>
+        <member name="T:Data.Models.Setting">
+            <summary>
+            Default settings scheme
+            </summary>
+        </member>
+        <member name="T:Data.Seeders.ReservationsSeeder">
+            <summary>
+            Reservations table seeder
+            </summary>
+        </member>
+        <member name="T:Data.Seeders.RolesSeeder">
+            <summary>
+            Roles table seeder
+            </summary>
+        </member>
+        <member name="T:Data.Seeders.RoomsSeeder">
+            <summary>
+            Rooms table seeder
+            </summary>
+        </member>
+        <member name="T:Data.Seeders.SettingsSeeder">
+            <summary>
+            Settings table seeder
+            </summary>
+        </member>
+        <member name="T:Data.Seeders.UsersSeeder">
+            <summary>
+            Users table seeder
+            </summary>
+        </member>
+    </members>
+</doc>

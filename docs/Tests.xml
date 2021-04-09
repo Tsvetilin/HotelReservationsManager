@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Tests</name>
+    </assembly>
+    <members>
+        <member name="T:Tests.Common.CustomAppFactory">
+            <summary>
+            Custom application factory that bypasses the Authentication and Authorization 
+            and creates dummy SQLServer database for the tests that is later automatically deleted
+            </summary>
+        </member>
+        <member name="T:Tests.Common.DisposableClassFixture">
+            <summary>
+            Class fixture to dispose all created test databases after all tests are finished
+            </summary>
+        </member>
+        <member name="T:Tests.Common.FakeUserFilter">
+            <summary>
+            Filters that populates the current User claims and simulates that user is successfully logged in
+            </summary>
+        </member>
+        <member name="T:Tests.Common.InMemoryFactory">
+            <summary>
+            In-memory database factory with unique name
+            </summary>
+        </member>
+        <member name="T:Tests.Common.Seeder">
+            <summary>
+            Database seeder extensions
+            </summary>
+        </member>
+        <member name="T:Tests.Common.TestAuthHandler">
+            <summary>
+            Authentication handler to replace the app authentication scheme with Test one
+            </summary>
+        </member>
+        <member name="T:Tests.Common.TestDatabaseConnectionProvider">
+            <summary>
+            Unique dummy test databases connection strings manager
+            </summary>
+        </member>
+        <member name="T:Tests.Data.Reservations">
+            <summary>
+            Reservations test data
+            </summary>
+        </member>
+        <member name="T:Tests.Data.Rooms">
+            <summary>
+            Rooms test data
+            </summary>
+        </member>
+        <member name="T:Tests.Data.Settings">
+            <summary>
+            Settings test data
+            </summary>
+        </member>
+        <member name="T:Tests.Data.Users">
+            <summary>
+            Users test data
+            </summary>
+        </member>
+    </members>
+</doc>
