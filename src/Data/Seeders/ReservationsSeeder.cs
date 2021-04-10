@@ -48,7 +48,7 @@ namespace Data.Seeders
            }) ;
 
             await dbContext.SaveChangesAsync();
-            logger.LogInformation($"Finished executing {nameof(RoomsSeeder)}");
+            logger.LogInformation($"Finished executing {nameof(ReservationsSeeder)}");
         }
     }
 }

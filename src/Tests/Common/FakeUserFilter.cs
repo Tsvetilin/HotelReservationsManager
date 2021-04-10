@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Tests.Common
 {
     /// <summary>
-    /// Filters that populates the current User claims and simulates that user is successfully logged in
+    /// Filter that populates the current User claims and simulates that user is successfully logged in
     /// </summary>
     public class FakeUserFilter : IAsyncActionFilter
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Web.Common
 {
     /// <summary>
-    /// Memory cache extension methods helper for commonly used 
+    /// Memory cache extension methods helper for commonly used data
     /// </summary>
     public static class MemoryCacheHelper
     {

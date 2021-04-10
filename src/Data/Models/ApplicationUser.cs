@@ -16,6 +16,7 @@ namespace Data.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool IsAdult { get; set; }
+
         public virtual EmployeeData EmployeeData {get;set;}
     }
 }

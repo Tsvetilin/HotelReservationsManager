@@ -57,6 +57,7 @@ namespace Web.Models.Reservations
         [BindNever]
         public double RoomChildrenPrice { get; set; }
 
+        [BindNever]
         public string RoomImageUrl { get; set; }
 
         public string UserId { get; set; }

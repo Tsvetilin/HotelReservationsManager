@@ -8,7 +8,6 @@ namespace Services.Data
     public interface IRoomService
     {
         public Task AddRoom(Room room);
-
         public Task<IEnumerable<T>> GetAllByCapacity<T>(int capacity);
         public Task<IEnumerable<T>> GetAllByType<T>(RoomType type);
         public Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>();

@@ -18,7 +18,6 @@ namespace Tests.Service.Tests
         {
             var ImageManager = new ImageManager("cloud Name", "api key", "api sender");
             Assert.DoesNotThrowAsync(() => ImageManager.UploadImageAsync(new MemoryStream(),"file name"));
-
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Web.Areas.Identity.Pages.Account
         {
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "User name")]
+            [Display(Name = "Username")]
             public string Username { get; set; }
 
             [Required]
@@ -121,6 +121,11 @@ namespace Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    result = await _userManager.AddToRoleAsync(user, "User");
+                    if (!result.Succeeded)
+                    {
+                        return Page();
+                    }
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

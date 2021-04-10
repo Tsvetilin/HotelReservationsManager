@@ -36,7 +36,5 @@ namespace Tests.Common
 
             return Task.FromResult(result);
         }
-
-        
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Tests.Common
 {
     /// <summary>
-    /// Unique dummy test databases connection strings manager
+    /// Unique dummy test database connection strings manager
     /// </summary>
     public sealed class TestDatabaseConnectionProvider
     {

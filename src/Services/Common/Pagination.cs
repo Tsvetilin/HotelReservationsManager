@@ -19,7 +19,7 @@ namespace Services.Common
         /// <returns>Collection of elements of type <typeparamref name="T"/> for page <paramref name="page"/></returns>
         public static IEnumerable<T> GetPageItems<T>(this IEnumerable<T> items, int page, int elementsOnPage)
         {
-            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ToList();
+            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).ToList();
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Services.Common
         public static async Task<IEnumerable<T>> GetPageItems<T>(this Task<IEnumerable<T>> itemsTask, int page, int elementsOnPage)
         {
             var items = await itemsTask;
-            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).AsQueryable().ToList();
+            return items.Skip(elementsOnPage * (page - 1)).Take(elementsOnPage).ToList();
         }
     }
 }

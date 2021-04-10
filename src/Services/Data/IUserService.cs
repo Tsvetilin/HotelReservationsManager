@@ -7,7 +7,6 @@ namespace Services.Data
     public interface IUserService
     {
         public Task AddAsync(EmployeeData user);
-
         public Task<T> GetEmployeeAsync<T>(string id);
         public Task<T> GetUserAsync<T>(string id);
         public Task<IEnumerable<T>> GetAllEmployees<T>();

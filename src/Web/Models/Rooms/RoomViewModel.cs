@@ -14,6 +14,7 @@ namespace Web.Models.Rooms
         public double AdultPrice { get; set; }
         public double ChildrenPrice { get; set; }
         public string ImageUrl { get; set; }
+
         public IEnumerable<ReservationViewModel> Reservations {get;set;}
 
     }

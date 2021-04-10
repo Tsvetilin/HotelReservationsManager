@@ -31,7 +31,7 @@ namespace Data.Seeders
                     Value="50",
                     Type=typeof(double).ToString(),
                 }
-            }) ;
+            });
            
             await dbContext.SaveChangesAsync();
             logger.LogInformation($"Finished executing {nameof(SettingsSeeder)}");

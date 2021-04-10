@@ -18,9 +18,9 @@ namespace Tests.Web.Tests
         public HomeTestsAuthorized(CustomAppFactory factory)
         {
             this.factory = factory;
-            this.client = factory.WithWebHostBuilder(builder =>
+            this.client = this.factory.WithWebHostBuilder(builder =>
             {
-
+                ///
             }).CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false
@@ -69,7 +69,6 @@ namespace Tests.Web.Tests
         [InlineData("/users/update/notexistinguser")]
         [InlineData("/rooms/update/notexisting1")]
         [InlineData("/users/promote/notexistinguser")]
-
         public async void Get_ShouldReturnNotFound(string url)
         {
             var res = await client.GetAsync(url);

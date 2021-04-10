@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 using Tests.Common;
 using Web;
 using Xunit;
-using Xunit.Extensions.Ordering;
 
-//[assembly: TestFramework("AssemblyFixtureExample.XunitExtensions.XunitTestFrameworkWithAssemblyFixture", "AssemblyFixtureExample")]
-//[assembly: AssemblyFixture(typeof(MyAssemblyFixture))]
+
 namespace Tests.Web.Tests
 {
     [CollectionDefinition("HomeTestsUnauthorized", DisableParallelization = true)]

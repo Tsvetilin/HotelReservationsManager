@@ -1,6 +1,5 @@
 ﻿using Data;
 using Data.Models;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,13 +7,9 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Services.Data;
-using System;
 using System.Linq;
 using System.Security.Claims;
 using Web;
-using Web.Models.Reservations;
-using static Tests.Common.TestAuthHandler;
 
 /// <summary>
 /// Tests project space related to commonly used helpers & factories
@@ -32,6 +27,7 @@ namespace Tests.Common
             base.ConfigureWebHost(builder);
             builder.ConfigureServices(services =>
             {
+                // Database change
                 var db = services.SingleOrDefault(
                      d => d.ServiceType ==
                 typeof(ApplicationDbContext));
@@ -50,6 +46,7 @@ namespace Tests.Common
                     context.UseSqlServer(TestDatabaseConnectionProvider.Instance.SharedConnectionStringDisposable);
                 });
 
+                // Authentication bypass
                 var a = services.SingleOrDefault(
                      d => d.ServiceType ==
                 typeof(AuthenticationBuilder));

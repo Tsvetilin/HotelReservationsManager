@@ -72,7 +72,8 @@ namespace Web.Controllers
         {
             var user = await userManager.GetUserAsync(User);
             var viewModel = await this.reservationService.GetReservation<ReservationViewModel>(id);
-            if (viewModel == null || !(user.Id == viewModel.UserId || User.IsInRole("Admin") || User.IsInRole("Employee")))
+            if (viewModel == null || 
+                !(user.Id == viewModel.UserId || User.IsInRole("Admin") || User.IsInRole("Employee")))
             {
                 return this.NotFound();
             }
@@ -102,11 +103,14 @@ namespace Web.Controllers
                 return this.NotFound();
             }
 
-            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate);
+            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, 
+                                                                          inputModel.AccommodationDate, 
+                                                                          inputModel.ReleaseDate);
 
             if (!roomIsEmpty)
             {
-                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), "Room is already reserved at that time");
+                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), 
+                                              "Room is already reserved at that time");
             }
 
             if (!this.ModelState.IsValid)
@@ -149,7 +153,9 @@ namespace Web.Controllers
 
             if (reservation.Reservations?.Any() ?? false)
             {
-                reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+                reservation.Reservations = reservation.Reservations.
+                                                      Where(x => !(x.AccommodationDate == reservation.AccommodationDate
+                                                                   && x.ReleaseDate == reservation.ReleaseDate));
             }
 
             return this.View(reservation);
@@ -160,7 +166,8 @@ namespace Web.Controllers
         {
             var user = await userManager.GetUserAsync(User);
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
-            if (reservation == null || !(user.Id == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate < DateTime.Today)
+            if (reservation == null || 
+                !(user.Id == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate < DateTime.Today)
             {
                 return this.NotFound();
             }
@@ -170,14 +177,20 @@ namespace Web.Controllers
 
             if (reservation.Reservations?.Any() ?? false)
             {
-                reservation.Reservations = reservation.Reservations.Where(x => !(x.AccommodationDate == reservation.AccommodationDate && x.ReleaseDate == reservation.ReleaseDate));
+                reservation.Reservations = reservation.Reservations.
+                                                       Where(x => !(x.AccommodationDate == reservation.AccommodationDate 
+                                                                    && x.ReleaseDate == reservation.ReleaseDate));
             }
 
-            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id, inputModel.AccommodationDate, inputModel.ReleaseDate,id);
+            var roomIsEmpty = await reservationService.AreDatesAcceptable(room.Id,
+                                                                          inputModel.AccommodationDate, 
+                                                                          inputModel.
+                                                                          ReleaseDate,id);
 
             if (!roomIsEmpty)
             {
-                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), "Room is already reserved at that time");
+                this.ModelState.AddModelError(nameof(inputModel.AccommodationDate), 
+                                              "Room is already reserved at that time");
             }
 
             if (!this.ModelState.IsValid)
@@ -221,7 +234,8 @@ namespace Web.Controllers
         {
             var reservation = await reservationService.GetReservation<ReservationInputModel>(id);
 
-            if (reservation == null || !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate<DateTime.Today)
+            if (reservation == null || 
+                !(reservation.UserId == reservation.UserId || User.IsInRole("Admin")) || reservation.ReleaseDate<DateTime.Today)
             {
                 this.NotFound();
             }

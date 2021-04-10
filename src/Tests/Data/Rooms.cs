@@ -90,6 +90,7 @@ namespace Tests.Data
                 }
             }
         };
+
         private const double AdultPrice1 = 20;
         private const double ChildrenPrice1 = 20;
         private const int Capacity1 = 2;
@@ -98,7 +99,5 @@ namespace Tests.Data
         private const int Capacity2 = 4;
         private const bool IsTaken1 = false;
         private const bool IsTaken2 = true;
-
-
     }
 }

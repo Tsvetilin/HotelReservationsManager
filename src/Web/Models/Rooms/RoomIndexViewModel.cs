@@ -12,11 +12,11 @@ namespace Web.Models.ViewModels
         public IEnumerable<RoomViewModel> Rooms { get; set; }
         public double AllInclusivePrice { get; set; }
         public double BreakfastPrice { get; set; }
-
         public int MaxCapacity { get; set; }
         public bool AvailableOnly { get; set; }
         public RoomType[] Types { get; set; }
         public int MinCapacity { get; set; }
+
         public List<SelectListItem> GetCapacitySelectList()
         {
             return Enumerable.Range(1, MaxCapacity).Select(x =>

@@ -1,8 +1,6 @@
 ﻿using Data.Seeders;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Data
@@ -29,8 +27,6 @@ namespace Data
             }
 
             logger.LogInformation("Finished executing seeders");
-
-            return;
         }
     }
 }

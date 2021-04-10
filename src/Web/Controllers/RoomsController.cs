@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Services;
 using Data.Models;
 using Web.Models.ViewModels;
 using Web.Models.Rooms;
@@ -35,7 +34,11 @@ namespace Web.Controllers
             this.settingService = settingService;
             this.imageManager = imageManager;
         }
-        public async Task<IActionResult> Index(int id = 1, int pageSize = 10, bool availableOnly = false, RoomType[] type = null, int minCapacity = 0)
+        public async Task<IActionResult> Index(int id = 1, 
+                                               int pageSize = 10, 
+                                               bool availableOnly = false, 
+                                               RoomType[] type = null,
+                                               int minCapacity = 0)
         {
             var searchResults = await roomService.GetSearchResults<RoomViewModel>(availableOnly, type, minCapacity);
             var resultsCount = searchResults.Count();

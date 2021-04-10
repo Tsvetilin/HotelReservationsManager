@@ -34,8 +34,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(SettingsIndexModel model)
         {
-            await settingService.UpdateAsync("AllInclusivePrice", model.AllInclusivePrice.ToString(), typeof(double).ToString());
-            await settingService.UpdateAsync("BreakfastPrice", model.BreakfastPrice.ToString(), typeof(double).ToString());
+            await settingService.UpdateAsync("AllInclusivePrice", 
+                                             model.AllInclusivePrice.ToString(),
+                                             typeof(double).ToString());
+            await settingService.UpdateAsync("BreakfastPrice", 
+                                             model.BreakfastPrice.ToString(),
+                                             typeof(double).ToString());
 
             memoryCache.ClearPriceCache();
 

@@ -64,10 +64,11 @@ namespace Services.Data
         public async Task<IEnumerable<T>> GetAllFreeRoomsAtPresent<T>()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
-                OrderBy(x => x.Number).
-                ProjectTo<T>().
-                ToListAsync();
+                                 Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today &&
+                                                                     r.ReleaseDate > DateTime.Today)).
+                                 OrderBy(x => x.Number).
+                                 ProjectTo<T>().
+                                 ToListAsync();
         }
 
         /// <summary>
@@ -78,8 +79,9 @@ namespace Services.Data
         public async Task<int> CountFreeRoomsAtPresent()
         {
             return await context.Rooms.
-                Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today && r.ReleaseDate > DateTime.Today)).
-                CountAsync();
+                                 Where(x => !x.Reservations.Any(r => r.AccommodationDate <= DateTime.Today 
+                                                                  && r.ReleaseDate > DateTime.Today)).
+                                 CountAsync();
         }
 
         /// <summary>
@@ -102,7 +104,9 @@ namespace Services.Data
         /// <param name="minCapacity">The min capacity of the filtered rooms</param>
         /// <returns>Task with filtered rooms data parsed to <typeparamref name="T"/>
         /// object or null if not found</returns>
-        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, RoomType[] types = null, int? minCapacity = null)
+        public async Task<IEnumerable<T>> GetSearchResults<T>(bool availableOnly = false, 
+                                                              RoomType[] types = null, 
+                                                              int? minCapacity = null)
         {
             IQueryable<Room> result = context.Rooms;
 
@@ -209,7 +213,10 @@ namespace Services.Data
         /// <returns>Task with the maximum price result</returns>
         public async Task<double> GetMaxPrice()
         {
-            return await this.context.Rooms.OrderByDescending(x => x.AdultPrice).Select(X => X.AdultPrice).FirstOrDefaultAsync();
+            return await this.context.Rooms.
+                                      OrderByDescending(x => x.AdultPrice).
+                                      Select(X => X.AdultPrice).
+                                      FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -229,7 +236,10 @@ namespace Services.Data
         /// <returns>Task with the maximum room capacity result</returns>
         public async Task<int> GetMaxCapacity()
         {
-            return await context.Rooms.AsNoTracking().OrderByDescending(x => x.Capacity).Select(x => x.Capacity).FirstOrDefaultAsync();
+            return await context.Rooms.AsNoTracking().
+                                       OrderByDescending(x => x.Capacity).
+                                       Select(x => x.Capacity).
+                                       FirstOrDefaultAsync();
         }
     }
 }

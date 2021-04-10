@@ -49,6 +49,5 @@ namespace Web.Models.InputModels
         [Required]
         [Display(Name = "Is Adult")]
         public bool IsAdult { get; set; }
-        public string Еrror { get; set; }
     }
 }
