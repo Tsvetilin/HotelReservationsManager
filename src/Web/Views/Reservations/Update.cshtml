@@ -212,10 +212,10 @@
             if (accDate && accDate.value && relDate && relDate.value && isPresentValid) {
                 var isTaken = false;
                 periods.forEach(period => {
-                    if ((period.start > new Date(accDate.value) && period.start < new Date(relDate.value)) ||
-                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value)) ||
-                        (period.end > new Date(relDate.value) && period.start < new Date(accDate.value)) ||
-                        (period.end < new Date(relDate.value) && period.start > new Date(accDate.value))) {
+                    if ((period.start >= new Date(accDate.value) && period.start <= new Date(relDate.value)) ||
+                        (period.end > new Date(accDate.value) && period.end <= new Date(relDate.value)) ||
+                        (period.end >= new Date(relDate.value) && period.start <= new Date(accDate.value)) ||
+                        (period.end <= new Date(relDate.value) && period.start >= new Date(accDate.value))) {
                         isTaken = true;
                     }
                 });

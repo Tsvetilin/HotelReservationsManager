@@ -56,10 +56,10 @@ namespace Services.Data
             }
 
             return !reservationPeriods.Any(x =>
-                (x.Item1 > accomodationDate && x.Item1 < releaseDate) ||
-                (x.Item2 > accomodationDate && x.Item2 < releaseDate) ||
-                (x.Item1 > accomodationDate && x.Item2 < releaseDate) ||
-                (x.Item1 < accomodationDate && x.Item2 > releaseDate));
+                (x.Item1 >= accomodationDate && x.Item1 <= releaseDate) ||
+                (x.Item2 > accomodationDate && x.Item2 <= releaseDate) ||
+                (x.Item1 >= accomodationDate && x.Item2 <= releaseDate) ||
+                (x.Item1 <= accomodationDate && x.Item2 >= releaseDate));
         }
 
         /// <summary>

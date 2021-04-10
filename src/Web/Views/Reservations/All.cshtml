@@ -31,8 +31,8 @@
             <li class="pb-3 @past">
                 <a asp-action="Details" asp-controller="Reservations" asp-route-id="@reservation.Id" class="text-decoration-none">
                     <div class="d-flex border border-info justify-content-between rounded blue-card">
-
-                        <div class="m-5 col-md-6 ml-4">
+                        <div class="col-md-1 col-0"></div>
+                        <div class="my-5 col-md-8 col-12">
                             <h3 class="text-dark font-weight-bold">Room №@reservation.RoomNumber</h3>
                             <h5 class="text-dark ">@reservation.RoomType.ToString()</h5>
                             <div>
@@ -56,19 +56,19 @@
                             </div>
                             <p class="text-dark ">Reservarion dates: @reservation.AccommodationDate.ToString("dd/MM/yyyy") - @reservation.ReleaseDate.ToString("dd/MM/yyyy")</p>
                         </div>
-                        <div class="col-md-3 col-12 justify-content-around align-self-center d-flex flex-row flex-md-columnr">
-                            <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" class="my-2" method="get">
+                        <div class="col-md-3 col-12 justify-content-around align-self-center d-flex flex-row flex-md-column">
+                            <form asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.Id" method="get" class="my-2">
                                 <input class="btn btn-info" type="submit" value="Info" />
                             </form>
                             @if (!isPast)
                             {
-                            <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" class="my-2" method="get">
-                                <input class="btn btn-primary" type="submit" value="Change" />
-                            </form>
-                            <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id" class="my-2"
-                                  method="post">
-                                <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
-                            </form>
+                                <form asp-controller="Reservations" asp-action="Update" asp-route-id="@reservation.Id" method="get" class="my-2">
+                                    <input class="btn btn-primary" type="submit" value="Change" />
+                                </form>
+                                <form asp-controller="Reservations" asp-action="Delete" asp-route-id="@reservation.Id" class="my-2"
+                                      method="post">
+                                    <input class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to cancel the reservation?')" value="Cancel" />
+                                </form>
                             }
                         </div>
 
