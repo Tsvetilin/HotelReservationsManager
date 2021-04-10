@@ -10,7 +10,7 @@
 
 <hr />
 <div>
-    <div class="col-md-3 col-12 justify-content-around align-self-center d-flex">
+    <div class="col-md-4 col-12 justify-content-around align-self-center d-flex">
         <form asp-controller="Reservations" asp-action="Create" asp-route-id="@Model.Id" method="get" class="my-2">
             <input class="btn btn-success" type="submit" value="Reserve" />
         </form>
@@ -34,16 +34,16 @@
             </div>
             <div>
                 <p>
-                    <strong>@Html.DisplayNameFor(model => model.Type):</strong> @Html.DisplayFor(model => model.Type)
+                    <strong>Type:</strong> @Html.DisplayFor(model => model.Type)
                 </p>
                 <p>
-                    <strong>@Html.DisplayNameFor(model => model.Capacity):</strong> @Html.DisplayFor(model => model.Capacity)
+                    <strong>Capacity:</strong> @Html.DisplayFor(model => model.Capacity)
                 </p>
                 <p>
-                    <strong> @Html.DisplayNameFor(model => model.AdultPrice): </strong>@Html.DisplayFor(model => model.AdultPrice)$
+                    <strong>Adult price: </strong>@Html.DisplayFor(model => model.AdultPrice)$
                 </p>
                 <p>
-                    <strong>@Html.DisplayNameFor(model => model.ChildrenPrice): </strong>@Html.DisplayFor(model => model.ChildrenPrice)$
+                    <strong>Children price: </strong>@Html.DisplayFor(model => model.ChildrenPrice)$
                 </p>
             </div>
         </div>

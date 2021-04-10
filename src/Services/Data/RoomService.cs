@@ -159,7 +159,7 @@ namespace Services.Data
         /// <returns>Task representing the operation</returns>
         public async Task UpdateRoom(string id, Room room)
         {
-            var roomToChange = await context.Rooms.FindAsync(id);
+            var roomToChange = await context.Rooms.AsNoTracking().FirstOrDefaultAsync(x=>x.Id==id);
             if (roomToChange != null)
             {
                 if (roomToChange.Reservations != null)
@@ -175,7 +175,7 @@ namespace Services.Data
                 }
 
                 room.Id = id;
-                context.Entry(roomToChange).CurrentValues.SetValues(room);
+                context.Rooms.Update(room);
                 await context.SaveChangesAsync();
             }
         }

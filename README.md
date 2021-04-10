@@ -12,14 +12,14 @@ The application is capable of adding rooms with specified cpacity, type and imag
 - The application will still work if not supplied with valid api keys but with a limited functionality. Email sending will be disabled and adding rooms will be impossible without image uploaded to cloudinary.
 - An admin account is seeded with login credentials **Admin** for username and **AdminPass** for password
 
-## Stucture of the project
+## Structure of the project
 Three-tier architecture following the MVC pattern
 
 ### Data Layer
 - Code First database approach
 - MSSQL Server Database
 - Entity Framework Core
-- Migraions
+- Migrations
 - Automated data seeding on database creation
 
 ### Service Layer
@@ -41,7 +41,8 @@ Three-tier architecture following the MVC pattern
 - InMemory Cache
 - GDPR compatible
 - Bundling and minification, client-side libraries restoration
-- Pagination & search impelented
+- Pagination & search implemented
+- Data validation
 - Responsive design
 
 ### Tests

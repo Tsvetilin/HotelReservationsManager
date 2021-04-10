@@ -127,7 +127,7 @@
         var allInclusicePrice =@Model.AllInclusivePrice;
         var breakfastPrice = @Model.BreakfastPrice;
 
-        var totalPrice = @Model.Price;
+        var totalPrice = 0;
 
         var isValidDate = false;
 
@@ -202,33 +202,28 @@
             var accDate = document.getElementById("acc-date");
             var relDate = document.getElementById("rel-date");
             var isPresentValid = false;
-            if (new Date(accDate.value) < new Date() || new Date(relDate.value) < new Date() || new Date(relDate.value) <= new Date(accDate.value)) {
+            if (new Date(accDate.value) >= new Date(relDate.value) || new Date(accDate.value) < new Date()) {
                 document.getElementById("date-inval").style = "display:block!important";
-                console.log("date invalid")
             }
             else {
                 document.getElementById("date-inval").style = "display:none!important";
-                console.log("date valid")
                 isPresentValid = true;
             }
             if (accDate && accDate.value && relDate && relDate.value && isPresentValid) {
                 var isTaken = false;
                 periods.forEach(period => {
-                    console.log(period.start, period.end, new Date(accDate.value), new Date(relDate.value));
                     if ((period.start > new Date(accDate.value) && period.start < new Date(relDate.value)) ||
-                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value))){
+                        (period.end > new Date(accDate.value) && period.end < new Date(relDate.value)) ||
+                        (period.end > new Date(relDate.value) && period.start < new Date(accDate.value)) ||
+                        (period.end < new Date(relDate.value) && period.start > new Date(accDate.value))) {
                         isTaken = true;
                     }
                 });
                 if (isTaken) {
                     document.getElementById("date-error").style = "display:block!important";
-                    console.log("date taken")
-
                 }
                 else {
                     document.getElementById("date-error").style = "display:none!important";
-                    console.log("date free")
-
                     isValidDate = true;
                 }
             }

@@ -79,30 +79,6 @@ namespace Tests.Service.Tests
             Assert.IsNotNull(resultList);
             Assert.AreEqual(rooms.Count, resultList.Count());
         }
-        [Test]
-        public async Task Update_ShouldUpdateARoom()
-        {
-            //Arrange
-            List<Room> rooms = new()
-            {
-                Rooms.Room1
-            };
-
-            ApplicationDbContext context = await InMemoryFactory.InitializeContext()
-                                                                .SeedAsync(rooms);
-            var roomService = new RoomServices(context);
-
-            //Act
-            await roomService.UpdateRoom(Rooms.Room1.Id, Rooms.Room2);
-
-            //Assert      
-            Assert.AreEqual(context.Rooms.FirstOrDefault().IsTaken, Rooms.Room2.IsTaken);
-            Assert.AreEqual(context.Rooms.FirstOrDefault().Number, Rooms.Room2.Number);
-            Assert.AreEqual(context.Rooms.FirstOrDefault().AdultPrice, Rooms.Room2.AdultPrice);
-            Assert.AreEqual(context.Rooms.FirstOrDefault().ChildrenPrice, Rooms.Room2.ChildrenPrice);
-            Assert.AreEqual(context.Rooms.FirstOrDefault().Capacity, Rooms.Room2.Capacity);
-            Assert.AreEqual(context.Rooms.FirstOrDefault().Type, Rooms.Room2.Type);
-        }
 
         [Test]
         public async Task DeleteRoom_ShouldRemoveARoom()

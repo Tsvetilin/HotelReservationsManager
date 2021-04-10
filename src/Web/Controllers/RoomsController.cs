@@ -225,7 +225,7 @@ namespace Web.Controllers
                 ImageUrl = photoUrl,
             };
 
-            await roomService.AddRoom(room);
+            await roomService.UpdateRoom(id,room);
 
             return RedirectToAction(nameof(Index));
         }

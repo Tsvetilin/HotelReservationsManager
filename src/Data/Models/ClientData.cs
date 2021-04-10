@@ -18,5 +18,6 @@ namespace Data.Models
         public bool IsAdult { get; set; }
 
         public virtual Reservation Reservation { get; set; }
+        public string ReservationId { get; set; }
     }
 }

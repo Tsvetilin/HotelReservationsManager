@@ -2,7 +2,6 @@
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
-using Services.Data;
 using Services.Mapping;
 using System;
 using System.Collections.Generic;
@@ -42,6 +41,7 @@ namespace Services.Data
 
             var reservationPeriods = await dbContext.
                                            Reservations.
+                                           AsNoTracking().
                                            Where(x => x.Room.Id == roomId).
                                            Select(x => new Tuple<DateTime, DateTime>
                                                         (x.AccommodationDate, x.ReleaseDate).
@@ -50,7 +50,7 @@ namespace Services.Data
 
             if (!string.IsNullOrWhiteSpace(reservationId))
             {
-                var reservation = await dbContext.Reservations.FirstOrDefaultAsync(x => x.Id == reservationId);
+                var reservation = await dbContext.Reservations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == reservationId);
                 reservationPeriods = reservationPeriods.Where(x => x.Item1 != reservation.AccommodationDate &&
                                                               x.Item2 != reservation.ReleaseDate).ToList();
             }
@@ -70,11 +70,12 @@ namespace Services.Data
         /// <param name="allInclusive">Reservation's order all inclusive</param>
         /// <param name="breakfast">Reservation's order breakfast</param>
         /// <returns>Task with the calculation result</returns>
-        private async Task<double> CalculatePrice(Room room,
+        private async Task<double> CalculatePriceForNight(Room room,
                                                   IEnumerable<ClientData> clients,
                                                   bool allInclusive,
                                                   bool breakfast)
         {
+            clients = clients.ToList().Where(x => x.FullName != null);
             var price =
                 clients.Count(x => x.IsAdult) * room.AdultPrice +
                 clients.Count(x => !x.IsAdult) * room.ChildrenPrice +
@@ -129,7 +130,7 @@ namespace Services.Data
                 return null;
             }
 
-            var price = await CalculatePrice(room, clients, allInclusive, breakfast);
+            var price = await CalculatePriceForNight(room, clients, allInclusive, breakfast) * (releaseDate-accomodationDate).TotalDays;
 
             var reservation = new Reservation
             {
@@ -162,18 +163,16 @@ namespace Services.Data
         /// <param name="user">The room renter</param>
         /// <returns>Task representing the success of the update operation</returns>
         public async Task<bool> UpdateReservation(string id,
-                                            DateTime accomodationDate,
-                                            DateTime releaseDate,
-                                            bool allInclusive,
-                                            bool breakfast,
-                                            IEnumerable<ClientData> clients,
-                                            ApplicationUser user)
+                                                  DateTime accomodationDate,
+                                                  DateTime releaseDate,
+                                                  bool allInclusive,
+                                                  bool breakfast,
+                                                  IEnumerable<ClientData> clients,
+                                                  ApplicationUser user)
         {
-            var reservation = await dbContext.Reservations.AsNoTracking().Include(x => x.User)
-                                                                         .FirstOrDefaultAsync(x => x.Id == id);
+            var reservation = await dbContext.Reservations.AsNoTracking().Include(x => x.User).Include(x=>x.Room).FirstOrDefaultAsync(x => x.Id == id);
 
-            var room = await dbContext.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Reservations.
-                                                                                Any(y => y.Id == id));
+            var room = await dbContext.Rooms.FirstOrDefaultAsync(x => x.Reservations.Any(y => y.Id == id));
 
             var areDateAcceptable = await AreDatesAcceptable(room.Id, accomodationDate, releaseDate, id);
             var isCapacityInRange = clients.Count() + 1 <= room.Capacity;
@@ -186,7 +185,7 @@ namespace Services.Data
                 return false;
             }
 
-            var price = await CalculatePrice(room, clients, allInclusive, breakfast);
+            var price = await CalculatePriceForNight(room, clients, allInclusive, breakfast) * (releaseDate - accomodationDate).TotalDays;
 
             var newReservation = new Reservation
             {
@@ -196,12 +195,12 @@ namespace Services.Data
                 Breakfast = breakfast,
                 Price = price,
                 ReleaseDate = releaseDate,
-                Room = room,
+                Room=room,
                 Clients = clients,
                 User = user
             };
 
-            dbContext.Entry(reservation).CurrentValues.SetValues(newReservation);
+            dbContext.Reservations.Update(newReservation);
             await this.dbContext.SaveChangesAsync();
 
             return true;
@@ -239,7 +238,7 @@ namespace Services.Data
         /// object or null if not found</returns>
         public async Task<T> GetReservation<T>(string id)
         {
-            return await this.dbContext.Reservations.Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
+            return await this.dbContext.Reservations.AsNoTracking().Where(x => x.Id == id).ProjectTo<T>().FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -251,7 +250,8 @@ namespace Services.Data
         /// object or null if not found</returns>
         public async Task<IEnumerable<T>> GetReservationsForUser<T>(string userId)
         {
-            return await this.dbContext.Reservations.Where(x => x.User.Id == userId)
+            return await this.dbContext.Reservations.AsNoTracking()
+                                                    .Where(x => x.User.Id == userId)
                                                     .OrderByDescending(x => x.AccommodationDate)
                                                     .ProjectTo<T>().ToListAsync();
         }
@@ -279,7 +279,8 @@ namespace Services.Data
         public async Task<IEnumerable<ClientData>> UpdateClientsForReservation(string reservationId,
                                                                                IEnumerable<ClientData> clients)
         {
-            var reservation = await dbContext.Reservations.Include(x => x.Room)
+            var reservation = await dbContext.Reservations.AsNoTracking()
+                                                          .Include(x => x.Room)
                                                           .FirstOrDefaultAsync(x => x.Id == reservationId);
             var initialClients = await dbContext.ClientData.Where(x => x.Reservation.Id == reservationId)
                                                            .ToListAsync();
@@ -301,8 +302,8 @@ namespace Services.Data
             {
                 foreach (var cl in newClients)
                 {
-                    cl.Reservation = reservation;
-                    if(string.IsNullOrWhiteSpace(cl.Id))
+                    cl.ReservationId = reservation.Id;
+                    if (string.IsNullOrWhiteSpace(cl.Id))
                     {
                         cl.Id = Guid.NewGuid().ToString();
                     }
@@ -311,13 +312,13 @@ namespace Services.Data
                 dbContext.ClientData.AddRange(newClients);
             }
 
-            var clientsToUpdate = clients.Where(x => !newClients.Select(u => u.Id).Contains(x.Id) && x.Id != null);
+            var clientsToUpdate = clients.Where(x => !newClients.Select(u => u.Id).Contains(x.Id) && x.Id != null).ToList();
 
             if (clientsToUpdate?.Any() ?? false)
             {
                 foreach (var cl in newClients)
                 {
-                    cl.Reservation = reservation;
+                    cl.ReservationId = reservation.Id;
                 }
                 dbContext.ClientData.UpdateRange(clientsToUpdate);
             }
@@ -335,7 +336,7 @@ namespace Services.Data
         /// object or null if not found</returns>
         public async Task<IEnumerable<T>> GetAll<T>()
         {
-            return await this.dbContext.Reservations.OrderBy(x => x.ReleaseDate).ProjectTo<T>().ToListAsync();
+            return await this.dbContext.Reservations.AsNoTracking().OrderBy(x => x.ReleaseDate).ProjectTo<T>().ToListAsync();
         }
 
 
@@ -345,7 +346,7 @@ namespace Services.Data
         /// <returns>Task with the all reservations count result</returns>
         public async Task<int> CountAllReservations()
         {
-            return await this.dbContext.Reservations.CountAsync();
+            return await this.dbContext.Reservations.AsNoTracking().CountAsync();
         }
     }
 }
