@@ -82,7 +82,7 @@ namespace Tests.Service.Tests
 
             List<Room> rooms = new()
             {
-                Rooms.Room1
+                Rooms.Room2
             };
 
             List<ApplicationUser> users = new()
@@ -100,13 +100,13 @@ namespace Tests.Service.Tests
             var service = new ReservationsService(context, settingService);
 
             // Act
-            var reservation = await service.AddReservation(Reservations.Reservation1User3Room1NoClient.Room.Id,
-                                         Reservations.Reservation1User3Room1NoClient.AccommodationDate,
-                                         Reservations.Reservation1User3Room1NoClient.ReleaseDate,
+            var reservation = await service.AddReservation(Reservations.Reservation2User4Room2NoClient.Room.Id,
+                                         Reservations.Reservation2User4Room2NoClient.AccommodationDate,
+                                         Reservations.Reservation2User4Room2NoClient.ReleaseDate,
                                          Reservations.UpdateAllInClusive1,
                                          Reservations.Breakfast1,
-                                         Reservations.Reservation1User3Room1NoClient.Clients,
-                                         Reservations.Reservation1User3Room1NoClient.User
+                                         Reservations.Reservation2User4Room2NoClient.Clients,
+                                         Reservations.Reservation2User4Room2NoClient.User
                                          );
 
             // Assert
@@ -349,7 +349,7 @@ namespace Tests.Service.Tests
                                                                         Users.User4NotEmployee.Id);
 
             // Assert
-            Assert.AreEqual(2, userReservations.Count());
+            Assert.AreEqual(context.Reservations.Count(x=>x.User.Id==Users.User4NotEmployee.Id), userReservations.Count());
         }
 
         [Test]
